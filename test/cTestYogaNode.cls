@@ -1,0 +1,459 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+  Persistable = 0  'NotPersistable
+  DataBindingBehavior = 0  'vbNone
+  DataSourceBehavior  = 0  'vbNone
+  MTSTransactionMode  = 0  'NotAnMTSObject
+END
+Attribute VB_Name = "cTestYogaNode"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = True
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+'=========================================================================
+'
+' VbYoga (c) 2019 by wqweto@gmail.com
+'
+' Facebook's Yoga bindings for VB6. Implements CSS Flexbox layout
+'
+' This project is licensed under the terms of the MIT license
+' See the LICENSE file in the project root for more information
+'
+'=========================================================================
+Option Explicit
+DefObj A-Z
+
+Private Const ObjectVariableNotSetException     As Long = 91
+Private Const SubscriptOutOfRangeException      As Long = 9
+Private Const InvalidOperationException         As Long = vbObjectError
+
+Public Sub TestAddChildGetParent()
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+
+    Assert.IsNothing child.parent
+    Assert.AreEqual 0, parent.Count
+
+    parent.Insert 0, child
+
+    Assert.AreEqual 1, parent.Count
+    Assert.AreSame child, parent.Item(0)
+    Assert.AreSame parent, child.parent
+
+    parent.RemoveAt 0
+
+    Assert.IsNothing child.parent
+    Assert.AreEqual 0, parent.Count
+End Sub
+
+Public Sub TestChildren()
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim node As cYogaNode
+    For Each node In parent
+        Assert.Fail node.ToString()
+    Next
+
+    Dim child0 As cYogaNode: Set child0 = YogaNodeNew()
+    Assert.AreEqual -1, parent.IndexOf(child0)
+    parent.Insert 0, child0
+    For Each node In parent
+        Assert.AreEqual 0, parent.IndexOf(node)
+    Next
+
+    Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
+    parent.Insert 1, child1
+    Dim index As Long
+    For Each node In parent
+        Assert.AreEqual index, parent.IndexOf(node)
+        index = index + 1
+    Next
+
+    parent.RemoveAt 0
+    Assert.AreEqual -1, parent.IndexOf(child0)
+    Assert.AreEqual 0, parent.IndexOf(child1)
+
+    parent.Clear
+    Assert.AreEqual 0, parent.Count
+
+    parent.Clear
+    Assert.AreEqual 0, parent.Count
+End Sub
+
+Public Sub TestRemoveAtFromEmpty()
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Assert.Throws ObjectVariableNotSetException, , "Object variable or With block variable not set"
+    parent.RemoveAt 0
+End Sub
+
+Public Sub TestRemoveAtOutOfRange()
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    parent.Insert 0, child
+    Assert.Throws SubscriptOutOfRangeException, , "Subscript out of range"
+    parent.RemoveAt 1
+End Sub
+
+Public Sub TestCannotAddChildToMultipleParents()
+    Dim parent1 As cYogaNode: Set parent1 = YogaNodeNew()
+    Dim parent2 As cYogaNode: Set parent2 = YogaNodeNew()
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+
+    parent1.Insert 0, child
+    Assert.Throws InvalidOperationException, , "Child already has a parent, it must be removed first"
+    parent2.Insert 0, child
+End Sub
+
+Public Sub TestReset()
+    Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+    node.Reset
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+End Sub
+
+Public Sub TestResetParent()
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    parent.Insert 0, child
+    Assert.Throws InvalidOperationException, , "Cannot reset a node which still has children attached"
+    parent.Reset
+End Sub
+
+Public Sub TestResetChild()
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    parent.Insert 0, child
+    Assert.Throws InvalidOperationException, , "Cannot reset a node still attached to a parent"
+    child.Reset
+End Sub
+
+Public Sub TestClear()
+    Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
+    parent.Insert 0, child
+    Assert.AreEqual 1, parent.Count
+    Assert.AreEqual parent, child.parent
+    parent.Clear
+    Assert.AreEqual 0, parent.Count
+    Assert.IsNothing child.parent
+    Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
+End Sub
+
+Public Function MeasureCallback( _
+            oNode As cYogaNode, _
+            ByVal sngWidth As Single, _
+            ByVal eWidthMode As YogaMeasureMode, _
+            ByVal sngHeight As Single, _
+            ByVal eHeightMode As YogaMeasureMode, _
+            sngOutputWidth As Single, _
+            sngOutputHeight As Single)
+    #If sngWidth And eWidthMode And sngHeight And eHeightMode Then '--- touch args
+    #End If
+    Select Case oNode.Tag
+    Case 0
+        sngOutputWidth = 100
+        sngOutputHeight = 150
+    Case 1
+        sngOutputWidth = 123.4!
+        sngOutputHeight = 81.7!
+    Case 2
+        sngOutputWidth = 120
+        sngOutputHeight = 130
+    End Select
+End Function
+
+Public Sub TestMeasureFunc()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.SetMeasureFunction Me
+    node.Tag = 0
+    node.CalculateLayout
+    Assert.AreEqual 100, node.LayoutWidth
+    Assert.AreEqual 150, node.LayoutHeight
+End Sub
+
+Public Sub TestMeasureFuncWithFloat()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.Tag = 1
+    node.SetMeasureFunction Me
+    node.CalculateLayout
+    Assert.AreEqual 124!, node.LayoutWidth
+    Assert.AreEqual 82!, node.LayoutHeight
+
+    Dim config0 As cYogaConfig: Set config0 = YogaConfigNew
+    config0.PointScaleFactor = 0
+    Set node = YogaNodeNew(config0)
+    node.Tag = 1
+    node.SetMeasureFunction Me
+    node.CalculateLayout
+    Assert.AreEqual 123.4!, node.LayoutWidth
+    Assert.AreEqual 81.7!, node.LayoutHeight
+End Sub
+
+Public Sub TestChildWithMeasureFunc()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.SetMeasureFunction Me
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    Assert.Throws InvalidOperationException, , "Cannot add child: Nodes with measure functions cannot have children"
+    node.Insert 0, child
+End Sub
+
+Public Sub TestMeasureFuncWithChild()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    node.Insert 0, child
+    Assert.Throws InvalidOperationException, , "Cannot set measure function: Nodes with measure functions cannot have children"
+    node.SetMeasureFunction Me
+End Sub
+
+Public Function BaselineCallback( _
+            oNode As cYogaNode, _
+            ByVal sngWidth As Single, _
+            ByVal sngHeight As Single) As Single
+    Select Case oNode.Tag
+    Case 0
+        Assert.AreEqual 100, sngWidth
+        Assert.AreEqual 110, sngHeight
+        BaselineCallback = 65
+    Case 1
+        Assert.AreEqual 100, sngWidth
+        Assert.AreEqual 110, sngHeight
+        BaselineCallback = 80
+    Case 2
+        Assert.AreEqual 100, sngWidth
+        Assert.AreEqual 110, sngHeight
+        BaselineCallback = 88
+    End Select
+End Function
+
+Public Sub TestBaselineFunc()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.Height = 200
+    node.flexDirection = YogaFlexDirection.yogaFlexRow
+    node.AlignItems = YogaAlign.yogaAlignBaseline
+
+    Dim child0 As cYogaNode: Set child0 = YogaNodeNew()
+    child0.Width = 100
+    child0.Height = 110
+    child0.Tag = 0
+    child0.SetBaselineFunction Me
+    node.Insert 0, child0
+
+    Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
+    child1.Width = 100
+    child1.Height = 110
+    child1.Tag = 1
+    child1.SetBaselineFunction Me
+    node.Insert 1, child1
+
+    Dim child2 As cYogaNode: Set child2 = YogaNodeNew()
+    child2.Width = 100
+    child2.Height = 110
+    child2.Tag = 2
+    child2.SetBaselineFunction Me
+    node.Insert 2, child2
+
+    node.CalculateLayout
+
+    Assert.AreEqual 0, child0.LayoutX
+    Assert.AreEqual 23, child0.LayoutY
+    Assert.AreEqual 100, child1.LayoutX
+    Assert.AreEqual 8, child1.LayoutY
+    Assert.AreEqual 200, child2.LayoutX
+    Assert.AreEqual 0, child2.LayoutY
+End Sub
+
+Public Sub TestPrintOneNode()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.Width = 100
+    node.Height = 120
+    node.CalculateLayout
+    Assert.AreEqual "<div layout=""width: 100; height: 120; top: 0; left: 0;"" style=""width: 100px; height: 120px; "" ></div>", node.ToString()
+End Sub
+
+Public Sub TestPrintWithLogger()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.Width = 110
+    node.Height = 105
+    node.CalculateLayout
+    Assert.AreEqual "<div layout=""width: 110; height: 105; top: 0; left: 0;"" style=""width: 110px; height: 105px; "" ></div>", node.ToString()
+End Sub
+
+Public Sub TestPrint()
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    parent.Width = 100
+    parent.Height = 120
+    Dim child0 As cYogaNode: Set child0 = YogaNodeNew()
+    child0.Width = 30
+    child0.Height = 40
+    Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
+    child1.Width = 35
+    child1.Height = 45
+    parent.Insert 0, child0
+    parent.Insert 0, child1
+    parent.CalculateLayout
+    Assert.AreEqual "<div layout=""width: 100; height: 120; top: 0; left: 0;"" style=""width: 100px; height: 120px; "" >" & vbCrLf & _
+        "  <div layout=""width: 35; height: 45; top: 0; left: 0;"" style=""width: 35px; height: 45px; "" ></div>" & vbCrLf & _
+        "  <div layout=""width: 30; height: 40; top: 45; left: 0;"" style=""width: 30px; height: 40px; "" ></div>" & vbCrLf & _
+        "</div>", parent.ToString()
+End Sub
+
+Public Sub TestCopyStyle()
+    Dim node0 As cYogaNode: Set node0 = YogaNodeNew()
+    Assert.IsTrue YogaConstantsIsUndefined(node0.MaxHeight)
+
+    Dim node1 As cYogaNode: Set node1 = YogaNodeNew()
+    node1.MaxHeight = 100
+
+    node0.CopyStyle node1
+    Assert.AreEqual Array(yogaUnitPoint, 100), node0.MaxHeight
+End Sub
+
+Public Sub TestCopyConstructor()
+    Dim node0 As cYogaNode: Set node0 = YogaNodeNew()
+    node0.MaxWidth = 80
+
+    Dim node1 As cYogaNode: Set node1 = YogaNodeClone(node0)
+    Assert.AreEqual Array(yogaUnitPoint, 80), node1.MaxWidth
+
+    Dim node2 As cYogaNode: Set node2 = YogaNodeClone(node1)
+    node2.MaxHeight = 90
+
+    Assert.AreEqual Array(yogaUnitPoint, 80), node2.MaxWidth
+    Assert.AreEqual Array(yogaUnitPoint, 90), node2.MaxHeight
+
+    Dim node3 As cYogaNode: Set node3 = YogaNodeClone(node0)
+    node3.MaxWidth = 100
+
+    Assert.AreEqual Array(yogaUnitPoint, 100), node3.MaxWidth
+
+    Dim node4 As cYogaNode: Set node4 = YogaNodeClone(node2)
+    node4.MaxWidth = 100
+
+    Assert.AreEqual Array(yogaUnitPoint, 100), node4.MaxWidth
+    Assert.AreEqual Array(yogaUnitPoint, 90), node4.MaxHeight
+End Sub
+
+'#if !UNITY_5_4_OR_NEWER
+Private Sub ForceGC()
+'    GC.Collect
+'    GC.WaitForPendingFinalizers
+End Sub
+
+Public Sub TestDestructor()
+    ForceGC
+    Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
+    TestDestructorForGC instanceCount
+    ForceGC
+    Assert.AreEqual instanceCount, YogaNodeInstanceCount()
+End Sub
+Private Sub TestDestructorForGC(ByVal instanceCount As Long)
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    Assert.IsNotNothing node
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+    Set node = Nothing
+End Sub
+
+Public Sub TestDestructorWithChildren()
+    ForceGC
+    Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
+    TestDestructorWithChildrenForGC1 instanceCount
+    ForceGC
+    Assert.AreEqual instanceCount, YogaNodeInstanceCount()
+End Sub
+Private Sub TestDestructorWithChildrenForGC1(ByVal instanceCount As Long)
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+
+    TestDestructorWithChildrenForGC2 node, instanceCount + 1
+    ForceGC
+    Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
+
+    TestDestructorWithChildrenForGC2 node, instanceCount + 2
+    ForceGC
+    Assert.AreEqual instanceCount + 3, YogaNodeInstanceCount()
+
+    Set node = Nothing
+End Sub
+Private Sub TestDestructorWithChildrenForGC2(parent As cYogaNode, ByVal instanceCount As Long)
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+
+    parent.Insert 0, child
+    Set child = Nothing
+End Sub
+
+Public Sub TestClearWithChildDestructor()
+    ForceGC
+    Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+    TestClearWithChildDestructorForGC node, instanceCount + 1
+    ForceGC
+    Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
+    node.Clear
+    Assert.AreEqual 0, node.Count
+    ForceGC
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+End Sub
+
+Private Sub TestClearWithChildDestructorForGC(parent As cYogaNode, ByVal instanceCount As Long)
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+    parent.Insert 0, child
+End Sub
+
+Public Sub TestMeasureFuncWithDestructor()
+    ForceGC
+    Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
+    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
+    TestMeasureFuncWithDestructorForGC parent
+    ForceGC
+    Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
+    parent.CalculateLayout
+    Assert.AreEqual 120, CLng(parent.LayoutWidth)
+    Assert.AreEqual 130, CLng(parent.LayoutHeight)
+End Sub
+Private Sub TestMeasureFuncWithDestructorForGC(parent As cYogaNode)
+    Dim child As cYogaNode: Set child = YogaNodeNew()
+    parent.Insert 0, child
+    child.Tag = 2
+    child.SetMeasureFunction Me
+End Sub
+
+Public Sub TestLayoutMargin()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.Width = 100
+    node.Height = 100
+    node.MarginStart = 1
+    node.MarginEnd = 2
+    node.MarginTop = 3
+    node.MarginBottom = 4
+    node.CalculateLayout
+    
+    Assert.AreEqual 1, node.LayoutMarginLeft
+    Assert.AreEqual 2, node.LayoutMarginRight
+    Assert.AreEqual 3, node.LayoutMarginTop
+    Assert.AreEqual 4, node.LayoutMarginBottom
+End Sub
+
+Public Sub TestLayoutPadding()
+    Dim node As cYogaNode: Set node = YogaNodeNew()
+    node.Width = 100
+    node.Height = 100
+    node.PaddingStart = 1
+    node.PaddingEnd = 2
+    node.PaddingTop = 3
+    node.PaddingBottom = 4
+    node.CalculateLayout
+    
+    Assert.AreEqual 1, node.LayoutPaddingLeft
+    Assert.AreEqual 2, node.LayoutPaddingRight
+    Assert.AreEqual 3, node.LayoutPaddingTop
+    Assert.AreEqual 4, node.LayoutPaddingBottom
+End Sub
+
