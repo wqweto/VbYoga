@@ -133,12 +133,16 @@ Private m_oParent               As cYogaNode
 Private m_cChildren             As Collection
 Private m_cLog                  As Collection
 
+#If False Then
+Const Config = 1, Parent = 1
+#End If
+
 '=========================================================================
 ' Properties
 '=========================================================================
 
-Property Get config() As cYogaConfig
-    Set config = m_oConfig
+Property Get Config() As cYogaConfig
+    Set Config = m_oConfig
 End Property
 
 Property Get NodePtr() As Long
@@ -169,11 +173,11 @@ Public Sub MarkLayoutSeen()
     Call YGNodeSetHasNewLayout(NodePtr, 0)
 End Sub
 
-Property Get parent() As cYogaNode
-    Set parent = m_oParent
+Property Get Parent() As cYogaNode
+    Set Parent = m_oParent
 End Property
 
-Property Set parent(ByVal oValue As cYogaNode)
+Property Set Parent(ByVal oValue As cYogaNode)
     Call CopyMemory(m_oParent, oValue, 4)
 End Property
 
@@ -828,7 +832,7 @@ Public Sub Insert(ByVal index As Long, oChild As cYogaNode)
     Else
         m_cChildren.Add oChild
     End If
-    Set oChild.parent = Me
+    Set oChild.Parent = Me
     Call YGNodeInsertChild(NodePtr, oChild.NodePtr, index)
 End Sub
 
@@ -837,7 +841,7 @@ Public Sub RemoveAt(ByVal index As Long)
     
     Set oChild = m_cChildren.Item(index + 1)
     m_cChildren.Remove index + 1
-    Set oChild.parent = Nothing
+    Set oChild.Parent = Nothing
     Call YGNodeRemoveChild(NodePtr, oChild.NodePtr)
 End Sub
 
