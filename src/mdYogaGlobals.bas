@@ -197,7 +197,7 @@ End Function
 
 Public Function YogaNodeClone(oSrcNode As cYogaNode) As cYogaNode
     Set YogaNodeClone = New cYogaNode
-    YogaNodeClone.Init oSrcNode.config, oSrcNode.NodePtr
+    YogaNodeClone.Init oSrcNode.Config, oSrcNode.NodePtr
 End Function
 
 Public Function YogaNodeInstanceCount() As Long
@@ -258,30 +258,15 @@ Public Function FromYogaValue(uValue As YogaValue) As Variant
     FromYogaValue = Array(uValue.Unit, uValue.Value)
 End Function
 
-'Public Function YogaFloatIsUndefined(ByVal sngValue As Single) As Boolean
-'    YogaFloatIsUndefined = (YGFloatIsUndefined(sngValue) <> 0)
-'End Function
-
 Public Function YogaConstantsIsUndefined(vValue As Variant) As Boolean
     If IsArray(vValue) Then
-        YogaConstantsIsUndefined = vValue(0) = yogaUnitUndefined
+        YogaConstantsIsUndefined = (vValue(0) = yogaUnitUndefined)
     Else
         YogaConstantsIsUndefined = (YGFloatIsUndefined(vValue) <> 0)
     End If
 End Function
 
 '= private ===============================================================
-
-'Private Function YogaIsFloatNan(ByVal sngValue As Single) As Boolean
-'    Const SINGLE_MAN_MASK As Long = &H7FFFFF    ' Hex(2 ^ 23 - 1)
-'    Const SINGLE_EXP_MASK As Long = &H7F800000  ' Hex(255 * 2 ^ 23)
-'    Dim lValue          As Long
-'
-'    Call CopyMemory(lValue, sngValue, 4)
-'    If (lValue And SINGLE_EXP_MASK) = SINGLE_EXP_MASK And (lValue And SINGLE_MAN_MASK) <> 0 Then
-'        YogaIsFloatNan = True
-'    End If
-'End Function
 
 Private Function YogaConfigLoggerRedirect( _
             ByVal lConfigPtr As Long, _
