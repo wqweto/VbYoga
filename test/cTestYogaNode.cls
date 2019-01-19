@@ -29,69 +29,69 @@ Private Const SubscriptOutOfRangeException      As Long = 9
 Private Const InvalidOperationException         As Long = vbObjectError
 
 Public Sub TestAddChildGetParent()
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Dim child As cYogaNode: Set child = YogaNodeNew()
 
-    Assert.IsNothing child.parent
-    Assert.AreEqual 0, parent.Count
+    Assert.IsNothing child.Parent
+    Assert.AreEqual 0, Parent.Count
 
-    parent.Insert 0, child
+    Parent.Insert 0, child
 
-    Assert.AreEqual 1, parent.Count
-    Assert.AreSame child, parent.Item(0)
-    Assert.AreSame parent, child.parent
+    Assert.AreEqual 1, Parent.Count
+    Assert.AreSame child, Parent.Item(0)
+    Assert.AreSame Parent, child.Parent
 
-    parent.RemoveAt 0
+    Parent.RemoveAt 0
 
-    Assert.IsNothing child.parent
-    Assert.AreEqual 0, parent.Count
+    Assert.IsNothing child.Parent
+    Assert.AreEqual 0, Parent.Count
 End Sub
 
 Public Sub TestChildren()
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Dim node As cYogaNode
-    For Each node In parent
+    For Each node In Parent
         Assert.Fail node.ToString()
     Next
 
     Dim child0 As cYogaNode: Set child0 = YogaNodeNew()
-    Assert.AreEqual -1, parent.IndexOf(child0)
-    parent.Insert 0, child0
-    For Each node In parent
-        Assert.AreEqual 0, parent.IndexOf(node)
+    Assert.AreEqual -1, Parent.IndexOf(child0)
+    Parent.Insert 0, child0
+    For Each node In Parent
+        Assert.AreEqual 0, Parent.IndexOf(node)
     Next
 
     Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
-    parent.Insert 1, child1
+    Parent.Insert 1, child1
     Dim index As Long
-    For Each node In parent
-        Assert.AreEqual index, parent.IndexOf(node)
+    For Each node In Parent
+        Assert.AreEqual index, Parent.IndexOf(node)
         index = index + 1
     Next
 
-    parent.RemoveAt 0
-    Assert.AreEqual -1, parent.IndexOf(child0)
-    Assert.AreEqual 0, parent.IndexOf(child1)
+    Parent.RemoveAt 0
+    Assert.AreEqual -1, Parent.IndexOf(child0)
+    Assert.AreEqual 0, Parent.IndexOf(child1)
 
-    parent.Clear
-    Assert.AreEqual 0, parent.Count
+    Parent.Clear
+    Assert.AreEqual 0, Parent.Count
 
-    parent.Clear
-    Assert.AreEqual 0, parent.Count
+    Parent.Clear
+    Assert.AreEqual 0, Parent.Count
 End Sub
 
 Public Sub TestRemoveAtFromEmpty()
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Assert.Throws ObjectVariableNotSetException, , "Object variable or With block variable not set"
-    parent.RemoveAt 0
+    Parent.RemoveAt 0
 End Sub
 
 Public Sub TestRemoveAtOutOfRange()
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Dim child As cYogaNode: Set child = YogaNodeNew()
-    parent.Insert 0, child
+    Parent.Insert 0, child
     Assert.Throws SubscriptOutOfRangeException, , "Subscript out of range"
-    parent.RemoveAt 1
+    Parent.RemoveAt 1
 End Sub
 
 Public Sub TestCannotAddChildToMultipleParents()
@@ -113,33 +113,33 @@ Public Sub TestReset()
 End Sub
 
 Public Sub TestResetParent()
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Dim child As cYogaNode: Set child = YogaNodeNew()
-    parent.Insert 0, child
+    Parent.Insert 0, child
     Assert.Throws InvalidOperationException, , "Cannot reset a node which still has children attached"
-    parent.Reset
+    Parent.Reset
 End Sub
 
 Public Sub TestResetChild()
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Dim child As cYogaNode: Set child = YogaNodeNew()
-    parent.Insert 0, child
+    Parent.Insert 0, child
     Assert.Throws InvalidOperationException, , "Cannot reset a node still attached to a parent"
     child.Reset
 End Sub
 
 Public Sub TestClear()
     Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
     Dim child As cYogaNode: Set child = YogaNodeNew()
     Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
-    parent.Insert 0, child
-    Assert.AreEqual 1, parent.Count
-    Assert.AreEqual parent, child.parent
-    parent.Clear
-    Assert.AreEqual 0, parent.Count
-    Assert.IsNothing child.parent
+    Parent.Insert 0, child
+    Assert.AreEqual 1, Parent.Count
+    Assert.AreEqual Parent, child.Parent
+    Parent.Clear
+    Assert.AreEqual 0, Parent.Count
+    Assert.IsNothing child.Parent
     Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
 End Sub
 
@@ -283,22 +283,22 @@ Public Sub TestPrintWithLogger()
 End Sub
 
 Public Sub TestPrint()
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
-    parent.Width = 100
-    parent.Height = 120
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
+    Parent.Width = 100
+    Parent.Height = 120
     Dim child0 As cYogaNode: Set child0 = YogaNodeNew()
     child0.Width = 30
     child0.Height = 40
     Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
     child1.Width = 35
     child1.Height = 45
-    parent.Insert 0, child0
-    parent.Insert 0, child1
-    parent.CalculateLayout
+    Parent.Insert 0, child0
+    Parent.Insert 0, child1
+    Parent.CalculateLayout
     Assert.AreEqual "<div layout=""width: 100; height: 120; top: 0; left: 0;"" style=""width: 100px; height: 120px; "" >" & vbCrLf & _
         "  <div layout=""width: 35; height: 45; top: 0; left: 0;"" style=""width: 35px; height: 45px; "" ></div>" & vbCrLf & _
         "  <div layout=""width: 30; height: 40; top: 45; left: 0;"" style=""width: 30px; height: 40px; "" ></div>" & vbCrLf & _
-        "</div>", parent.ToString()
+        "</div>", Parent.ToString()
 End Sub
 
 Public Sub TestCopyStyle()
@@ -337,10 +337,8 @@ Public Sub TestCopyConstructor()
     Assert.AreEqual Array(yogaUnitPoint, 90), node4.MaxHeight
 End Sub
 
-'#if !UNITY_5_4_OR_NEWER
 Private Sub ForceGC()
-'    GC.Collect
-'    GC.WaitForPendingFinalizers
+    '--- do nothing
 End Sub
 
 Public Sub TestDestructor()
@@ -350,6 +348,7 @@ Public Sub TestDestructor()
     ForceGC
     Assert.AreEqual instanceCount, YogaNodeInstanceCount()
 End Sub
+
 Private Sub TestDestructorForGC(ByVal instanceCount As Long)
     Dim node As cYogaNode: Set node = YogaNodeNew()
     Assert.IsNotNothing node
@@ -364,6 +363,7 @@ Public Sub TestDestructorWithChildren()
     ForceGC
     Assert.AreEqual instanceCount, YogaNodeInstanceCount()
 End Sub
+
 Private Sub TestDestructorWithChildrenForGC1(ByVal instanceCount As Long)
     Dim node As cYogaNode: Set node = YogaNodeNew()
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
@@ -378,11 +378,12 @@ Private Sub TestDestructorWithChildrenForGC1(ByVal instanceCount As Long)
 
     Set node = Nothing
 End Sub
-Private Sub TestDestructorWithChildrenForGC2(parent As cYogaNode, ByVal instanceCount As Long)
+
+Private Sub TestDestructorWithChildrenForGC2(Parent As cYogaNode, ByVal instanceCount As Long)
     Dim child As cYogaNode: Set child = YogaNodeNew()
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
 
-    parent.Insert 0, child
+    Parent.Insert 0, child
     Set child = Nothing
 End Sub
 
@@ -400,27 +401,28 @@ Public Sub TestClearWithChildDestructor()
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
 End Sub
 
-Private Sub TestClearWithChildDestructorForGC(parent As cYogaNode, ByVal instanceCount As Long)
+Private Sub TestClearWithChildDestructorForGC(Parent As cYogaNode, ByVal instanceCount As Long)
     Dim child As cYogaNode: Set child = YogaNodeNew()
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
-    parent.Insert 0, child
+    Parent.Insert 0, child
 End Sub
 
 Public Sub TestMeasureFuncWithDestructor()
     ForceGC
     Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
-    Dim parent As cYogaNode: Set parent = YogaNodeNew()
+    Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
-    TestMeasureFuncWithDestructorForGC parent
+    TestMeasureFuncWithDestructorForGC Parent
     ForceGC
     Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
-    parent.CalculateLayout
-    Assert.AreEqual 120, CLng(parent.LayoutWidth)
-    Assert.AreEqual 130, CLng(parent.LayoutHeight)
+    Parent.CalculateLayout
+    Assert.AreEqual 120, CLng(Parent.LayoutWidth)
+    Assert.AreEqual 130, CLng(Parent.LayoutHeight)
 End Sub
-Private Sub TestMeasureFuncWithDestructorForGC(parent As cYogaNode)
+
+Private Sub TestMeasureFuncWithDestructorForGC(Parent As cYogaNode)
     Dim child As cYogaNode: Set child = YogaNodeNew()
-    parent.Insert 0, child
+    Parent.Insert 0, child
     child.Tag = 2
     child.SetMeasureFunction Me
 End Sub
