@@ -102,7 +102,7 @@ Private Sub Class_Initialize()
 End Sub
 
 Private Sub Class_Terminate()
-    If m_lConfigPtr <> 0 And m_lConfigPtr <> YogaDefConfigPtr Then
+    If m_lConfigPtr <> 0 And YogaConfigInstanceCount > 0 Then
         Call YGConfigFree(m_lConfigPtr)
         m_lConfigPtr = 0
     End If

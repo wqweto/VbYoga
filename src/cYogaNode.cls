@@ -25,6 +25,114 @@ Option Explicit
 DefObj A-Z
 
 '=========================================================================
+' Public Enums
+'=========================================================================
+
+Public Enum YogaAlign
+    yogaAlignAuto
+    yogaAlignFlexStart
+    yogaAlignCenter
+    yogaAlignFlexEnd
+    yogaAlignStretch
+    yogaAlignBaseline
+    yogaAlignSpaceBetween
+    yogaAlignSpaceAround
+End Enum
+    
+Public Enum YogaDimension
+    yogaDimWidth
+    yogaDimHeight
+End Enum
+
+Public Enum YogaDirection
+    yogaDirInherit
+    yogaDirLTR
+    yogaDirRTL
+End Enum
+
+Public Enum YogaDisplay
+    yogaDisplayFlex
+    yogaDisplayNone
+End Enum
+
+Public Enum YogaEdge
+    yogaEdgeLeft
+    yogaEdgeTop
+    yogaEdgeRight
+    yogaEdgeBottom
+    yogaEdgeStart
+    yogaEdgeEnd
+    yogaEdgeHorizontal
+    yogaEdgeVertical
+    yogaEdgeAll
+End Enum
+
+Public Enum YogaExperimentalFeature
+    yogaExpWebFlexBasis
+End Enum
+
+Public Enum YogaFlexDirection
+    yogaFlexColumn
+    yogaFlexColumnReverse
+    yogaFlexRow
+    yogaFlexRowReverse
+End Enum
+
+Public Enum YogaJustify
+    yogaJustFlexStart
+    yogaJustCenter
+    yogaJustFlexEnd
+    yogaJustSpaceBetween
+    yogaJustSpaceAround
+    yogaJustSpaceEvenly
+End Enum
+
+Public Enum YogaLogLevel
+    yogaLogError
+    yogaLogWarn
+    yogaLogInfo
+    yogaLogDebug
+    yogaLogVerbose
+    yogaLogFatal
+End Enum
+
+Public Enum YogaMeasureMode
+    yogaMeasureUndefined
+    yogaMeasureExactly
+    yogaMeasureAtMost
+End Enum
+
+Public Enum YogaOverflow
+    yogaOverflowVisible
+    yogaOverflowHidden
+    yogaOverflowScroll
+End Enum
+
+Public Enum YogaPositionType
+    yogaPosRelative
+    yogaPosAbsolute
+End Enum
+
+Public Enum YogaPrintOptions
+    yogaProLayout = 1
+    yogaProStyle = 2
+    yogaProChildren = 4
+End Enum
+
+Public Enum YogaUnit
+    yogaUnitUndefined
+    yogaUnitPoint
+    yogaUnitPercent
+    yogaUnitAuto
+End Enum
+
+Public Enum YogaWrap
+    yogaWrapNoWrap
+    yogaWrapWrap
+    yogaWrapWrapReverse
+End Enum
+
+'=========================================================================
 ' API
 '=========================================================================
 
@@ -117,11 +225,22 @@ Private Declare Function YGNodeStyleGetBorder Lib "yoga" Alias "_YGNodeStyleGetB
 Private Declare Function YGNodeStyleSetBorder Lib "yoga" Alias "_YGNodeStyleSetBorder@12" (ByVal lNodePtr As Long, ByVal lEdge As Long, ByVal sngBorder As Single) As Long
 Private Declare Function YGNodeLayoutGetMargin Lib "yoga" Alias "_YGNodeLayoutGetMargin@8" (ByVal lNodePtr As Long, ByVal lEdge As Long) As Single
 Private Declare Function YGNodeLayoutGetPadding Lib "yoga" Alias "_YGNodeLayoutGetPadding@8" (ByVal lNodePtr As Long, ByVal lEdge As Long) As Single
+Private Declare Function YGFloatIsUndefined Lib "yoga" Alias "_YGFloatIsUndefined@4" (ByVal sngValue As Single) As Long
+
+#If False Then
+Const Value = 1, Unit = 1, Config = 1, Parent = 1
+#End If
+
+Private Type YogaValue
+    Value           As Single
+    Unit            As YogaUnit
+End Type
 
 '=========================================================================
 ' Constants and member variables
 '=========================================================================
 
+Private Const FLOAT_UNDEFINED       As Single = 3.40282347E+38
 Private Const FLOAT_EPSILON         As Single = 0.000000001
 
 Public Tag                      As Variant
@@ -132,10 +251,6 @@ Private m_oBaselineFn           As Object
 Private m_oParent               As cYogaNode
 Private m_cChildren             As Collection
 Private m_cLog                  As Collection
-
-#If False Then
-Const Config = 1, Parent = 1
-#End If
 
 '=========================================================================
 ' Properties
@@ -940,6 +1055,28 @@ Attribute LogCallback.VB_MemberFlags = "40"
 End Sub
 
 '= private ===============================================================
+
+Private Function ToYogaValue(vValue As Variant) As YogaValue
+    If IsArray(vValue) Then
+        ToYogaValue.Unit = vValue(0)
+        If ToYogaValue.Unit = yogaUnitAuto Or ToYogaValue.Unit = yogaUnitUndefined Then
+            ToYogaValue.Value = YogaFloatNan
+        Else
+            ToYogaValue.Value = vValue(1)
+        End If
+    Else
+        ToYogaValue.Value = vValue
+        If YGFloatIsUndefined(ToYogaValue.Value) <> 0 Then
+            ToYogaValue.Unit = yogaUnitUndefined
+        Else
+            ToYogaValue.Unit = yogaUnitPoint
+        End If
+    End If
+End Function
+
+Private Function FromYogaValue(uValue As YogaValue) As Variant
+    FromYogaValue = Array(uValue.Unit, uValue.Value)
+End Function
 
 Private Function ConcatCollection(oCol As Collection, Optional Separator As String = vbCrLf) As String
     Dim lSize           As Long
