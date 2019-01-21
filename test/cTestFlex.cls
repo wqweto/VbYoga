@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_flex_basis_flex_grow_column()
     Dim oConfig         As cYogaConfig
@@ -654,3 +655,15 @@ Public Sub Test_flex_grow_less_than_factor_one()
     Assert.AreEqual 184!, oRoot_child2.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_flex_basis_flex_grow_column"
+    Tests.Add "Test_flex_shrink_flex_grow_row"
+    Tests.Add "Test_flex_shrink_flex_grow_child_flex_shrink_other_child"
+    Tests.Add "Test_flex_basis_flex_grow_row"
+    Tests.Add "Test_flex_basis_flex_shrink_column"
+    Tests.Add "Test_flex_basis_flex_shrink_row"
+    Tests.Add "Test_flex_shrink_to_zero"
+    Tests.Add "Test_flex_basis_overrides_main_size"
+    Tests.Add "Test_flex_grow_shrink_at_most"
+    Tests.Add "Test_flex_grow_less_than_factor_one"
+End Sub

@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_percentage_width_height()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -1167,3 +1168,25 @@ Public Sub Test_percent_absolute_position()
     Assert.AreEqual 50!, root_child0_child1.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_percentage_width_height"
+    Tests.Add "Test_percentage_position_left_top"
+    Tests.Add "Test_percentage_position_bottom_right"
+    Tests.Add "Test_percentage_flex_basis"
+    Tests.Add "Test_percentage_flex_basis_cross"
+    Tests.Add "Test_percentage_flex_basis_cross_min_height"
+    Tests.Add "Test_percentage_flex_basis_main_max_height"
+    Tests.Add "Test_percentage_flex_basis_cross_max_height"
+    Tests.Add "Test_percentage_flex_basis_main_max_width"
+    Tests.Add "Test_percentage_flex_basis_cross_max_width"
+    Tests.Add "Test_percentage_flex_basis_main_min_width"
+    Tests.Add "Test_percentage_flex_basis_cross_min_width"
+    Tests.Add "Test_percentage_multiple_nested_with_padding_margin_and_percentage_values"
+    Tests.Add "Test_percentage_margin_should_calculate_based_only_on_width"
+    Tests.Add "Test_percentage_padding_should_calculate_based_only_on_width"
+    Tests.Add "Test_percentage_absolute_position"
+    Tests.Add "Test_percentage_width_height_undefined_parent_size"
+    Tests.Add "Test_percent_within_flex_grow"
+    Tests.Add "Test_percentage_container_in_wrapping_container"
+    Tests.Add "Test_percent_absolute_position"
+End Sub

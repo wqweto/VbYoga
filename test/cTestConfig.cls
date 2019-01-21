@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub TestUseWebDefaults()
     Dim config0 As cYogaConfig: Set config0 = YogaConfigNew()
@@ -72,3 +73,8 @@ Public Sub TestCopyConstructor()
     Assert.AreEqual YogaFlexDirection.yogaFlexRow, node1.flexDirection
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "TestUseWebDefaults"
+    Tests.Add "TestDefaultConfig"
+    Tests.Add "TestCopyConstructor"
+End Sub

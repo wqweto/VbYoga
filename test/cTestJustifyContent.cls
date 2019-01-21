@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_justify_content_row_flex_start()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -1130,3 +1131,23 @@ Public Sub Test_justify_content_min_width_with_padding_child_width_lower_than_pa
     Assert.AreEqual 100!, root_child0_child0_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_justify_content_row_flex_start"
+    Tests.Add "Test_justify_content_row_flex_end"
+    Tests.Add "Test_justify_content_row_center"
+    Tests.Add "Test_justify_content_row_space_between"
+    Tests.Add "Test_justify_content_row_space_around"
+    Tests.Add "Test_justify_content_column_flex_start"
+    Tests.Add "Test_justify_content_column_flex_end"
+    Tests.Add "Test_justify_content_column_center"
+    Tests.Add "Test_justify_content_column_space_between"
+    Tests.Add "Test_justify_content_column_space_around"
+    Tests.Add "Test_justify_content_row_min_width_and_margin"
+    Tests.Add "Test_justify_content_row_max_width_and_margin"
+    Tests.Add "Test_justify_content_column_min_height_and_margin"
+    Tests.Add "Test_justify_content_colunn_max_height_and_margin"
+    Tests.Add "Test_justify_content_column_space_evenly"
+    Tests.Add "Test_justify_content_row_space_evenly"
+    Tests.Add "Test_justify_content_min_width_with_padding_child_width_greater_than_parent"
+    Tests.Add "Test_justify_content_min_width_with_padding_child_width_lower_than_parent"
+End Sub

@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_max_width()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -1256,4 +1257,33 @@ Public Sub Test_min_max_percent_no_width_height()
     Assert.AreEqual 0!, root_child0.LayoutY
     Assert.AreEqual 10!, root_child0.LayoutWidth
     Assert.AreEqual 10!, root_child0.LayoutHeight
+End Sub
+
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_max_width"
+    Tests.Add "Test_max_height"
+    Tests.Add "Test_min_height"
+    Tests.Add "Test_min_width"
+    Tests.Add "Test_justify_content_min_max"
+    Tests.Add "Test_align_items_min_max"
+    Tests.Add "Test_justify_content_overflow_min_max"
+    Tests.Add "Test_flex_grow_to_min"
+    Tests.Add "Test_flex_grow_in_at_most_container"
+    Tests.Add "Test_flex_grow_child"
+    Tests.Add "Test_flex_grow_within_constrained_min_max_column"
+    Tests.Add "Test_flex_grow_within_max_width"
+    Tests.Add "Test_flex_grow_within_constrained_max_width"
+    Tests.Add "Test_flex_root_ignored"
+    Tests.Add "Test_flex_grow_root_minimized"
+    Tests.Add "Test_flex_grow_height_maximized"
+    Tests.Add "Test_flex_grow_within_constrained_min_row"
+    Tests.Add "Test_flex_grow_within_constrained_min_column"
+    Tests.Add "Test_flex_grow_within_constrained_max_row"
+    Tests.Add "Test_flex_grow_within_constrained_max_column"
+    Tests.Add "Test_child_min_max_width_flexing"
+    Tests.Add "Test_min_width_overrides_width"
+    Tests.Add "Test_max_width_overrides_width"
+    Tests.Add "Test_min_height_overrides_height"
+    Tests.Add "Test_max_height_overrides_height"
+    Tests.Add "Test_min_max_percent_no_width_height"
 End Sub

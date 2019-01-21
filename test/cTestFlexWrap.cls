@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_wrap_column()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -1706,5 +1707,28 @@ Public Sub Test_wrap_nodes_with_content_sizing_margin_cross()
     Assert.AreEqual 0!, root_child0_child1_child0.LayoutY
     Assert.AreEqual 40!, root_child0_child1_child0.LayoutWidth
     Assert.AreEqual 40!, root_child0_child1_child0.LayoutHeight
+End Sub
+
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_wrap_column"
+    Tests.Add "Test_wrap_row"
+    Tests.Add "Test_wrap_row_align_items_flex_end"
+    Tests.Add "Test_wrap_row_align_items_center"
+    Tests.Add "Test_flex_wrap_children_with_min_main_overriding_flex_basis"
+    Tests.Add "Test_flex_wrap_wrap_to_child_height"
+    Tests.Add "Test_flex_wrap_align_stretch_fits_one_row"
+    Tests.Add "Test_wrap_reverse_row_align_content_flex_start"
+    Tests.Add "Test_wrap_reverse_row_align_content_center"
+    Tests.Add "Test_wrap_reverse_row_single_line_different_size"
+    Tests.Add "Test_wrap_reverse_row_align_content_stretch"
+    Tests.Add "Test_wrap_reverse_row_align_content_space_around"
+    Tests.Add "Test_wrap_reverse_column_fixed_size"
+    Tests.Add "Test_wrapped_row_within_align_items_center"
+    Tests.Add "Test_wrapped_row_within_align_items_flex_start"
+    Tests.Add "Test_wrapped_row_within_align_items_flex_end"
+    Tests.Add "Test_wrapped_column_max_height"
+    Tests.Add "Test_wrapped_column_max_height_flex"
+    Tests.Add "Test_wrap_nodes_with_content_sizing_overflowing_margin"
+    Tests.Add "Test_wrap_nodes_with_content_sizing_margin_cross"
 End Sub
 

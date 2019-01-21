@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_align_items_stretch()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -2115,3 +2116,33 @@ Public Sub Test_align_flex_start_with_shrinking_children_with_stretch()
     Assert.AreEqual 0!, root_child0_child0_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_align_items_stretch"
+    Tests.Add "Test_align_items_center"
+    Tests.Add "Test_align_items_flex_start"
+    Tests.Add "Test_align_items_flex_end"
+    Tests.Add "Test_align_baseline"
+    Tests.Add "Test_align_baseline_child"
+    Tests.Add "Test_align_baseline_child_multiline"
+    Tests.Add "Test_align_baseline_child_multiline_override"
+    Tests.Add "Test_align_baseline_child_multiline_no_override_on_secondline"
+    Tests.Add "Test_align_baseline_child_top"
+    Tests.Add "Test_align_baseline_child_top2"
+    Tests.Add "Test_align_baseline_double_nested_child"
+    Tests.Add "Test_align_baseline_column"
+    Tests.Add "Test_align_baseline_child_margin"
+    Tests.Add "Test_align_baseline_child_padding"
+    Tests.Add "Test_align_baseline_multiline"
+    Tests.Add "Test_align_baseline_multiline_column"
+    Tests.Add "Test_align_baseline_multiline_column2"
+    Tests.Add "Test_align_baseline_multiline_row_and_column"
+    Tests.Add "Test_align_items_center_child_with_margin_bigger_than_parent"
+    Tests.Add "Test_align_items_flex_end_child_with_margin_bigger_than_parent"
+    Tests.Add "Test_align_items_center_child_without_margin_bigger_than_parent"
+    Tests.Add "Test_align_items_flex_end_child_without_margin_bigger_than_parent"
+    Tests.Add "Test_align_center_should_size_based_on_content"
+    Tests.Add "Test_align_strech_should_size_based_on_parent"
+    Tests.Add "Test_align_flex_start_with_shrinking_children"
+    Tests.Add "Test_align_flex_start_with_stretching_children"
+    Tests.Add "Test_align_flex_start_with_shrinking_children_with_stretch"
+End Sub

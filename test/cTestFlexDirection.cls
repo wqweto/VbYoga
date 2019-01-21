@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_flex_direction_column_no_height()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -416,3 +417,11 @@ Public Sub Test_flex_direction_row_reverse()
     Assert.AreEqual 100!, root_child2.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_flex_direction_column_no_height"
+    Tests.Add "Test_flex_direction_row_no_width"
+    Tests.Add "Test_flex_direction_column"
+    Tests.Add "Test_flex_direction_row"
+    Tests.Add "Test_flex_direction_column_reverse"
+    Tests.Add "Test_flex_direction_row_reverse"
+End Sub

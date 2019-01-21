@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_rounding_flex_basis_flex_grow_row_width_of_100()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -1064,3 +1065,18 @@ Public Sub Test_rounding_inner_node_controversy_combined()
     Assert.AreEqual 320!, root_child2.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_rounding_flex_basis_flex_grow_row_width_of_100"
+    Tests.Add "Test_rounding_flex_basis_flex_grow_row_prime_number_width"
+    Tests.Add "Test_rounding_flex_basis_flex_shrink_row"
+    Tests.Add "Test_rounding_flex_basis_overrides_main_size"
+    Tests.Add "Test_rounding_total_fractial"
+    Tests.Add "Test_rounding_total_fractial_nested"
+    Tests.Add "Test_rounding_fractial_input_1"
+    Tests.Add "Test_rounding_fractial_input_2"
+    Tests.Add "Test_rounding_fractial_input_3"
+    Tests.Add "Test_rounding_fractial_input_4"
+    Tests.Add "Test_rounding_inner_node_controversy_horizontal"
+    Tests.Add "Test_rounding_inner_node_controversy_vertical"
+    Tests.Add "Test_rounding_inner_node_controversy_combined"
+End Sub

@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_margin_start()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -1664,3 +1665,38 @@ Public Sub Test_margin_auto_left_stretching_child()
     Assert.AreEqual 50!, root_child1.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_margin_start"
+    Tests.Add "Test_margin_top"
+    Tests.Add "Test_margin_end"
+    Tests.Add "Test_margin_bottom"
+    Tests.Add "Test_margin_and_flex_row"
+    Tests.Add "Test_margin_and_flex_column"
+    Tests.Add "Test_margin_and_stretch_row"
+    Tests.Add "Test_margin_and_stretch_column"
+    Tests.Add "Test_margin_with_sibling_row"
+    Tests.Add "Test_margin_with_sibling_column"
+    Tests.Add "Test_margin_auto_bottom"
+    Tests.Add "Test_margin_auto_top"
+    Tests.Add "Test_margin_auto_bottom_and_top"
+    Tests.Add "Test_margin_auto_bottom_and_top_justify_center"
+    Tests.Add "Test_margin_auto_mutiple_children_column"
+    Tests.Add "Test_margin_auto_mutiple_children_row"
+    Tests.Add "Test_margin_auto_left_and_right_column"
+    Tests.Add "Test_margin_auto_left_and_right"
+    Tests.Add "Test_margin_auto_start_and_end_column"
+    Tests.Add "Test_margin_auto_start_and_end"
+    Tests.Add "Test_margin_auto_left_and_right_column_and_center"
+    Tests.Add "Test_margin_auto_left"
+    Tests.Add "Test_margin_auto_right"
+    Tests.Add "Test_margin_auto_left_and_right_strech"
+    Tests.Add "Test_margin_auto_top_and_bottom_strech"
+    Tests.Add "Test_margin_should_not_be_part_of_max_height"
+    Tests.Add "Test_margin_should_not_be_part_of_max_width"
+    Tests.Add "Test_margin_auto_left_right_child_bigger_than_parent"
+    Tests.Add "Test_margin_auto_left_child_bigger_than_parent"
+    Tests.Add "Test_margin_fix_left_auto_right_child_bigger_than_parent"
+    Tests.Add "Test_margin_auto_left_fix_right_child_bigger_than_parent"
+    Tests.Add "Test_margin_auto_top_stretching_child"
+    Tests.Add "Test_margin_auto_left_stretching_child"
+End Sub

@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub TestObjectInitializer()
     Dim node As cYogaNode: Set node = YogaNodeNew()
@@ -111,4 +112,9 @@ Public Sub TestWriteRead()
     Assert.AreEqual 14, node.BorderBottomWidth
     Assert.AreEqual 15, node.BorderLeftWidth
     Assert.AreEqual 16, node.BorderRightWidth
+End Sub
+
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "TestObjectInitializer"
+    Tests.Add "TestWriteRead"
 End Sub

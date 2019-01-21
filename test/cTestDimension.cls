@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_wrap_child()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -109,3 +110,7 @@ Public Sub Test_wrap_grandchild()
     Assert.AreEqual 100!, root_child0_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_wrap_child"
+    Tests.Add "Test_wrap_grandchild"
+End Sub

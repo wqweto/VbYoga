@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_align_content_flex_start()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -1853,3 +1854,24 @@ Public Sub Test_align_content_stretch_is_not_overriding_align_items()
     Assert.AreEqual 10!, root_child0_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_align_content_flex_start"
+    Tests.Add "Test_align_content_flex_start_without_height_on_children"
+    Tests.Add "Test_align_content_flex_start_with_flex"
+    Tests.Add "Test_align_content_flex_end"
+    Tests.Add "Test_align_content_stretch"
+    Tests.Add "Test_align_content_spacebetween"
+    Tests.Add "Test_align_content_spacearound"
+    Tests.Add "Test_align_content_stretch_row"
+    Tests.Add "Test_align_content_stretch_row_with_children"
+    Tests.Add "Test_align_content_stretch_row_with_flex"
+    Tests.Add "Test_align_content_stretch_row_with_flex_no_shrink"
+    Tests.Add "Test_align_content_stretch_row_with_margin"
+    Tests.Add "Test_align_content_stretch_row_with_padding"
+    Tests.Add "Test_align_content_stretch_row_with_single_row"
+    Tests.Add "Test_align_content_stretch_row_with_fixed_height"
+    Tests.Add "Test_align_content_stretch_row_with_max_height"
+    Tests.Add "Test_align_content_stretch_row_with_min_height"
+    Tests.Add "Test_align_content_stretch_column"
+    Tests.Add "Test_align_content_stretch_is_not_overriding_align_items"
+End Sub

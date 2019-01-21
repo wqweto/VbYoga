@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_align_baseline_parent_using_child_in_column_as_reference()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -109,3 +110,8 @@ Private Function createYGNode(config As cYogaConfig, flexDirection As YogaFlexDi
     End If
     Set createYGNode = node
 End Function
+
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_align_baseline_parent_using_child_in_column_as_reference"
+    Tests.Add "Test_align_baseline_parent_using_child_in_row_as_reference"
+End Sub

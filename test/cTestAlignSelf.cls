@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_align_self_center()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -252,3 +253,10 @@ Public Sub Test_align_self_baseline()
     Assert.AreEqual 10!, root_child1_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_align_self_center"
+    Tests.Add "Test_align_self_flex_end"
+    Tests.Add "Test_align_self_flex_start"
+    Tests.Add "Test_align_self_flex_end_override_flex_start"
+    Tests.Add "Test_align_self_baseline"
+End Sub

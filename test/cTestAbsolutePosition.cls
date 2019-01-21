@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_absolute_layout_width_height_start_top()
     Dim oConfig         As cYogaConfig
@@ -1009,3 +1010,26 @@ Public Sub Test_absolute_layout_in_wrap_reverse_row_container_flex_end()
     Assert.AreEqual 20!, root_child0.LayoutHeight, "20! = root_child0.LayoutHeight"
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_absolute_layout_width_height_start_top"
+    Tests.Add "Test_absolute_layout_width_height_end_bottom"
+    Tests.Add "Test_absolute_layout_start_top_end_bottom"
+    Tests.Add "Test_absolute_layout_width_height_start_top_end_bottom"
+    Tests.Add "Test_do_not_clamp_height_of_absolute_node_to_height_of_its_overflow_hidden_parent"
+    Tests.Add "Test_absolute_layout_within_border"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_flex_end"
+    Tests.Add "Test_absolute_layout_justify_content_center"
+    Tests.Add "Test_absolute_layout_align_items_center"
+    Tests.Add "Test_absolute_layout_align_items_center_on_child_only"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_top_position"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_bottom_position"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_left_position"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_right_position"
+    Tests.Add "Test_position_root_with_rtl_should_position_withoutdirection"
+    Tests.Add "Test_absolute_layout_percentage_bottom_based_on_parent_height"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_column_container"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_row_container"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_column_container_flex_end"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_row_container_flex_end"
+End Sub

@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_android_news_feed()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -302,3 +303,6 @@ Public Sub Test_android_news_feed()
     Assert.AreEqual 0!, root_child0_child0_child1_child0_child1_child1.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_android_news_feed"
+End Sub
