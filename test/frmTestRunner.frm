@@ -44,14 +44,14 @@ Attribute VB_Exposed = False
 ' See the LICENSE file in the project root for more information
 '
 '=========================================================================
+Option Explicit
+DefObj A-Z
 '
 ' frmTestRunner
 '
 ' ** NOTE **
 ' Please set Tools->Options->General->Error_Trapping to 'Break on Unhandled Errors'
 '
-Option Explicit
-DefObj A-Z
 ' Namespaces Available:
 '       Assert.*            ie. Assert.That Value, Iz.EqualTo(5)
 '
@@ -79,35 +79,40 @@ DefObj A-Z
 
 Private Declare Function LoadLibrary Lib "kernel32" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
 
+Private m_cCodegen          As Collection
+
 Private Sub Form_Load()
-    ' Add tests here
-    '
-    ' AddTest New MyTestObject
     Call LoadLibrary(App.Path & "\yoga.dll")
     Call LoadLibrary(App.Path & "\..\lib\yoga.dll")
     
-    AddTest New cTestConfig
-    AddTest New cTestYogaNode
-    AddTest New cTestAbsolutePosition
-    AddTest New cTestFlex
-    AddTest New cTestAlignBaseline
-    AddTest New cTestAlignContent
-    AddTest New cTestAlignItems
-    AddTest New cTestAlignSelf
-    AddTest New cTestAndroidNewsFeed
-    AddTest New cTestBorder
-    AddTest New cTestDimension
-    AddTest New cTestDisplay
-    AddTest New cTestFlexDirection
-    AddTest New cTestFlexWrap
-    AddTest New cTestJustifyContent
-    AddTest New cTestMargin
-    AddTest New cTestMinMaxDimension
-    AddTest New cTestPadding
-    AddTest New cTestPercentage
-    AddTest New cTestRounding
-    AddTest New cTestSizeOverflow
-    AddTest New cTestNodeSpacing
+'    Set m_cCodegen = New Collection
+    AddTest CodegenTestCases(New cTestConfig)
+    AddTest CodegenTestCases(New cTestYogaNode)
+    AddTest CodegenTestCases(New cTestAbsolutePosition)
+    AddTest CodegenTestCases(New cTestFlex)
+    AddTest CodegenTestCases(New cTestAlignBaseline)
+    AddTest CodegenTestCases(New cTestAlignContent)
+    AddTest CodegenTestCases(New cTestAlignItems)
+    AddTest CodegenTestCases(New cTestAlignSelf)
+    AddTest CodegenTestCases(New cTestAndroidNewsFeed)
+    AddTest CodegenTestCases(New cTestBorder)
+    AddTest CodegenTestCases(New cTestDimension)
+    AddTest CodegenTestCases(New cTestDisplay)
+    AddTest CodegenTestCases(New cTestFlexDirection)
+    AddTest CodegenTestCases(New cTestFlexWrap)
+    AddTest CodegenTestCases(New cTestJustifyContent)
+    AddTest CodegenTestCases(New cTestMargin)
+    AddTest CodegenTestCases(New cTestMinMaxDimension)
+    AddTest CodegenTestCases(New cTestNodeSpacing)
+    AddTest CodegenTestCases(New cTestPadding)
+    AddTest CodegenTestCases(New cTestPercentage)
+    AddTest CodegenTestCases(New cTestRounding)
+    AddTest CodegenTestCases(New cTestSizeOverflow)
+    If Not m_cCodegen Is Nothing Then
+        Clipboard.Clear
+        On Error Resume Next
+        Clipboard.SetText ConcatCollection(m_cCodegen, vbCrLf)
+    End If
 End Sub
 
 
@@ -124,3 +129,42 @@ Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
 End Sub
 
 
+Private Function CodegenTestCases(oObj As Object) As Object
+    Dim oInfo           As TLI.MemberInfo
+    
+    Set CodegenTestCases = oObj
+    If Not m_cCodegen Is Nothing Then
+        m_cCodegen.Add "'--- " & TypeName(oObj)
+        m_cCodegen.Add "Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)"
+        With New TLI.TLIApplication
+            For Each oInfo In .InterfaceInfoFromObject(oObj).Members
+                If oInfo.InvokeKind = INVOKE_FUNC Then
+                    If oInfo.Parameters.Count = 0 Then
+                        m_cCodegen.Add Replace("    Tests.Add ""%1""", "%1", oInfo.Name)
+                    End If
+                End If
+            Next
+        End With
+        m_cCodegen.Add "End Sub"
+        m_cCodegen.Add vbNullString
+    End If
+End Function
+
+Private Function ConcatCollection(oCol As Collection, Optional Separator As String = vbCrLf) As String
+    Dim lSize           As Long
+    Dim vElem           As Variant
+    
+    For Each vElem In oCol
+        lSize = lSize + Len(vElem) + Len(Separator)
+    Next
+    If lSize > 0 Then
+        ConcatCollection = String$(lSize - Len(Separator), 0)
+        lSize = 1
+        For Each vElem In oCol
+            If lSize <= Len(ConcatCollection) Then
+                Mid$(ConcatCollection, lSize, Len(vElem) + Len(Separator)) = vElem & Separator
+            End If
+            lSize = lSize + Len(vElem) + Len(Separator)
+        Next
+    End If
+End Function
