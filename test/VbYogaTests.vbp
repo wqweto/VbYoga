@@ -28,6 +28,7 @@ Class=cTestRounding; cTestRounding.cls
 Class=cTestSizeOverflow; cTestSizeOverflow.cls
 Class=cTestYogaNode; cTestYogaNode.cls
 Class=cTestNodeSpacing; cTestNodeSpacing.cls
+ResFile32="VbYogaTests.res"
 IconForm="frmTestRunner"
 Startup="frmTestRunner"
 HelpFile=""
