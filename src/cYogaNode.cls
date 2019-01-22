@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Private Const MODULE_NAME As String = "cYogaNode"
 
 '=========================================================================
 ' Public Enums
@@ -143,9 +144,9 @@ Private Declare Function YGNodeFree Lib "yoga" Alias "_YGNodeFree@4" (ByVal lNod
 Private Declare Function YGNodeSetContext Lib "yoga" Alias "_YGNodeSetContext@8" (ByVal lNodePtr As Long, ByVal lContext As Long) As Long
 Private Declare Function YGNodeReset Lib "yoga" Alias "_YGNodeReset@4" (ByVal lNodePtr As Long) As Long
 Private Declare Function YGNodeCopyStyle Lib "yoga" Alias "_YGNodeCopyStyle@8" (ByVal lNodePtr As Long, ByVal lSrcPtr As Long) As Long
-Private Declare Function YGNodeIsDirty Lib "yoga" Alias "_YGNodeIsDirty@4" (ByVal lNodePtr As Long) As Long
+Private Declare Function YGNodeIsDirty Lib "yoga" Alias "_YGNodeIsDirty@4" (ByVal lNodePtr As Long) As Byte
 Private Declare Function YGNodeMarkDirty Lib "yoga" Alias "_YGNodeMarkDirty@4" (ByVal lNodePtr As Long) As Long
-Private Declare Function YGNodeGetHasNewLayout Lib "yoga" Alias "_YGNodeGetHasNewLayout@4" (ByVal lNodePtr As Long) As Long
+Private Declare Function YGNodeGetHasNewLayout Lib "yoga" Alias "_YGNodeGetHasNewLayout@4" (ByVal lNodePtr As Long) As Byte
 Private Declare Function YGNodeSetHasNewLayout Lib "yoga" Alias "_YGNodeSetHasNewLayout@8" (ByVal lNodePtr As Long, ByVal lValue As Long) As Long
 Private Declare Function YGNodePrint Lib "yoga" Alias "_YGNodePrint@8" (ByVal lNodePtr As Long, ByVal lOptions As Long) As Long
 Private Declare Function YGNodeInsertChild Lib "yoga" Alias "_YGNodeInsertChild@12" (ByVal lNodePtr As Long, ByVal lChildPtr As Long, ByVal lIndex As Long) As Long
@@ -171,6 +172,7 @@ Private Declare Function YGNodeStyleGetPositionType Lib "yoga" Alias "_YGNodeSty
 Private Declare Function YGNodeStyleSetPositionType Lib "yoga" Alias "_YGNodeStyleSetPositionType@8" (ByVal lNodePtr As Long, ByVal lPositionType As Long) As Long
 Private Declare Function YGNodeStyleGetFlexWrap Lib "yoga" Alias "_YGNodeStyleGetFlexWrap@4" (ByVal lNodePtr As Long) As Long
 Private Declare Function YGNodeStyleSetFlexWrap Lib "yoga" Alias "_YGNodeStyleSetFlexWrap@8" (ByVal lNodePtr As Long, ByVal lFlexWrap As Long) As Long
+Private Declare Function YGNodeStyleGetFlex Lib "yoga" Alias "_YGNodeStyleGetFlex@4" (ByVal lNodePtr As Long) As Single
 Private Declare Function YGNodeStyleSetFlex Lib "yoga" Alias "_YGNodeStyleSetFlex@8" (ByVal lNodePtr As Long, ByVal sngFlex As Single) As Long
 Private Declare Function YGNodeStyleGetFlexGrow Lib "yoga" Alias "_YGNodeStyleGetFlexGrow@4" (ByVal lNodePtr As Long) As Single
 Private Declare Function YGNodeStyleSetFlexGrow Lib "yoga" Alias "_YGNodeStyleSetFlexGrow@8" (ByVal lNodePtr As Long, ByVal sngFlexGrow As Single) As Long
@@ -209,7 +211,7 @@ Private Declare Function YGNodeLayoutGetHeight Lib "yoga" Alias "_YGNodeLayoutGe
 Private Declare Function YGNodeLayoutGetDirection Lib "yoga" Alias "_YGNodeLayoutGetDirection@4" (ByVal lNodePtr As Long) As Long
 Private Declare Function YGNodeStyleGetOverflow Lib "yoga" Alias "_YGNodeStyleGetOverflow@4" (ByVal lNodePtr As Long) As Long
 Private Declare Function YGNodeStyleSetOverflow Lib "yoga" Alias "_YGNodeStyleSetOverflow@8" (ByVal lNodePtr As Long, ByVal lOverflow As Long) As Long
-Private Declare Function YGNodeIsReferenceBaseline Lib "yoga" Alias "_YGNodeIsReferenceBaseline@4" (ByVal lNodePtr As Long) As Long
+Private Declare Function YGNodeIsReferenceBaseline Lib "yoga" Alias "_YGNodeIsReferenceBaseline@4" (ByVal lNodePtr As Long) As Byte
 Private Declare Function YGNodeSetIsReferenceBaseline Lib "yoga" Alias "_YGNodeSetIsReferenceBaseline@8" (ByVal lNodePtr As Long, ByVal fBaseline As Long) As Long
 Private Declare Function YGNodeStyleGetPosition Lib "yoga" Alias "_YGNodeStyleGetPosition@8" (ByVal lNodePtr As Long, ByVal lEdge As Long) As YogaValue
 Private Declare Function YGNodeStyleSetPosition Lib "yoga" Alias "_YGNodeStyleSetPosition@12" (ByVal lNodePtr As Long, ByVal lEdge As Long, ByVal sngPosition As Single) As Long
@@ -225,7 +227,7 @@ Private Declare Function YGNodeStyleGetBorder Lib "yoga" Alias "_YGNodeStyleGetB
 Private Declare Function YGNodeStyleSetBorder Lib "yoga" Alias "_YGNodeStyleSetBorder@12" (ByVal lNodePtr As Long, ByVal lEdge As Long, ByVal sngBorder As Single) As Long
 Private Declare Function YGNodeLayoutGetMargin Lib "yoga" Alias "_YGNodeLayoutGetMargin@8" (ByVal lNodePtr As Long, ByVal lEdge As Long) As Single
 Private Declare Function YGNodeLayoutGetPadding Lib "yoga" Alias "_YGNodeLayoutGetPadding@8" (ByVal lNodePtr As Long, ByVal lEdge As Long) As Single
-Private Declare Function YGFloatIsUndefined Lib "yoga" Alias "_YGFloatIsUndefined@4" (ByVal sngValue As Single) As Long
+Private Declare Function YGFloatIsUndefined Lib "yoga" Alias "_YGFloatIsUndefined@4" (ByVal sngValue As Single) As Byte
 
 #If False Then
 Const Value = 1, Unit = 1, Config = 1, Parent = 1
@@ -251,6 +253,10 @@ Private m_oBaselineFn           As Object
 Private m_oParent               As cYogaNode
 Private m_cChildren             As Collection
 Private m_cLog                  As Collection
+'--- debug
+#If DebugMode Then
+    Private m_sDebugID          As String
+#End If
 
 '=========================================================================
 ' Properties
@@ -312,11 +318,11 @@ Property Let StyleDirection(ByVal eValue As YogaDirection)
     Call YGNodeStyleSetDirection(NodePtr, eValue)
 End Property
 
-Property Get flexDirection() As YogaFlexDirection
-    flexDirection = YGNodeStyleGetFlexDirection(NodePtr)
+Property Get FlexDirection() As YogaFlexDirection
+    FlexDirection = YGNodeStyleGetFlexDirection(NodePtr)
 End Property
 
-Property Let flexDirection(ByVal eValue As YogaFlexDirection)
+Property Let FlexDirection(ByVal eValue As YogaFlexDirection)
     Call YGNodeStyleSetFlexDirection(NodePtr, eValue)
 End Property
 
@@ -377,7 +383,7 @@ Property Let Wrap(ByVal eValue As YogaWrap)
 End Property
 
 Property Get Flex() As Single
-    Err.Raise vbObjectError, , "Write-only property"
+    Flex = YGNodeStyleGetFlex(NodePtr)
 End Property
 
 Property Let Flex(ByVal sngValue As Single)
@@ -1044,6 +1050,22 @@ Attribute GetEnumerator.VB_MemberFlags = "40"
     Set GetEnumerator = m_cChildren.[_NewEnum]
 End Function
 
+Public Function GetLayoutLeft(Optional oParent As cYogaNode) As Single
+    If m_oParent Is oParent Then
+        GetLayoutLeft = LayoutX
+    Else
+        GetLayoutLeft = m_oParent.GetLayoutLeft(oParent) + LayoutX
+    End If
+End Function
+
+Public Function GetLayoutTop(Optional oParent As cYogaNode) As Single
+    If m_oParent Is oParent Then
+        GetLayoutTop = LayoutY
+    Else
+        GetLayoutTop = m_oParent.GetLayoutTop(oParent) + LayoutY
+    End If
+End Function
+
 '--- hidden
 Public Sub LogCallback(oNode As cYogaNode, ByVal eLevel As YogaLogLevel, sMessage As String)
 Attribute LogCallback.VB_MemberFlags = "40"
@@ -1101,11 +1123,19 @@ End Function
 ' Base class events
 '=========================================================================
 
+#If DebugMode Then
+    Private Sub Class_Initialize()
+        DebugInstanceInit MODULE_NAME, m_sDebugID, Me
+    End Sub
+#End If
+
 Private Sub Class_Terminate()
     If m_lNodePtr <> 0 Then
         Call YGNodeFree(m_lNodePtr)
         m_lNodePtr = 0
     End If
     Call CopyMemory(m_oParent, 0&, 4)
+    #If DebugMode Then
+        DebugInstanceTerm MODULE_NAME, m_sDebugID
+    #End If
 End Sub
-

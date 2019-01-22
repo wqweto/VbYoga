@@ -18,13 +18,15 @@ DefObj A-Z
 
 Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 Private Declare Function lstrlen Lib "kernel32" Alias "lstrlenA" (ByVal lpString As Long) As Long
+Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleA" (ByVal lpModuleName As String) As Long
+Private Declare Function LoadLibrary Lib "kernel32" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
 Private Declare Function YGConfigGetDefault Lib "yoga" Alias "_YGConfigGetDefault@0" () As Long
 Private Declare Function YGConfigGetContext Lib "yoga" Alias "_YGConfigGetContext@4" (ByVal lConfigPtr As Long) As Long
 Private Declare Function YGConfigGetInstanceCount Lib "yoga" Alias "_YGConfigGetInstanceCount@0" () As Long
 Private Declare Function YGInteropSetLogger Lib "yoga" Alias "_YGInteropSetLogger@4" (ByVal pfn As Long) As Long
 Private Declare Function YGNodeGetContext Lib "yoga" Alias "_YGNodeGetContext@4" (ByVal lNodePtr As Long) As Long
 Private Declare Function YGNodeGetInstanceCount Lib "yoga" Alias "_YGNodeGetInstanceCount@0" () As Long
-Private Declare Function YGFloatIsUndefined Lib "yoga" Alias "_YGFloatIsUndefined@4" (ByVal sngValue As Single) As Long
+Private Declare Function YGFloatIsUndefined Lib "yoga" Alias "_YGFloatIsUndefined@4" (ByVal sngValue As Single) As Byte
 
 #If False Then
 Const Width = 1, Height = 1
@@ -42,7 +44,7 @@ End Type
 Private Const FLOAT_NAN_BYTES       As Long = &HFFC00000
 
 Public YogaFloatNan             As Single
-Private m_lDefConfigPtr         As Long
+Public YogaDefConfigPtr         As Long
 Private m_oDefaultConfig        As Object
 
 '=========================================================================
@@ -50,10 +52,13 @@ Private m_oDefaultConfig        As Object
 '=========================================================================
 
 Public Function YogaConfigDefault() As cYogaConfig
-    If m_lDefConfigPtr = 0 Then
+    If YogaDefConfigPtr = 0 Then
+        If GetModuleHandle("yoga.dll") = 0 Then
+            Call LoadLibrary(LocateFile(App.Path & "\yoga.dll"))
+        End If
         Call CopyMemory(YogaFloatNan, FLOAT_NAN_BYTES, 4)
-        m_lDefConfigPtr = YGConfigGetDefault()
-        Set m_oDefaultConfig = YogaConfigNew(m_lDefConfigPtr)
+        YogaDefConfigPtr = YGConfigGetDefault()
+        Set m_oDefaultConfig = YogaConfigNew(YogaDefConfigPtr)
         Call YGInteropSetLogger(AddressOf pvYogaConfigLoggerRedirect)
     End If
     Set YogaConfigDefault = m_oDefaultConfig
@@ -187,4 +192,8 @@ Private Function pvToObject(ByVal lPtr As Long) As Object
         Set pvToObject = pUnk
         Call CopyMemory(pUnk, 0&, 4)
     End If
+End Function
+
+Private Function LocateFile(sFile As String) As String
+    LocateFile = sFile
 End Function

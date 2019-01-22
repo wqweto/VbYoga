@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Private Const MODULE_NAME As String = "cYogaConfig"
 
 '=========================================================================
 ' API
@@ -31,9 +32,9 @@ DefObj A-Z
 Private Declare Function YGConfigNew Lib "yoga" Alias "_YGConfigNew@0" () As Long
 Private Declare Function YGConfigFree Lib "yoga" Alias "_YGConfigFree@4" (ByVal lConfigPtr As Long) As Long
 Private Declare Function YGConfigSetContext Lib "yoga" Alias "_YGConfigSetContext@8" (ByVal lConfigPtr As Long, ByVal lContext As Long) As Long
-Private Declare Function YGConfigIsExperimentalFeatureEnabled Lib "yoga" Alias "_YGConfigIsExperimentalFeatureEnabled@8" (ByVal lConfigPtr As Long, ByVal lFeature As Long) As Long
+Private Declare Function YGConfigIsExperimentalFeatureEnabled Lib "yoga" Alias "_YGConfigIsExperimentalFeatureEnabled@8" (ByVal lConfigPtr As Long, ByVal lFeature As Long) As Byte
 Private Declare Function YGConfigSetExperimentalFeatureEnabled Lib "yoga" Alias "_YGConfigSetExperimentalFeatureEnabled@12" (ByVal lConfigPtr As Long, ByVal lFeature As Long, ByVal lEnabled As Long) As Long
-Private Declare Function YGConfigGetUseWebDefaults Lib "yoga" Alias "_YGConfigGetUseWebDefaults@4" (ByVal lConfigPtr As Long) As Long
+Private Declare Function YGConfigGetUseWebDefaults Lib "yoga" Alias "_YGConfigGetUseWebDefaults@4" (ByVal lConfigPtr As Long) As Byte
 Private Declare Function YGConfigSetUseWebDefaults Lib "yoga" Alias "_YGConfigSetUseWebDefaults@8" (ByVal lConfigPtr As Long, ByVal lEnabled As Long) As Long
 Private Declare Function YGConfigSetPointScaleFactor Lib "yoga" Alias "_YGConfigSetPointScaleFactor@8" (ByVal lConfigPtr As Long, ByVal sngFactor As Single) As Long
 
@@ -43,6 +44,10 @@ Private Declare Function YGConfigSetPointScaleFactor Lib "yoga" Alias "_YGConfig
 
 Public Logger                   As Object
 Private m_lConfigPtr            As Long
+'--- debug
+#If DebugMode Then
+    Private m_sDebugID          As String
+#End If
 
 '=========================================================================
 ' Properties
@@ -98,12 +103,18 @@ End Sub
 '=========================================================================
 
 Private Sub Class_Initialize()
+    #If DebugMode Then
+        DebugInstanceInit MODULE_NAME, m_sDebugID, Me
+    #End If
     Call YogaConfigDefault
 End Sub
 
 Private Sub Class_Terminate()
-    If m_lConfigPtr <> 0 And YogaConfigInstanceCount > 0 Then
+    If m_lConfigPtr <> 0 And m_lConfigPtr <> YogaDefConfigPtr Then
         Call YGConfigFree(m_lConfigPtr)
         m_lConfigPtr = 0
     End If
+    #If DebugMode Then
+        DebugInstanceTerm MODULE_NAME, m_sDebugID
+    #End If
 End Sub
