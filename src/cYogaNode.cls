@@ -1053,31 +1053,31 @@ Attribute GetEnumerator.VB_MemberFlags = "40"
     Set GetEnumerator = m_cChildren.[_NewEnum]
 End Function
 
-Public Function GetRelativeLeft(Optional oParent As cYogaNode) As Single
+Public Function GetRelativeX(Optional oParent As cYogaNode) As Single
     If YogaConstantsIsUndefined(m_sngParentX) Then
         If m_oParent Is Nothing Then
             m_sngParentX = 0
         Else
-            m_sngParentX = m_oParent.GetRelativeLeft()
+            m_sngParentX = m_oParent.GetRelativeX()
         End If
     End If
-    GetRelativeLeft = m_sngParentX + LayoutX
+    GetRelativeX = m_sngParentX + LayoutX
     If Not oParent Is Nothing Then
-        GetRelativeLeft = GetRelativeLeft - oParent.GetRelativeLeft()
+        GetRelativeX = GetRelativeX - oParent.GetRelativeX()
     End If
 End Function
 
-Public Function GetRelativeTop(Optional oParent As cYogaNode) As Single
+Public Function GetRelativeY(Optional oParent As cYogaNode) As Single
     If YogaConstantsIsUndefined(m_sngParentY) Then
         If m_oParent Is Nothing Then
             m_sngParentY = 0
         Else
-            m_sngParentY = m_oParent.GetRelativeTop()
+            m_sngParentY = m_oParent.GetRelativeY()
         End If
     End If
-    GetRelativeTop = m_sngParentY + LayoutY
+    GetRelativeY = m_sngParentY + LayoutY
     If Not oParent Is Nothing Then
-        GetRelativeTop = GetRelativeTop - oParent.GetRelativeTop()
+        GetRelativeY = GetRelativeY - oParent.GetRelativeY()
     End If
 End Function
 
