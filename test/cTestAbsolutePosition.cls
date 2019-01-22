@@ -202,7 +202,7 @@ Public Sub Test_do_not_clamp_height_of_absolute_node_to_height_of_its_overflow_h
     Dim config As cYogaConfig: Set config = YogaConfigNew
 
     Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Overflow = YogaOverflow.yogaOverflowHidden
     root.Width = 50
     root.Height = 50
@@ -890,7 +890,7 @@ Public Sub Test_absolute_layout_in_wrap_reverse_row_container()
     Dim config As cYogaConfig: Set config = YogaConfigNew
 
     Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Wrap = YogaWrap.yogaWrapWrapReverse
     root.Width = 100
     root.Height = 100
@@ -972,7 +972,7 @@ Public Sub Test_absolute_layout_in_wrap_reverse_row_container_flex_end()
     Dim config As cYogaConfig: Set config = YogaConfigNew
 
     Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Wrap = YogaWrap.yogaWrapWrapReverse
     root.Width = 100
     root.Height = 100
