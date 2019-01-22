@@ -253,6 +253,8 @@ Private m_oBaselineFn           As Object
 Private m_oParent               As cYogaNode
 Private m_cChildren             As Collection
 Private m_cLog                  As Collection
+Private m_sngParentX            As Single
+Private m_sngParentY            As Single
 '--- debug
 #If DebugMode Then
     Private m_sDebugID          As String
@@ -318,11 +320,11 @@ Property Let StyleDirection(ByVal eValue As YogaDirection)
     Call YGNodeStyleSetDirection(NodePtr, eValue)
 End Property
 
-Property Get FlexDirection() As YogaFlexDirection
-    FlexDirection = YGNodeStyleGetFlexDirection(NodePtr)
+Property Get flexDirection() As YogaFlexDirection
+    flexDirection = YGNodeStyleGetFlexDirection(NodePtr)
 End Property
 
-Property Let FlexDirection(ByVal eValue As YogaFlexDirection)
+Property Let flexDirection(ByVal eValue As YogaFlexDirection)
     Call YGNodeStyleSetFlexDirection(NodePtr, eValue)
 End Property
 
@@ -553,8 +555,8 @@ Property Let Overflow(ByVal eValue As YogaOverflow)
     Call YGNodeStyleSetOverflow(NodePtr, eValue)
 End Property
 
-Property Get Item(ByVal index As Long) As cYogaNode
-    Set Item = m_cChildren.Item(index + 1)
+Property Get Item(ByVal Index As Long) As cYogaNode
+    Set Item = m_cChildren.Item(Index + 1)
 End Property
 
 Property Get Count() As Long
@@ -944,24 +946,24 @@ Public Function ValuesEqual(ByVal f1 As Single, ByVal f2 As Single) As Boolean
     ValuesEqual = Abs(f1 - f2) < FLOAT_EPSILON
 End Function
 
-Public Sub Insert(ByVal index As Long, oChild As cYogaNode)
+Public Sub Insert(ByVal Index As Long, oChild As cYogaNode)
     If m_cChildren Is Nothing Then
         Set m_cChildren = New Collection
     End If
-    If index < m_cChildren.Count Then
-        m_cChildren.Add oChild, Before:=index + 1
+    If Index < m_cChildren.Count Then
+        m_cChildren.Add oChild, Before:=Index + 1
     Else
         m_cChildren.Add oChild
     End If
     Set oChild.Parent = Me
-    Call YGNodeInsertChild(NodePtr, oChild.NodePtr, index)
+    Call YGNodeInsertChild(NodePtr, oChild.NodePtr, Index)
 End Sub
 
-Public Sub RemoveAt(ByVal index As Long)
+Public Sub RemoveAt(ByVal Index As Long)
     Dim oChild              As cYogaNode
     
-    Set oChild = m_cChildren.Item(index + 1)
-    m_cChildren.Remove index + 1
+    Set oChild = m_cChildren.Item(Index + 1)
+    m_cChildren.Remove Index + 1
     Set oChild.Parent = Nothing
     Call YGNodeRemoveChild(NodePtr, oChild.NodePtr)
 End Sub
@@ -1027,6 +1029,7 @@ Public Sub CalculateLayout( _
         sngHeight = YogaFloatNan
     End If
     Call YGNodeCalculateLayout(NodePtr, sngWidth, sngHeight, YGNodeStyleGetDirection(NodePtr))
+    frInvalidateLayoutCache
 End Sub
 
 Public Function ToString(Optional ByVal eOptions As YogaPrintOptions = yogaProLayout Or yogaProStyle Or yogaProChildren) As String
@@ -1050,19 +1053,31 @@ Attribute GetEnumerator.VB_MemberFlags = "40"
     Set GetEnumerator = m_cChildren.[_NewEnum]
 End Function
 
-Public Function GetLayoutLeft(Optional oParent As cYogaNode) As Single
-    If m_oParent Is oParent Then
-        GetLayoutLeft = LayoutX
-    Else
-        GetLayoutLeft = m_oParent.GetLayoutLeft(oParent) + LayoutX
+Public Function GetRelativeLeft(Optional oParent As cYogaNode) As Single
+    If YogaConstantsIsUndefined(m_sngParentX) Then
+        If m_oParent Is Nothing Then
+            m_sngParentX = 0
+        Else
+            m_sngParentX = m_oParent.GetRelativeLeft()
+        End If
+    End If
+    GetRelativeLeft = m_sngParentX + LayoutX
+    If Not oParent Is Nothing Then
+        GetRelativeLeft = GetRelativeLeft - oParent.GetRelativeLeft()
     End If
 End Function
 
-Public Function GetLayoutTop(Optional oParent As cYogaNode) As Single
-    If m_oParent Is oParent Then
-        GetLayoutTop = LayoutY
-    Else
-        GetLayoutTop = m_oParent.GetLayoutTop(oParent) + LayoutY
+Public Function GetRelativeTop(Optional oParent As cYogaNode) As Single
+    If YogaConstantsIsUndefined(m_sngParentY) Then
+        If m_oParent Is Nothing Then
+            m_sngParentY = 0
+        Else
+            m_sngParentY = m_oParent.GetRelativeTop()
+        End If
+    End If
+    GetRelativeTop = m_sngParentY + LayoutY
+    If Not oParent Is Nothing Then
+        GetRelativeTop = GetRelativeTop - oParent.GetRelativeTop()
     End If
 End Function
 
@@ -1077,6 +1092,20 @@ Attribute LogCallback.VB_MemberFlags = "40"
 End Sub
 
 '= private ===============================================================
+
+Friend Sub frInvalidateLayoutCache()
+    Dim oNode           As cYogaNode
+    
+    If HasNewLayout Then
+        m_sngParentX = YogaFloatNan
+        m_sngParentY = YogaFloatNan
+    End If
+    If Not m_cChildren Is Nothing Then
+        For Each oNode In m_cChildren
+            oNode.frInvalidateLayoutCache
+        Next
+    End If
+End Sub
 
 Private Function ToYogaValue(vValue As Variant) As YogaValue
     If IsArray(vValue) Then
