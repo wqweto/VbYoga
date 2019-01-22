@@ -320,11 +320,11 @@ Property Let StyleDirection(ByVal eValue As YogaDirection)
     Call YGNodeStyleSetDirection(NodePtr, eValue)
 End Property
 
-Property Get flexDirection() As YogaFlexDirection
-    flexDirection = YGNodeStyleGetFlexDirection(NodePtr)
+Property Get FlexDirection() As YogaFlexDirection
+    FlexDirection = YGNodeStyleGetFlexDirection(NodePtr)
 End Property
 
-Property Let flexDirection(ByVal eValue As YogaFlexDirection)
+Property Let FlexDirection(ByVal eValue As YogaFlexDirection)
     Call YGNodeStyleSetFlexDirection(NodePtr, eValue)
 End Property
 
