@@ -26,22 +26,22 @@ DefObj A-Z
 Implements ITestFixture
 
 Public Sub Test_rounding_flex_basis_flex_grow_row_width_of_100()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root.Insert 2, root_child2
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -92,30 +92,30 @@ Public Sub Test_rounding_flex_basis_flex_grow_row_width_of_100()
 End Sub
 
 Public Sub Test_rounding_flex_basis_flex_grow_row_prime_number_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 113
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root.Insert 2, root_child2
 
-    Dim root_child3 As cYogaNode: Set root_child3 = YogaNodeNew(config)
+    Dim root_child3 As cYogaNode: Set root_child3 = YogaNodeNew(Config)
     root_child3.FlexGrow = 1
     root.Insert 3, root_child3
 
-    Dim root_child4 As cYogaNode: Set root_child4 = YogaNodeNew(config)
+    Dim root_child4 As cYogaNode: Set root_child4 = YogaNodeNew(Config)
     root_child4.FlexGrow = 1
     root.Insert 4, root_child4
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -186,23 +186,23 @@ Public Sub Test_rounding_flex_basis_flex_grow_row_prime_number_width()
 End Sub
 
 Public Sub Test_rounding_flex_basis_flex_shrink_row()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 101
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexShrink = 1
     root_child0.FlexBasis = 100
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexBasis = 25
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexBasis = 25
     root.Insert 2, root_child2
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -253,24 +253,24 @@ Public Sub Test_rounding_flex_basis_flex_shrink_row()
 End Sub
 
 Public Sub Test_rounding_flex_basis_overrides_main_size()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 113
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 50
     root_child0.Height = 20
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Height = 10
     root.Insert 2, root_child2
@@ -322,24 +322,24 @@ Public Sub Test_rounding_flex_basis_overrides_main_size()
 End Sub
 
 Public Sub Test_rounding_total_fractial()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 87.4!
     root.Height = 113.4!
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 0.7!
     root_child0.FlexBasis = 50.3!
     root_child0.Height = 20.3!
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1.6!
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1.1!
     root_child2.Height = 10.7!
     root.Insert 2, root_child2
@@ -391,38 +391,38 @@ Public Sub Test_rounding_total_fractial()
 End Sub
 
 Public Sub Test_rounding_total_fractial_nested()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 87.4!
     root.Height = 113.4!
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 0.7!
     root_child0.FlexBasis = 50.3!
     root_child0.Height = 20.3!
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.FlexGrow = 1
     root_child0_child0.FlexBasis = 0.3!
     root_child0_child0.Bottom = 13.3!
     root_child0_child0.Height = 9.9!
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(Config)
     root_child0_child1.FlexGrow = 4
     root_child0_child1.FlexBasis = 0.3!
     root_child0_child1.Top = 13.3!
     root_child0_child1.Height = 1.1!
     root_child0.Insert 1, root_child0_child1
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1.6!
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1.1!
     root_child2.Height = 10.7!
     root.Insert 2, root_child2
@@ -494,24 +494,24 @@ Public Sub Test_rounding_total_fractial_nested()
 End Sub
 
 Public Sub Test_rounding_fractial_input_1()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 113.4!
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 50
     root_child0.Height = 20
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Height = 10
     root.Insert 2, root_child2
@@ -563,24 +563,24 @@ Public Sub Test_rounding_fractial_input_1()
 End Sub
 
 Public Sub Test_rounding_fractial_input_2()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 113.6!
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 50
     root_child0.Height = 20
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Height = 10
     root.Insert 2, root_child2
@@ -632,25 +632,25 @@ Public Sub Test_rounding_fractial_input_2()
 End Sub
 
 Public Sub Test_rounding_fractial_input_3()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Top = 0.3!
     root.Width = 100
     root.Height = 113.4!
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 50
     root_child0.Height = 20
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Height = 10
     root.Insert 2, root_child2
@@ -702,25 +702,25 @@ Public Sub Test_rounding_fractial_input_3()
 End Sub
 
 Public Sub Test_rounding_fractial_input_4()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Top = 0.7!
     root.Width = 100
     root.Height = 113.4!
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 50
     root_child0.Height = 20
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Height = 10
     root.Insert 2, root_child2
@@ -772,28 +772,28 @@ Public Sub Test_rounding_fractial_input_4()
 End Sub
 
 Public Sub Test_rounding_inner_node_controversy_horizontal()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 320
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.Height = 10
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(config)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(Config)
     root_child1_child0.FlexGrow = 1
     root_child1_child0.Height = 10
     root_child1.Insert 0, root_child1_child0
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Height = 10
     root.Insert 2, root_child2
@@ -855,27 +855,27 @@ Public Sub Test_rounding_inner_node_controversy_horizontal()
 End Sub
 
 Public Sub Test_rounding_inner_node_controversy_vertical()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Height = 320
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.Width = 10
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Width = 10
     root.Insert 1, root_child1
 
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(config)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(Config)
     root_child1_child0.FlexGrow = 1
     root_child1_child0.Width = 10
     root_child1.Insert 0, root_child1_child0
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Width = 10
     root.Insert 2, root_child2
@@ -937,44 +937,44 @@ Public Sub Test_rounding_inner_node_controversy_vertical()
 End Sub
 
 Public Sub Test_rounding_inner_node_controversy_combined()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 640
     root.Height = 320
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.Height = Array(yogaUnitPercent, 100)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Height = Array(yogaUnitPercent, 100)
     root.Insert 1, root_child1
 
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(config)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(Config)
     root_child1_child0.FlexGrow = 1
     root_child1_child0.Width = Array(yogaUnitPercent, 100)
     root_child1.Insert 0, root_child1_child0
 
-    Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = YogaNodeNew(config)
+    Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = YogaNodeNew(Config)
     root_child1_child1.FlexGrow = 1
     root_child1_child1.Width = Array(yogaUnitPercent, 100)
     root_child1.Insert 1, root_child1_child1
 
-    Dim root_child1_child1_child0 As cYogaNode: Set root_child1_child1_child0 = YogaNodeNew(config)
+    Dim root_child1_child1_child0 As cYogaNode: Set root_child1_child1_child0 = YogaNodeNew(Config)
     root_child1_child1_child0.FlexGrow = 1
     root_child1_child1_child0.Width = Array(yogaUnitPercent, 100)
     root_child1_child1.Insert 0, root_child1_child1_child0
 
-    Dim root_child1_child2 As cYogaNode: Set root_child1_child2 = YogaNodeNew(config)
+    Dim root_child1_child2 As cYogaNode: Set root_child1_child2 = YogaNodeNew(Config)
     root_child1_child2.FlexGrow = 1
     root_child1_child2.Width = Array(yogaUnitPercent, 100)
     root_child1.Insert 2, root_child1_child2
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.Height = Array(yogaUnitPercent, 100)
     root.Insert 2, root_child2

@@ -26,18 +26,18 @@ DefObj A-Z
 Implements ITestFixture
 
 Public Sub Test_display_none()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Display = YogaDisplay.yogaDisplayNone
     root.Insert 1, root_child1
@@ -79,18 +79,18 @@ Public Sub Test_display_none()
 End Sub
 
 Public Sub Test_display_none_fixed_size()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 20
     root_child1.Height = 20
     root_child1.Display = YogaDisplay.yogaDisplayNone
@@ -133,14 +133,14 @@ Public Sub Test_display_none_fixed_size()
 End Sub
 
 Public Sub Test_display_none_with_margin()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = 10
     root_child0.MarginTop = 10
     root_child0.MarginRight = 10
@@ -150,7 +150,7 @@ Public Sub Test_display_none_with_margin()
     root_child0.Display = YogaDisplay.yogaDisplayNone
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -191,27 +191,27 @@ Public Sub Test_display_none_with_margin()
 End Sub
 
 Public Sub Test_display_none_with_child()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexShrink = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 0)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.FlexShrink = 1
     root_child1.FlexBasis = Array(yogaUnitPercent, 0)
     root_child1.Display = YogaDisplay.yogaDisplayNone
     root.Insert 1, root_child1
 
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(config)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(Config)
     root_child1_child0.FlexGrow = 1
     root_child1_child0.FlexShrink = 1
     root_child1_child0.FlexBasis = Array(yogaUnitPercent, 0)
@@ -220,7 +220,7 @@ Public Sub Test_display_none_with_child()
     root_child1_child0.MinHeight = 0
     root_child1.Insert 0, root_child1_child0
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.FlexGrow = 1
     root_child2.FlexShrink = 1
     root_child2.FlexBasis = Array(yogaUnitPercent, 0)
@@ -283,18 +283,18 @@ Public Sub Test_display_none_with_child()
 End Sub
 
 Public Sub Test_display_none_with_position()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.Top = 10
     root_child1.Display = YogaDisplay.yogaDisplayNone

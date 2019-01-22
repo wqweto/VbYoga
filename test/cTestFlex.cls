@@ -91,7 +91,7 @@ Public Sub Test_flex_shrink_flex_grow_row()
     Set oConfig = YogaConfigNew()
 
     Set oRoot = YogaNodeNew(oConfig)
-    oRoot.flexDirection = yogaFlexRow
+    oRoot.FlexDirection = yogaFlexRow
     oRoot.Width = 500
     oRoot.Height = 500
 
@@ -152,7 +152,7 @@ Public Sub Test_flex_shrink_flex_grow_child_flex_shrink_other_child()
     Set oConfig = YogaConfigNew()
 
     Set oRoot = YogaNodeNew(oConfig)
-    oRoot.flexDirection = yogaFlexRow
+    oRoot.FlexDirection = yogaFlexRow
     oRoot.Width = 500
     oRoot.Height = 500
 
@@ -214,7 +214,7 @@ Public Sub Test_flex_basis_flex_grow_row()
     Set oConfig = YogaConfigNew()
 
     Set oRoot = YogaNodeNew(oConfig)
-    oRoot.flexDirection = yogaFlexRow
+    oRoot.FlexDirection = yogaFlexRow
     oRoot.Width = 100
     oRoot.Height = 100
 
@@ -329,7 +329,7 @@ Public Sub Test_flex_basis_flex_shrink_row()
     Set oConfig = YogaConfigNew()
 
     Set oRoot = YogaNodeNew(oConfig)
-    oRoot.flexDirection = yogaFlexRow
+    oRoot.FlexDirection = yogaFlexRow
     oRoot.Width = 100
     oRoot.Height = 100
 

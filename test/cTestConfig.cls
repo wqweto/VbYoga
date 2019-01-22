@@ -29,26 +29,26 @@ Public Sub TestUseWebDefaults()
     Dim config0 As cYogaConfig: Set config0 = YogaConfigNew()
     config0.UseWebDefaults = True
     Dim node0 As cYogaNode: Set node0 = YogaNodeNew(config0)
-    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.FlexDirection
 
     node0.Reset
-    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.FlexDirection
 
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
-    config.UseWebDefaults = True
-    Dim node1 As cYogaNode: Set node1 = YogaNodeNew(config)
-    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node1.flexDirection
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
+    Config.UseWebDefaults = True
+    Dim node1 As cYogaNode: Set node1 = YogaNodeNew(Config)
+    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node1.FlexDirection
 
     node1.Reset
-    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node1.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node1.FlexDirection
 End Sub
 
 Public Sub TestDefaultConfig()
     Dim node0 As cYogaNode: Set node0 = YogaNodeNew()
-    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node0.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node0.FlexDirection
 
     Dim node1 As cYogaNode: Set node1 = YogaNodeNew(YogaConfigNew())
-    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node1.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node1.FlexDirection
 End Sub
 
 Public Sub TestCopyConstructor()
@@ -56,21 +56,21 @@ Public Sub TestCopyConstructor()
     config0.UseWebDefaults = True
     Dim srcNode As cYogaNode: Set srcNode = YogaNodeNew(config0)
     Dim node0 As cYogaNode: Set node0 = YogaNodeClone(srcNode)
-    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.FlexDirection
 
-    node0.flexDirection = YogaFlexDirection.yogaFlexColumn
-    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node0.flexDirection
+    node0.FlexDirection = YogaFlexDirection.yogaFlexColumn
+    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node0.FlexDirection
 
     node0.Reset
-    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node0.FlexDirection
 
     Dim node1 As cYogaNode: Set node1 = YogaNodeClone(srcNode)
-    node1.flexDirection = YogaFlexDirection.yogaFlexColumn
+    node1.FlexDirection = YogaFlexDirection.yogaFlexColumn
 
-    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node1.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexColumn, node1.FlexDirection
 
     node1.Reset
-    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node1.flexDirection
+    Assert.AreEqual YogaFlexDirection.yogaFlexRow, node1.FlexDirection
 End Sub
 
 Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)

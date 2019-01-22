@@ -26,19 +26,19 @@ DefObj A-Z
 Implements ITestFixture
 
 Public Sub Test_align_baseline_parent_using_child_in_column_as_reference()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
-    Dim root As cYogaNode: Set root = createYGNode(config, YogaFlexDirection.yogaFlexRow, 1000, 1000, True)
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
+    Dim root As cYogaNode: Set root = createYGNode(Config, YogaFlexDirection.yogaFlexRow, 1000, 1000, True)
     
-    Dim root_child0 As cYogaNode: Set root_child0 = createYGNode(config, YogaFlexDirection.yogaFlexColumn, 500, 600, False)
+    Dim root_child0 As cYogaNode: Set root_child0 = createYGNode(Config, YogaFlexDirection.yogaFlexColumn, 500, 600, False)
     root.Insert 0, root_child0
     
-    Dim root_child1 As cYogaNode: Set root_child1 = createYGNode(config, YogaFlexDirection.yogaFlexColumn, 500, 800, False)
+    Dim root_child1 As cYogaNode: Set root_child1 = createYGNode(Config, YogaFlexDirection.yogaFlexColumn, 500, 800, False)
     root.Insert 1, root_child1
     
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = createYGNode(config, YogaFlexDirection.yogaFlexColumn, 500, 300, False)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = createYGNode(Config, YogaFlexDirection.yogaFlexColumn, 500, 300, False)
     root_child1.Insert 0, root_child1_child0
     
-    Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = createYGNode(config, YogaFlexDirection.yogaFlexColumn, 500, 400, False)
+    Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = createYGNode(Config, YogaFlexDirection.yogaFlexColumn, 500, 400, False)
     root_child1_child1.SetBaselineFunction Me
     root_child1_child1.IsReferenceBaseline = True
     root_child1.Insert 1, root_child1_child1
@@ -65,20 +65,20 @@ Public Function BaselineCallback(oNode As cYogaNode, ByVal sngWidth As Single, B
 End Function
 
 Public Sub Test_align_baseline_parent_using_child_in_row_as_reference()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = createYGNode(config, YogaFlexDirection.yogaFlexRow, 1000, 1000, True)
+    Dim root As cYogaNode: Set root = createYGNode(Config, YogaFlexDirection.yogaFlexRow, 1000, 1000, True)
 
-    Dim root_child0 As cYogaNode: Set root_child0 = createYGNode(config, YogaFlexDirection.yogaFlexColumn, 500, 600, False)
+    Dim root_child0 As cYogaNode: Set root_child0 = createYGNode(Config, YogaFlexDirection.yogaFlexColumn, 500, 600, False)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = createYGNode(config, YogaFlexDirection.yogaFlexRow, 500, 800, True)
+    Dim root_child1 As cYogaNode: Set root_child1 = createYGNode(Config, YogaFlexDirection.yogaFlexRow, 500, 800, True)
     root.Insert 1, root_child1
 
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = createYGNode(config, YogaFlexDirection.yogaFlexRow, 500, 500, False)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = createYGNode(Config, YogaFlexDirection.yogaFlexRow, 500, 500, False)
     root_child1.Insert 0, root_child1_child0
 
-    Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = createYGNode(config, YogaFlexDirection.yogaFlexRow, 500, 400, False)
+    Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = createYGNode(Config, YogaFlexDirection.yogaFlexRow, 500, 400, False)
     root_child1_child1.SetBaselineFunction Me
     root_child1_child1.IsReferenceBaseline = True
     root_child1.Insert 1, root_child1_child1
@@ -100,9 +100,9 @@ Public Sub Test_align_baseline_parent_using_child_in_row_as_reference()
     Assert.AreEqual 300!, root_child1_child1.LayoutY
 End Sub
 
-Private Function createYGNode(config As cYogaConfig, flexDirection As YogaFlexDirection, Width As Long, Height As Long, alignBaseline As Boolean) As cYogaNode
-    Dim node As cYogaNode: Set node = YogaNodeNew(config)
-    node.flexDirection = flexDirection
+Private Function createYGNode(Config As cYogaConfig, FlexDirection As YogaFlexDirection, Width As Long, Height As Long, alignBaseline As Boolean) As cYogaNode
+    Dim node As cYogaNode: Set node = YogaNodeNew(Config)
+    node.FlexDirection = FlexDirection
     node.Width = Width
     node.Height = Height
     If alignBaseline Then

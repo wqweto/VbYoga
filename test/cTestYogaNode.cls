@@ -64,10 +64,10 @@ Public Sub TestChildren()
 
     Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
     Parent.Insert 1, child1
-    Dim index As Long
+    Dim Index As Long
     For Each node In Parent
-        Assert.AreEqual index, Parent.IndexOf(node)
-        index = index + 1
+        Assert.AreEqual Index, Parent.IndexOf(node)
+        Index = Index + 1
     Next
 
     Parent.RemoveAt 0
@@ -237,7 +237,7 @@ End Function
 Public Sub TestBaselineFunc()
     Dim node As cYogaNode: Set node = YogaNodeNew()
     node.Height = 200
-    node.flexDirection = YogaFlexDirection.yogaFlexRow
+    node.FlexDirection = YogaFlexDirection.yogaFlexRow
     node.AlignItems = YogaAlign.yogaAlignBaseline
 
     Dim child0 As cYogaNode: Set child0 = YogaNodeNew()
