@@ -209,6 +209,7 @@ Private Declare Function YGNodeLayoutGetTop Lib "yoga" Alias "_YGNodeLayoutGetTo
 Private Declare Function YGNodeLayoutGetWidth Lib "yoga" Alias "_YGNodeLayoutGetWidth@4" (ByVal lNodePtr As Long) As Single
 Private Declare Function YGNodeLayoutGetHeight Lib "yoga" Alias "_YGNodeLayoutGetHeight@4" (ByVal lNodePtr As Long) As Single
 Private Declare Function YGNodeLayoutGetDirection Lib "yoga" Alias "_YGNodeLayoutGetDirection@4" (ByVal lNodePtr As Long) As Long
+Private Declare Function YGNodeLayoutGetHadOverflow Lib "yoga" Alias "_YGNodeLayoutGetHadOverflow@4" (ByVal lNodePtr As Long) As Byte
 Private Declare Function YGNodeStyleGetOverflow Lib "yoga" Alias "_YGNodeStyleGetOverflow@4" (ByVal lNodePtr As Long) As Long
 Private Declare Function YGNodeStyleSetOverflow Lib "yoga" Alias "_YGNodeStyleSetOverflow@8" (ByVal lNodePtr As Long, ByVal lOverflow As Long) As Long
 Private Declare Function YGNodeIsReferenceBaseline Lib "yoga" Alias "_YGNodeIsReferenceBaseline@4" (ByVal lNodePtr As Long) As Byte
@@ -318,6 +319,14 @@ End Property
 
 Property Let StyleDirection(ByVal eValue As YogaDirection)
     Call YGNodeStyleSetDirection(NodePtr, eValue)
+End Property
+
+Property Get Overflow() As YogaOverflow
+    Overflow = YGNodeStyleGetOverflow(NodePtr)
+End Property
+
+Property Let Overflow(ByVal eValue As YogaOverflow)
+    Call YGNodeStyleSetOverflow(NodePtr, eValue)
 End Property
 
 Property Get FlexDirection() As YogaFlexDirection
@@ -547,12 +556,8 @@ Property Get LayoutDirection() As YogaDirection
     LayoutDirection = YGNodeLayoutGetDirection(NodePtr)
 End Property
 
-Property Get Overflow() As YogaOverflow
-    Overflow = YGNodeStyleGetOverflow(NodePtr)
-End Property
-
-Property Let Overflow(ByVal eValue As YogaOverflow)
-    Call YGNodeStyleSetOverflow(NodePtr, eValue)
+Property Get LayoutHadOverflow() As Boolean
+    LayoutHadOverflow = (YGNodeLayoutGetHadOverflow(NodePtr) <> 0)
 End Property
 
 Property Get Item(ByVal Index As Long) As cYogaNode
