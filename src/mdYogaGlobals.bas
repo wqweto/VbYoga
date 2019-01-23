@@ -169,7 +169,9 @@ Private Function pvYogaConfigLoggerRedirect( _
             On Error GoTo 0
             Err.Raise vbObjectError, , sMessage
         ElseIf Not bLogged Then
-            Debug.Print "VbYoga: eLevel=" & eLevel & ", lMsgPtr=" & sMessage
+            #If DebugMode Then
+                Debug.Print "eLevel=" & eLevel & ", lMsgPtr=" & sMessage & " [" & FUNC_NAME & "]"
+            #End If
         End If
     End If
     Exit Function
