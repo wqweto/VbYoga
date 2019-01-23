@@ -253,8 +253,8 @@ Private m_oBaselineFn           As Object
 Private m_oParent               As cYogaNode
 Private m_cChildren             As Collection
 Private m_cLog                  As Collection
-Private m_sngParentX            As Single
-Private m_sngParentY            As Single
+Private m_sngAbsoluteX          As Single
+Private m_sngAbsoluteY          As Single
 '--- debug
 #If DebugMode Then
     Private m_sDebugID          As String
@@ -1053,31 +1053,31 @@ Attribute GetEnumerator.VB_MemberFlags = "40"
     Set GetEnumerator = m_cChildren.[_NewEnum]
 End Function
 
-Public Function GetRelativeX(Optional oParent As cYogaNode) As Single
-    If YogaConstantsIsUndefined(m_sngParentX) Then
+Public Function GetRelativeX(Optional oContainer As cYogaNode) As Single
+    If YogaConstantsIsUndefined(m_sngAbsoluteX) Then
         If m_oParent Is Nothing Then
-            m_sngParentX = 0
+            m_sngAbsoluteX = LayoutX
         Else
-            m_sngParentX = m_oParent.GetRelativeX()
+            m_sngAbsoluteX = m_oParent.GetRelativeX() + LayoutX
         End If
     End If
-    GetRelativeX = m_sngParentX + LayoutX
-    If Not oParent Is Nothing Then
-        GetRelativeX = GetRelativeX - oParent.GetRelativeX()
+    GetRelativeX = m_sngAbsoluteX
+    If Not oContainer Is Nothing Then
+        GetRelativeX = GetRelativeX - oContainer.GetRelativeX()
     End If
 End Function
 
-Public Function GetRelativeY(Optional oParent As cYogaNode) As Single
-    If YogaConstantsIsUndefined(m_sngParentY) Then
+Public Function GetRelativeY(Optional oContainer As cYogaNode) As Single
+    If YogaConstantsIsUndefined(m_sngAbsoluteY) Then
         If m_oParent Is Nothing Then
-            m_sngParentY = 0
+            m_sngAbsoluteY = LayoutY
         Else
-            m_sngParentY = m_oParent.GetRelativeY()
+            m_sngAbsoluteY = m_oParent.GetRelativeY() + LayoutY
         End If
     End If
-    GetRelativeY = m_sngParentY + LayoutY
-    If Not oParent Is Nothing Then
-        GetRelativeY = GetRelativeY - oParent.GetRelativeY()
+    GetRelativeY = m_sngAbsoluteY
+    If Not oContainer Is Nothing Then
+        GetRelativeY = GetRelativeY - oContainer.GetRelativeY()
     End If
 End Function
 
@@ -1091,14 +1091,12 @@ Attribute LogCallback.VB_MemberFlags = "40"
     End If
 End Sub
 
-'= private ===============================================================
-
 Friend Sub frInvalidateLayoutCache()
     Dim oNode           As cYogaNode
     
     If HasNewLayout Then
-        m_sngParentX = YogaFloatNan
-        m_sngParentY = YogaFloatNan
+        m_sngAbsoluteX = YogaFloatNan
+        m_sngAbsoluteY = YogaFloatNan
     End If
     If Not m_cChildren Is Nothing Then
         For Each oNode In m_cChildren
@@ -1106,6 +1104,8 @@ Friend Sub frInvalidateLayoutCache()
         Next
     End If
 End Sub
+
+'= private ===============================================================
 
 Private Function ToYogaValue(vValue As Variant) As YogaValue
     If IsArray(vValue) Then
