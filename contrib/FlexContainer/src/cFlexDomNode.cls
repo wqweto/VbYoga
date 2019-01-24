@@ -117,6 +117,7 @@ End Function
 
 Public Function AddLabel(Optional Name As String, Optional CssClass As String) As cFlexDomNode
     Set AddLabel = AddControl(FlexBox.frLoadLabel, Name, Trim$("label " & CssClass))
+    AddLabel.Layout.SetMeasureFunction AddLabel
 End Function
 
 Public Function AddControl(oCtl As Object, Optional Name As String, Optional CssClass As String) As cFlexDomNode
@@ -165,6 +166,27 @@ Public Sub ApplyLayout()
             oItem.ApplyLayout
         Next
     End If
+End Sub
+
+Public Sub MeasureCallback( _
+            oNode As Object, _
+            ByVal sngWidth As Single, _
+            ByVal eWidthMode As YogaMeasureMode, _
+            ByVal sngHeight As Single, _
+            ByVal eHeightMode As YogaMeasureMode, _
+            sngLayoutWidth As Single, _
+            sngLayoutHeight As Single)
+    With CtlLabel
+        If .AutoSize Then
+            If .WordWrap Then
+                .Width = Int(sngWidth / Screen.TwipsPerPixelX) * Screen.TwipsPerPixelX
+            Else
+                .Width = .Width
+            End If
+        End If
+        sngLayoutWidth = .Width
+        sngLayoutHeight = .Height
+    End With
 End Sub
 
 '=========================================================================

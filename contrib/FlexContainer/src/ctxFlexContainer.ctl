@@ -28,14 +28,15 @@ Begin VB.UserControl ctxFlexContainer
       EndProperty
    End
    Begin VB.Label labLabel 
+      AutoSize        =   -1  'True
       Caption         =   "labLabel"
-      Height          =   264
+      Height          =   192
       Index           =   0
       Left            =   756
       TabIndex        =   0
       Top             =   1428
       Visible         =   0   'False
-      Width           =   1272
+      Width           =   636
    End
 End
 Attribute VB_Name = "ctxFlexContainer"
