@@ -82,6 +82,14 @@ Private m_oCtlCancelMode        As Object
 #End If
 
 '=========================================================================
+' Error handling
+'=========================================================================
+
+Private Sub PrintError(sFunction As String)
+    Debug.Print "Critical error: " & Err.Description & " [" & MODULE_NAME & "." & sFunction & "]", Timer
+End Sub
+
+'=========================================================================
 ' Properties
 '=========================================================================
 
@@ -533,6 +541,7 @@ Private Function pvEmptyStyle() As Object
     If oEmpty Is Nothing Then
         Set oEmpty = CreateObject("Scripting.Dictionary")
     End If
+    Debug.Assert oEmpty.Count = 0
     Set pvEmptyStyle = oEmpty
 End Function
 
@@ -565,18 +574,42 @@ End Function
 '=========================================================================
 
 Private Sub btnButton_Click(Index As Integer)
+    Const FUNC_NAME     As String = "btnButton_Click"
+    
+    On Error GoTo EH
     RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton(Index))))
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
 End Sub
 
 Private Sub labLabel_Click(Index As Integer)
+    Const FUNC_NAME     As String = "labLabel_Click"
+    
+    On Error GoTo EH
     RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(labLabel(Index))))
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
 End Sub
 
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "UserControl_MouseMove"
+    
+    On Error GoTo EH
     CancelMode
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
 End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+    Const FUNC_NAME     As String = "UserControl_ReadProperties"
+    
+    On Error GoTo EH
     If Ambient.UserMode Then
         Set m_oYogaConfig = YogaConfigNew()
         m_oYogaConfig.PointScaleFactor = 1# / Screen.TwipsPerPixelX
@@ -587,13 +620,24 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         m_oRoot.CssClass = "root container"
         Set m_cMapping = New Collection
     End If
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
 End Sub
 
 Private Sub UserControl_Resize()
+    Const FUNC_NAME     As String = "UserControl_Resize"
+    
+    On Error GoTo EH
     If Not m_oRoot Is Nothing Then
         m_oRoot.Layout.CalculateLayout Width, Height
         m_oRoot.ApplyLayout
     End If
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
 End Sub
 
 '=========================================================================
