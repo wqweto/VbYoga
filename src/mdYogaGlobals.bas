@@ -94,9 +94,9 @@ End Function
 Public Function YogaNodeMeasureRedirect( _
             ByVal lNodePtr As Long, _
             ByVal sngWidth As Single, _
-            ByVal eWidthMode As Long, _
+            ByVal eWidthMode As YogaMeasureMode, _
             ByVal sngHeight As Single, _
-            ByVal eHeightMode As Long) As YogaSize
+            ByVal eHeightMode As YogaMeasureMode) As YogaSize
     Const FUNC_NAME     As String = "YogaNodeMeasureRedirect"
     Dim oNode           As cYogaNode
     
