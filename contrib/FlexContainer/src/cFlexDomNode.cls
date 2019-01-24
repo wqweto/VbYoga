@@ -51,11 +51,11 @@ Public Layout                   As cYogaNode
 ' Properties
 '=========================================================================
 
-Property Get FlexBox() As ctxFlexContainer
+Friend Property Get frFlexBox() As ctxFlexContainer
     If Not m_oFlexBox Is Nothing Then
-        Set FlexBox = m_oFlexBox
+        Set frFlexBox = m_oFlexBox
     ElseIf Not m_oParent Is Nothing Then
-        Set FlexBox = m_oParent.FlexBox
+        Set frFlexBox = m_oParent.frFlexBox
     End If
 End Property
 
@@ -112,11 +112,11 @@ Public Function AddContainer(Optional Name As String, Optional CssClass As Strin
 End Function
 
 Public Function AddButton(Optional Name As String, Optional CssClass As String) As cFlexDomNode
-    Set AddButton = AddControl(FlexBox.frLoadButton, Name, Trim$("button " & CssClass))
+    Set AddButton = AddControl(frFlexBox.frLoadButton, Name, Trim$("button " & CssClass))
 End Function
 
 Public Function AddLabel(Optional Name As String, Optional CssClass As String) As cFlexDomNode
-    Set AddLabel = AddControl(FlexBox.frLoadLabel, Name, Trim$("label " & CssClass))
+    Set AddLabel = AddControl(frFlexBox.frLoadLabel, Name, Trim$("label " & CssClass))
     AddLabel.Layout.SetMeasureFunction AddLabel
 End Function
 
@@ -124,7 +124,7 @@ Public Function AddControl(oCtl As Object, Optional Name As String, Optional Css
     Dim oDomNode        As cFlexDomNode
     Dim oFlexBox        As ctxFlexContainer
     
-    Set oFlexBox = FlexBox
+    Set oFlexBox = frFlexBox
     If m_cChildren Is Nothing Then
         Set m_cChildren = New Collection
     End If
