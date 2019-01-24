@@ -26,19 +26,13 @@ DefObj A-Z
 Private Const MODULE_NAME As String = "cFlexDomNode"
 
 '=========================================================================
-' API
-'=========================================================================
-
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
-
-'=========================================================================
 ' Constants and member variables
 '=========================================================================
 
-Private m_oFlexBox              As ctxFlexContainer     '--- weak-ref
-Private m_oParent               As cFlexDomNode         '--- weak-ref
+Private m_lFlexBoxWeakRef       As Long
+Private m_lParentWeakRef        As Long
 Private m_cChildren             As Collection
-Private m_oControl              As Object               '--- weak-ref
+Private m_lControlWeakRef       As Long
 Public Name                     As String
 Public CssClass                 As String
 Public Layout                   As cYogaNode
@@ -52,23 +46,23 @@ Public Layout                   As cYogaNode
 '=========================================================================
 
 Friend Property Get frFlexBox() As ctxFlexContainer
-    If Not m_oFlexBox Is Nothing Then
-        Set frFlexBox = m_oFlexBox
-    ElseIf Not m_oParent Is Nothing Then
-        Set frFlexBox = m_oParent.frFlexBox
+    If m_lFlexBoxWeakRef <> 0 Then
+        Set frFlexBox = YogaWeakRefResurrectTarget(m_lFlexBoxWeakRef)
+    ElseIf m_lParentWeakRef <> 0 Then
+        Set frFlexBox = Parent.frFlexBox
     End If
 End Property
 
 Friend Property Set frFlexBox(oValue As ctxFlexContainer)
-    Call CopyMemory(m_oFlexBox, oValue, 4)
+    m_lFlexBoxWeakRef = YogaWeakRefInit(oValue)
 End Property
 
 Property Get Parent() As cFlexDomNode
-    Set Parent = m_oParent
+    Set Parent = YogaWeakRefResurrectTarget(m_lParentWeakRef)
 End Property
 
 Friend Property Set frParent(oValue As cFlexDomNode)
-    Call CopyMemory(m_oParent, oValue, 4)
+    m_lParentWeakRef = YogaWeakRefInit(oValue)
 End Property
 
 Property Get Item(Index As Variant) As cFlexDomNode
@@ -88,19 +82,19 @@ Attribute GetEnumerator.VB_MemberFlags = "40"
 End Function
 
 Property Get Control() As Object
-    Set Control = m_oControl
+    Set Control = YogaWeakRefResurrectTarget(m_lControlWeakRef)
 End Property
 
 Friend Property Set frControl(oValue As Object)
-    Call CopyMemory(m_oControl, oValue, 4)
+    m_lControlWeakRef = YogaWeakRefInit(oValue)
 End Property
 
 Property Get CtlLabel() As VB.Label
-    Set CtlLabel = m_oControl
+    Set CtlLabel = YogaWeakRefResurrectTarget(m_lControlWeakRef)
 End Property
 
 Property Get CtlButton() As ctxNineButton
-    Set CtlButton = m_oControl
+    Set CtlButton = YogaWeakRefResurrectTarget(m_lControlWeakRef)
 End Property
 
 '=========================================================================
@@ -176,6 +170,9 @@ Public Sub MeasureCallback( _
             ByVal eHeightMode As YogaMeasureMode, _
             sngLayoutWidth As Single, _
             sngLayoutHeight As Single)
+Attribute MeasureCallback.VB_MemberFlags = "40"
+    #If oNode And eWidthMode And sngHeight And eHeightMode Then '--- touch args (silence MZ-Tools->Review Source Code)
+    #End If
     With CtlLabel
         If .AutoSize Then
             If .WordWrap Then
@@ -200,10 +197,7 @@ End Sub
 #End If
 
 Private Sub Class_Terminate()
-    Call CopyMemory(m_oFlexBox, 0&, 4)
-    Call CopyMemory(m_oParent, 0&, 4)
     Set m_cChildren = Nothing
-    Call CopyMemory(m_oControl, 0&, 4)
     Set Layout = Nothing
     #If DebugMode Then
         DebugInstanceTerm MODULE_NAME, m_sDebugID

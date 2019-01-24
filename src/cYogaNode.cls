@@ -137,7 +137,6 @@ End Enum
 ' API
 '=========================================================================
 
-Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
 Private Declare Function YGNodeNew Lib "yoga" Alias "_YGNodeNew@0" () As Long
 Private Declare Function YGNodeNewWithConfig Lib "yoga" Alias "_YGNodeNewWithConfig@4" (ByVal lConfigPtr As Long) As Long
 Private Declare Function YGNodeFree Lib "yoga" Alias "_YGNodeFree@4" (ByVal lNodePtr As Long) As Long
@@ -251,7 +250,7 @@ Private m_oConfig               As cYogaConfig
 Private m_lNodePtr              As Long
 Private m_oMeasureFn            As Object
 Private m_oBaselineFn           As Object
-Private m_oParent               As cYogaNode
+Private m_lParentWeakRef        As Long
 Private m_cChildren             As Collection
 Private m_cLog                  As Collection
 Private m_sngAbsoluteX          As Single
@@ -298,11 +297,11 @@ Public Sub MarkLayoutSeen()
 End Sub
 
 Property Get Parent() As cYogaNode
-    Set Parent = m_oParent
+    Set Parent = YogaWeakRefResurrectTarget(m_lParentWeakRef)
 End Property
 
 Property Set Parent(ByVal oValue As cYogaNode)
-    Call CopyMemory(m_oParent, oValue, 4)
+    m_lParentWeakRef = YogaWeakRefInit(oValue)
 End Property
 
 Property Get IsMeasureDefined() As Boolean
@@ -1060,10 +1059,10 @@ End Function
 
 Public Function GetRelativeX(Optional oContainer As cYogaNode) As Single
     If YogaConstantsIsUndefined(m_sngAbsoluteX) Then
-        If m_oParent Is Nothing Then
+        If m_lParentWeakRef = 0 Then
             m_sngAbsoluteX = LayoutX
         Else
-            m_sngAbsoluteX = m_oParent.GetRelativeX() + LayoutX
+            m_sngAbsoluteX = Parent.GetRelativeX() + LayoutX
         End If
     End If
     GetRelativeX = m_sngAbsoluteX
@@ -1074,10 +1073,10 @@ End Function
 
 Public Function GetRelativeY(Optional oContainer As cYogaNode) As Single
     If YogaConstantsIsUndefined(m_sngAbsoluteY) Then
-        If m_oParent Is Nothing Then
+        If m_lParentWeakRef = 0 Then
             m_sngAbsoluteY = LayoutY
         Else
-            m_sngAbsoluteY = m_oParent.GetRelativeY() + LayoutY
+            m_sngAbsoluteY = Parent.GetRelativeY() + LayoutY
         End If
     End If
     GetRelativeY = m_sngAbsoluteY
@@ -1089,7 +1088,7 @@ End Function
 '--- hidden
 Public Sub LogCallback(oNode As cYogaNode, ByVal eLevel As YogaLogLevel, sMessage As String)
 Attribute LogCallback.VB_MemberFlags = "40"
-    #If oNode And eLevel Then '--- touch args
+    #If oNode And eLevel Then '--- touch args (silence MZ-Tools->Review Source Code)
     #End If
     If Not m_cLog Is Nothing Then
         m_cLog.Add Replace(sMessage, vbLf, vbCrLf)
@@ -1168,7 +1167,6 @@ Private Sub Class_Terminate()
         Call YGNodeFree(m_lNodePtr)
         m_lNodePtr = 0
     End If
-    Call CopyMemory(m_oParent, 0&, 4)
     #If DebugMode Then
         DebugInstanceTerm MODULE_NAME, m_sDebugID
     #End If

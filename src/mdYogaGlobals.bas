@@ -131,6 +131,18 @@ Public Function YogaConstantsIsUndefined(vValue As Variant) As Boolean
     End If
 End Function
 
+Public Function YogaWeakRefInit(oObj As Object) As Long
+    Call CopyMemory(YogaWeakRefInit, oObj, 4)
+End Function
+
+Public Function YogaWeakRefResurrectTarget(ByVal lPtr As Long) As Object
+    Dim pUnk            As IUnknown
+    
+    Call CopyMemory(pUnk, lPtr, 4)
+    Set YogaWeakRefResurrectTarget = pUnk
+    Call CopyMemory(pUnk, 0&, 4)
+End Function
+
 '= private ===============================================================
 
 Private Function pvYogaConfigLoggerRedirect( _
