@@ -97,6 +97,31 @@ Private Sub Form_Load()
             With .AddLabel()
                 .CtlLabel.WordWrap = True
                 .CtlLabel.Caption = "In publishing and graphic design, lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful"
+                With .Layout
+                    .Width = Array(yogaUnitPercent, 9.9)
+                End With
+            End With
+            With .AddButton().Layout
+                .Width = Array(yogaUnitPercent, 30)
+                .MinWidth = 1200
+                .MaxHeight = 1200
+                .Height = Array(yogaUnitPercent, 100)
+            End With
+            With .AddButton()
+                .CtlButton.Style = ucsBtyButtonTurnGreen
+                With .Layout
+                    .Width = Array(yogaUnitPercent, 30)
+                    .MinWidth = 1200
+                    .MaxHeight = 1200
+                End With
+            End With
+            With .AddButton()
+                .CtlButton.Style = ucsBtyButtonTurnRed
+                With .Layout
+                    .Width = Array(yogaUnitPercent, 30)
+                    .MinWidth = 1200
+                    .MaxHeight = 1200
+                End With
             End With
         End With
         With .AddLabel(CssClass:="section-caption")
