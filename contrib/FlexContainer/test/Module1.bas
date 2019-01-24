@@ -5,6 +5,8 @@ Private m_lDebugID          As Long
 Private m_lDebugCount       As Long
 
 Public Sub DebugInstanceInit(sModuleName As String, sDebugID As String, oObj As Object)
+    #If sModuleName And oObj Then '--- silence MZ-Tools linter
+    #End If
     m_lDebugCount = m_lDebugCount + 1
     m_lDebugID = m_lDebugID + 1
     sDebugID = m_lDebugID
