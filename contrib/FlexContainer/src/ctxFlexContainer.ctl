@@ -103,22 +103,6 @@ End Property
 ' Methods
 '=========================================================================
 
-Public Function LoadButton() As VBControlExtender
-    m_lButtonCount = m_lButtonCount + 1
-    If btnButton.UBound < m_lButtonCount Then
-        Load btnButton(m_lButtonCount)
-    End If
-    Set LoadButton = btnButton(m_lButtonCount)
-End Function
-
-Public Function LoadLabel() As VB.Label
-    m_lLabelCount = m_lLabelCount + 1
-    If labLabel.UBound < m_lLabelCount Then
-        Load labLabel(m_lLabelCount)
-    End If
-    Set LoadLabel = labLabel(m_lLabelCount)
-End Function
-
 Public Function Reset()
     For m_lButtonCount = m_lButtonCount To 1 Step -1
         btnButton(m_lButtonCount).Visible = False
@@ -134,6 +118,24 @@ Public Function Reset()
     Set m_oRoot.frFlexBox = Me
     m_oRoot.CssClass = "root container"
     Set m_cMapping = New Collection
+End Function
+
+'= friend ================================================================
+
+Friend Function frLoadButton() As VBControlExtender
+    m_lButtonCount = m_lButtonCount + 1
+    If btnButton.UBound < m_lButtonCount Then
+        Load btnButton(m_lButtonCount)
+    End If
+    Set frLoadButton = btnButton(m_lButtonCount)
+End Function
+
+Friend Function frLoadLabel() As VB.Label
+    m_lLabelCount = m_lLabelCount + 1
+    If labLabel.UBound < m_lLabelCount Then
+        Load labLabel(m_lLabelCount)
+    End If
+    Set frLoadLabel = labLabel(m_lLabelCount)
 End Function
 
 Friend Sub frAddDomNodeMapping(oDomNode As cFlexDomNode, oCtl As Object)

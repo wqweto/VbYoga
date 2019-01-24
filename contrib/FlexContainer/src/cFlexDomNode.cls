@@ -104,11 +104,11 @@ Public Function AddContainer(Optional Name As String, Optional CssClass As Strin
 End Function
 
 Public Function AddButton(Optional Name As String, Optional CssClass As String) As cFlexDomNode
-    Set AddButton = AddControl(FlexBox.LoadButton, Name, Trim$("button " & CssClass))
+    Set AddButton = AddControl(FlexBox.frLoadButton, Name, Trim$("button " & CssClass))
 End Function
 
 Public Function AddLabel(Optional Name As String, Optional CssClass As String) As cFlexDomNode
-    Set AddLabel = AddControl(FlexBox.LoadLabel, Name, Trim$("label " & CssClass))
+    Set AddLabel = AddControl(FlexBox.frLoadLabel, Name, Trim$("label " & CssClass))
 End Function
 
 Public Function AddControl(oCtl As Object, Optional Name As String, Optional CssClass As String) As cFlexDomNode
