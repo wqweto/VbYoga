@@ -11,6 +11,7 @@ Attribute VB_Name = "mdYogaGlobals"
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Private Const MODULE_NAME As String = "mdYogaGlobals"
 
 '=========================================================================
 ' API
@@ -46,6 +47,14 @@ Private Const FLOAT_NAN_BYTES       As Long = &HFFC00000
 Public YogaFloatNan             As Single
 Public YogaDefConfigPtr         As Long
 Private m_oDefaultConfig        As Object
+
+'=========================================================================
+' Error handling
+'=========================================================================
+
+Private Sub PrintError(sFunction As String)
+    Debug.Print "Critical error: " & Err.Description & " [" & MODULE_NAME & "." & sFunction & "]", Timer
+End Sub
 
 '=========================================================================
 ' Functions
@@ -106,7 +115,8 @@ Public Function YogaNodeMeasureRedirect( _
         YogaNodeMeasureRedirect.Width, YogaNodeMeasureRedirect.Height)
     Exit Function
 EH:
-    Debug.Print "Critical error: " & Err.Description & " [" & FUNC_NAME & "]"
+    PrintError FUNC_NAME
+    Resume Next
 End Function
 
 Public Function YogaNodeBaselineRedirect( _
@@ -120,7 +130,8 @@ Public Function YogaNodeBaselineRedirect( _
     YogaNodeBaselineRedirect = oNode.frBaselineFn.BaselineCallback(oNode, sngWidth, sngHeight)
     Exit Function
 EH:
-    Debug.Print "Critical error: " & Err.Description & " [" & FUNC_NAME & "]"
+    PrintError FUNC_NAME
+    Resume Next
 End Function
 
 Public Function YogaConstantsIsUndefined(vValue As Variant) As Boolean
