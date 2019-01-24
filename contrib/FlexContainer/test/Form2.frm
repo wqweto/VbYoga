@@ -42,6 +42,8 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Private m_oCtlCancelMode        As Object
+
 Private Sub Command1_Click()
     With New Form2
         .Show
@@ -77,7 +79,7 @@ Private Sub Form_Load()
                 .Height = Array(yogaUnitPercent, 100)
             End With
             With .AddButton()
-                .Control.Style = ucsBtyButtonTurnGreen
+                .CtlButton.Style = ucsBtyButtonTurnGreen
                 With .Layout
                     .Width = Array(yogaUnitPercent, 30)
                     .MinWidth = 1200
@@ -85,12 +87,16 @@ Private Sub Form_Load()
                 End With
             End With
             With .AddButton()
-                .Control.Style = ucsBtyButtonTurnRed
+                .CtlButton.Style = ucsBtyButtonTurnRed
                 With .Layout
                     .Width = Array(yogaUnitPercent, 30)
                     .MinWidth = 1200
                     .MaxHeight = 1200
                 End With
+            End With
+            With .AddLabel()
+                .CtlLabel.WordWrap = True
+                .CtlLabel.Caption = "In publishing and graphic design, lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document without relying on meaningful"
             End With
         End With
         With .AddLabel(CssClass:="section-caption")
@@ -141,3 +147,19 @@ Private Sub Form_Resize()
         ctxFlexContainer1.Move 0, ctxFlexContainer1.Top, ScaleWidth, ScaleHeight - ctxFlexContainer1.Top
     End If
 End Sub
+
+Public Sub RegisterCancelMode(oCtl As Object)
+    If Not m_oCtlCancelMode Is Nothing And Not m_oCtlCancelMode Is oCtl Then
+        m_oCtlCancelMode.CancelMode
+    End If
+    Set m_oCtlCancelMode = oCtl
+End Sub
+
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    If Not m_oCtlCancelMode Is Nothing Then
+        m_oCtlCancelMode.CancelMode
+        Set m_oCtlCancelMode = Nothing
+    End If
+End Sub
+
+

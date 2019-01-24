@@ -62,6 +62,7 @@ Private Const MODULE_NAME As String = "ctxFlexContainer"
 '=========================================================================
 
 Event Click(DomNode As cFlexDomNode)
+Event RegisterCancelMode(oCtl As Object, Handled As Boolean)
 
 '=========================================================================
 ' Constants and member variables
@@ -73,6 +74,7 @@ Private m_oYogaConfig           As cYogaConfig
 Private m_lButtonCount          As Long
 Private m_lLabelCount           As Long
 Private m_cMapping              As Collection
+Private m_oCtlCancelMode        As Object
 '--- debug
 #If DebugMode Then
     Private m_sDebugID          As String
@@ -119,6 +121,21 @@ Public Function Reset()
     m_oRoot.CssClass = "root container"
     Set m_cMapping = New Collection
 End Function
+
+Public Sub RegisterCancelMode(oCtl As Object)
+    pvRegisterCancelMode Me
+    If Not m_oCtlCancelMode Is Nothing And Not m_oCtlCancelMode Is oCtl Then
+        m_oCtlCancelMode.CancelMode
+    End If
+    Set m_oCtlCancelMode = oCtl
+End Sub
+
+Public Sub CancelMode()
+    If Not m_oCtlCancelMode Is Nothing Then
+        m_oCtlCancelMode.CancelMode
+        Set m_oCtlCancelMode = Nothing
+    End If
+End Sub
 
 '= friend ================================================================
 
@@ -528,6 +545,20 @@ Private Sub pvMergeStyle(oDest As Object, oSrc As Object)
     Next
 End Sub
 
+Private Function pvRegisterCancelMode(oCtl As Object) As Boolean
+    Dim bHandled        As Boolean
+    
+    RaiseEvent RegisterCancelMode(oCtl, bHandled)
+    If Not bHandled Then
+        On Error GoTo QH
+        Parent.RegisterCancelMode oCtl
+        On Error GoTo 0
+    End If
+    '--- success
+    pvRegisterCancelMode = True
+QH:
+End Function
+
 '=========================================================================
 ' Events
 '=========================================================================
@@ -538,6 +569,10 @@ End Sub
 
 Private Sub labLabel_Click(Index As Integer)
     RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(labLabel(Index))))
+End Sub
+
+Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    CancelMode
 End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
