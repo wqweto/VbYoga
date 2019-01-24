@@ -95,6 +95,14 @@ Friend Property Set frControl(oValue As Object)
     Call CopyMemory(m_oControl, oValue, 4)
 End Property
 
+Property Get CtlLabel() As VB.Label
+    Set CtlLabel = m_oControl
+End Property
+
+Property Get CtlButton() As ctxNineButton
+    Set CtlButton = m_oControl
+End Property
+
 '=========================================================================
 ' Methods
 '=========================================================================
