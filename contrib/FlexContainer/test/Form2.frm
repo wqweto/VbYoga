@@ -1,5 +1,6 @@
 VERSION 5.00
 Begin VB.Form Form2 
+   BackColor       =   &H80000005&
    Caption         =   "Form2"
    ClientHeight    =   5436
    ClientLeft      =   108
@@ -31,8 +32,8 @@ Begin VB.Form Form2
       TabIndex        =   0
       Top             =   672
       Width           =   4128
-      _ExtentX        =   7281
-      _ExtentY        =   6837
+      _extentx        =   7281
+      _extenty        =   6837
    End
 End
 Attribute VB_Name = "Form2"

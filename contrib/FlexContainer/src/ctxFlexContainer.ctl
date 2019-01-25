@@ -1,11 +1,27 @@
 VERSION 5.00
 Begin VB.UserControl ctxFlexContainer 
+   BackStyle       =   0  'Transparent
    ClientHeight    =   2880
    ClientLeft      =   0
    ClientTop       =   0
    ClientWidth     =   3840
+   ClipBehavior    =   0  'None
+   ClipControls    =   0   'False
+   BeginProperty Font 
+      Name            =   "Tahoma"
+      Size            =   7.8
+      Charset         =   204
+      Weight          =   400
+      Underline       =   0   'False
+      Italic          =   0   'False
+      Strikethrough   =   0   'False
+   EndProperty
+   HasDC           =   0   'False
+   HitBehavior     =   0  'None
+   KeyPreview      =   -1  'True
    ScaleHeight     =   2880
    ScaleWidth      =   3840
+   Windowless      =   -1  'True
    Begin Project1.ctxNineButton btnButton 
       Height          =   600
       Index           =   0
@@ -18,7 +34,7 @@ Begin VB.UserControl ctxFlexContainer
       _ExtentY        =   1058
       Caption         =   "ctxNineButton1"
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
+         Name            =   "Tahoma"
          Size            =   7.8
          Charset         =   204
          Weight          =   400
@@ -29,6 +45,7 @@ Begin VB.UserControl ctxFlexContainer
    End
    Begin VB.Label labLabel 
       AutoSize        =   -1  'True
+      BackStyle       =   0  'Transparent
       Caption         =   "labLabel"
       Height          =   192
       Index           =   0
@@ -36,7 +53,7 @@ Begin VB.UserControl ctxFlexContainer
       TabIndex        =   0
       Top             =   1428
       Visible         =   0   'False
-      Width           =   636
+      Width           =   564
    End
 End
 Attribute VB_Name = "ctxFlexContainer"
@@ -69,7 +86,10 @@ Event RegisterCancelMode(oCtl As Object, Handled As Boolean)
 ' Constants and member variables
 '=========================================================================
 
+Private WithEvents m_oFont      As StdFont
+Attribute m_oFont.VB_VarHelpID = -1
 Private m_oStyles               As Object
+Private m_oCache                As Object
 Private m_oRoot                 As cFlexDomNode
 Private m_oYogaConfig           As cYogaConfig
 Private m_lButtonCount          As Long
@@ -93,12 +113,30 @@ End Sub
 ' Properties
 '=========================================================================
 
+Property Get Font() As StdFont
+    Set Font = m_oFont
+End Property
+
+Property Set Font(oValue As StdFont)
+    If Not m_oFont Is oValue Then
+        Set m_oFont = oValue
+        m_oFont_FontChanged vbNullString
+    End If
+End Property
+
+'= run-time ==============================================================
+
 Property Get Styles() As Object
-    Set m_oStyles = m_oStyles
+    Set Styles = m_oStyles
 End Property
 
 Property Set Styles(oValue As Object)
-    Set m_oStyles = oValue
+    If oValue Is Nothing Then
+        Set m_oStyles = CreateObject("Scripting.Dictionary")
+    Else
+        Set m_oStyles = oValue
+    End If
+    Set m_oCache = CreateObject("Scripting.Dictionary")
     pvApplyStyles m_oRoot
 End Property
 
@@ -114,7 +152,7 @@ End Property
 ' Methods
 '=========================================================================
 
-Public Function Reset()
+Public Sub Reset()
     For m_lButtonCount = m_lButtonCount To 1 Step -1
         btnButton(m_lButtonCount).Visible = False
     Next
@@ -129,7 +167,12 @@ Public Function Reset()
     Set m_oRoot.frFlexBox = Me
     m_oRoot.CssClass = "root container"
     Set m_cMapping = New Collection
-End Function
+End Sub
+
+Public Sub ApplyLayout()
+    m_oRoot.Layout.CalculateLayout Width, Height
+    m_oRoot.ApplyLayout
+End Sub
 
 Public Sub RegisterCancelMode(oCtl As Object)
     pvRegisterCancelMode Me
@@ -152,6 +195,7 @@ Friend Function frLoadButton() As VBControlExtender
     m_lButtonCount = m_lButtonCount + 1
     If btnButton.UBound < m_lButtonCount Then
         Load btnButton(m_lButtonCount)
+        Set btnButton(m_lButtonCount).Font = m_oFont
     End If
     Set frLoadButton = btnButton(m_lButtonCount)
 End Function
@@ -160,6 +204,7 @@ Friend Function frLoadLabel() As VB.Label
     m_lLabelCount = m_lLabelCount + 1
     If labLabel.UBound < m_lLabelCount Then
         Load labLabel(m_lLabelCount)
+        Set labLabel(m_lLabelCount).Font = m_oFont
     End If
     Set frLoadLabel = labLabel(m_lLabelCount)
 End Function
@@ -170,13 +215,27 @@ End Sub
 
 '= private ===============================================================
 
+Private Sub pvInitUserMode()
+    Set m_oYogaConfig = YogaConfigNew()
+    m_oYogaConfig.PointScaleFactor = 1# / Screen.TwipsPerPixelX
+    m_oYogaConfig.UseWebDefaults = True
+    Set m_oRoot = New cFlexDomNode
+    Set m_oRoot.Layout = YogaNodeNew(m_oYogaConfig)
+    Set m_oRoot.frFlexBox = Me
+    m_oRoot.CssClass = "root container"
+    Set m_cMapping = New Collection
+End Sub
+
 Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
+    Const FUNC_NAME     As String = "pvApplyStyles"
+    Const STR_PROP_PREFIX As String = "property-"
     Dim oStyle          As Object
     Dim oItem           As cFlexDomNode
     Dim vKey            As Variant
     Dim vSplit          As Variant
     Dim vValue          As Variant
     
+    On Error GoTo EH
     Set oStyle = pvGetStyle(oDomNode.Name, oDomNode.CssClass, TypeName(oDomNode.Control))
     With oDomNode.Layout
         For Each vKey In oStyle.Keys
@@ -442,9 +501,14 @@ Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
             Case "border", "border-width"
                 .BorderWidth = Val(vValue)
             Case Else
-                #If DebugMode Then
-                    Debug.Print "Unknown style: " & vKey
-                #End If
+                '--- allow setting control properties from CSS
+                If Left$(LCase$(vKey), Len(STR_PROP_PREFIX)) = STR_PROP_PREFIX Then
+                    CallByName oDomNode.Control, Replace(Mid$(vKey, Len(STR_PROP_PREFIX) + 1), "-", vbNullString), VbLet, vValue
+                Else
+                    #If DebugMode Then
+                        Debug.Print "Unknown style: " & vKey
+                    #End If
+                End If
             End Select
         Next
     End With
@@ -453,6 +517,10 @@ Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
             pvApplyStyles oItem
         Next
     End If
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
 End Sub
 
 Private Function pvToYogaValue(ByVal sValue As String) As Variant
@@ -522,16 +590,16 @@ Private Function pvGetStyle(CtlName As String, CssClass As String, CtlType As St
 End Function
 
 Private Function pvTryGetCache(sKey As String) As Object
-    If m_oStyles.Exists("__cache__" & sKey) Then
-        Set pvTryGetCache = m_oStyles.Item("__cache__" & sKey)
+    If m_oCache.Exists(sKey) Then
+        Set pvTryGetCache = m_oCache.Item(sKey)
     End If
 End Function
 
 Private Function pvSetCache(sKey As String, oValue As Object)
     If oValue Is Nothing Then
-        m_oStyles.Remove "__cache__" & sKey
+        m_oCache.Remove sKey
     Else
-        Set m_oStyles.Item("__cache__" & sKey) = oValue
+        Set m_oCache.Item(sKey) = oValue
     End If
 End Function
 
@@ -595,6 +663,27 @@ EH:
     Resume Next
 End Sub
 
+Private Sub m_oFont_FontChanged(ByVal PropertyName As String)
+    Const FUNC_NAME     As String = "m_oFont_FontChanged"
+    Dim lIdx            As Long
+    
+    On Error GoTo EH
+    For lIdx = 0 To m_lButtonCount
+        btnButton(lIdx).Font = m_oFont
+    Next
+    For lIdx = 0 To m_lLabelCount
+        labLabel(lIdx).Font = m_oFont
+    Next
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub UserControl_HitTest(X As Single, Y As Single, HitResult As Integer)
+    HitResult = vbHitResultHit
+End Sub
+
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     Const FUNC_NAME     As String = "UserControl_MouseMove"
     
@@ -606,19 +695,12 @@ EH:
     Resume Next
 End Sub
 
-Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
-    Const FUNC_NAME     As String = "UserControl_ReadProperties"
+Private Sub UserControl_Resize()
+    Const FUNC_NAME     As String = "UserControl_Resize"
     
     On Error GoTo EH
-    If Ambient.UserMode Then
-        Set m_oYogaConfig = YogaConfigNew()
-        m_oYogaConfig.PointScaleFactor = 1# / Screen.TwipsPerPixelX
-        m_oYogaConfig.UseWebDefaults = True
-        Set m_oRoot = New cFlexDomNode
-        Set m_oRoot.Layout = YogaNodeNew(m_oYogaConfig)
-        Set m_oRoot.frFlexBox = Me
-        m_oRoot.CssClass = "root container"
-        Set m_cMapping = New Collection
+    If Not m_oRoot Is Nothing Then
+        ApplyLayout
     End If
     Exit Sub
 EH:
@@ -626,14 +708,39 @@ EH:
     Resume Next
 End Sub
 
-Private Sub UserControl_Resize()
-    Const FUNC_NAME     As String = "UserControl_Resize"
+Private Sub UserControl_InitProperties()
+    Const FUNC_NAME     As String = "UserControl_InitProperties"
     
     On Error GoTo EH
-    If Not m_oRoot Is Nothing Then
-        m_oRoot.Layout.CalculateLayout Width, Height
-        m_oRoot.ApplyLayout
+    If Ambient.UserMode Then
+        pvInitUserMode
     End If
+    Set Font = Ambient.Font
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
+    Const FUNC_NAME     As String = "UserControl_ReadProperties"
+    
+    On Error GoTo EH
+    If Ambient.UserMode Then
+        pvInitUserMode
+    End If
+    Set Font = PropBag.ReadProperty("Font", Ambient.Font)
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
+    Const FUNC_NAME     As String = "UserControl_WriteProperties"
+    
+    On Error GoTo EH
+    PropBag.WriteProperty "Font", m_oFont, Ambient.Font
     Exit Sub
 EH:
     PrintError FUNC_NAME
