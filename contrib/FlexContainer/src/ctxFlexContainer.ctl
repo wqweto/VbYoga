@@ -84,11 +84,22 @@ Event Click(DomNode As cFlexDomNode)
 Event RegisterCancelMode(oCtl As Object, Handled As Boolean)
 
 '=========================================================================
+' API
+'=========================================================================
+
+Private Declare Function ApiUpdateWindow Lib "user32" Alias "UpdateWindow" (ByVal hWnd As Long) As Long
+
+'=========================================================================
 ' Constants and member variables
 '=========================================================================
 
+Private Const FLOAT_UNDEFINED       As Single = 3.40282347E+38
+Private Const DEF_AUTOAPPLYLAYOUT   As Boolean = False
+
 Private WithEvents m_oFont      As StdFont
 Attribute m_oFont.VB_VarHelpID = -1
+Private m_bAutoApplyLayout      As Boolean
+'--- run-time
 Private m_oStyles               As Object
 Private m_oCache                As Object
 Private m_oRoot                 As cFlexDomNode
@@ -122,6 +133,21 @@ Property Set Font(oValue As StdFont)
     If Not m_oFont Is oValue Then
         Set m_oFont = oValue
         m_oFont_FontChanged vbNullString
+        PropertyChanged
+    End If
+End Property
+
+Property Get AutoApplyLayout() As Boolean
+    AutoApplyLayout = m_bAutoApplyLayout
+End Property
+
+Property Let AutoApplyLayout(ByVal bValue As Boolean)
+    If m_bAutoApplyLayout <> bValue Then
+        m_bAutoApplyLayout = bValue
+        PropertyChanged
+        If Not m_oRoot Is Nothing And bValue Then
+            ApplyLayout
+        End If
     End If
 End Property
 
@@ -170,8 +196,8 @@ Public Sub Reset()
     Set m_cMapping = New Collection
 End Sub
 
-Public Sub ApplyLayout()
-    m_oRoot.Layout.CalculateLayout Width, Height
+Public Sub ApplyLayout(Optional ByVal sngWidth As Single = FLOAT_UNDEFINED, Optional ByVal sngHeight As Single = FLOAT_UNDEFINED)
+    m_oRoot.Layout.CalculateLayout sngWidth, sngHeight
     m_oRoot.ApplyLayout
 End Sub
 
@@ -188,6 +214,23 @@ Public Sub CancelMode()
         m_oCtlCancelMode.CancelMode
         Set m_oCtlCancelMode = Nothing
     End If
+End Sub
+
+Public Sub Refresh()
+    UserControl.Refresh
+End Sub
+
+Public Sub Repaint()
+    Dim lIdx            As Long
+    
+    UserControl.Refresh
+    For lIdx = 1 To m_lButtonCount
+        btnButton(lIdx).Refresh
+    Next
+    For lIdx = 1 To m_lLabelCount
+        labLabel(lIdx).Refresh
+    Next
+    Call ApiUpdateWindow(ContainerHwnd)
 End Sub
 
 '= friend ================================================================
@@ -252,9 +295,9 @@ Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
             Case "min-height"
                 .MinHeight = pvToYogaValue(vValue)
             Case "max-width"
-                .MinWidth = pvToYogaValue(vValue)
+                .MaxWidth = pvToYogaValue(vValue)
             Case "max-height"
-                .MinHeight = pvToYogaValue(vValue)
+                .MaxHeight = pvToYogaValue(vValue)
             Case "direction"
                 Select Case LCase$(vValue)
                 Case "ltr"
@@ -505,7 +548,9 @@ Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
             Case Else
                 '--- allow setting control properties from CSS
                 If Left$(LCase$(vKey), Len(STR_PROP_PREFIX)) = STR_PROP_PREFIX Then
-                    CallByName oDomNode.Control, Replace(Mid$(vKey, Len(STR_PROP_PREFIX) + 1), "-", vbNullString), VbLet, vValue
+                    If InStr(vKey, ":") = 0 And Not oDomNode.Control Is Nothing Then
+                        CallByName oDomNode.Control, Replace(Mid$(vKey, Len(STR_PROP_PREFIX) + 1), "-", vbNullString), VbLet, vValue
+                    End If
                 Else
                     #If DebugMode Then
                         Debug.Print "Unknown style: " & vKey
@@ -564,7 +609,8 @@ Private Function pvGetStyle(CtlName As String, CssClass As String, CtlType As St
             pvSetCache "#" & CtlName, oCache
         End If
         pvMergeStyle oRetVal, oCache
-        For Each vElem In Split(CssClass)
+        For Each vElem In Split(StrReverse(CssClass))
+            vElem = StrReverse(vElem)
             Set oCache = pvTryGetCache("." & vElem)
             If oCache Is Nothing Then
                 If m_oStyles.Exists("." & vElem) Then
@@ -645,7 +691,7 @@ End Function
 
 Private Sub btnButton_Click(Index As Integer)
     Const FUNC_NAME     As String = "btnButton_Click"
-    
+
     On Error GoTo EH
     RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton(Index))))
     Exit Sub
@@ -653,6 +699,21 @@ EH:
     PrintError FUNC_NAME
     Resume Next
 End Sub
+
+'Private Sub btnButton_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+'    Const FUNC_NAME     As String = "btnButton_MouseUp"
+'
+'    On Error GoTo EH
+'    If X >= 0 And X < btnButton(Index).Width And Y >= 0 And Y < btnButton(Index).Height Then
+'        If (btnButton(Index).DownButton And Button And vbLeftButton) <> 0 Then
+'            RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton(Index))))
+'        End If
+'    End If
+'    Exit Sub
+'EH:
+'    PrintError FUNC_NAME
+'    Resume Next
+'End Sub
 
 Private Sub labLabel_Click(Index As Integer)
     Const FUNC_NAME     As String = "labLabel_Click"
@@ -701,8 +762,8 @@ Private Sub UserControl_Resize()
     Const FUNC_NAME     As String = "UserControl_Resize"
     
     On Error GoTo EH
-    If Not m_oRoot Is Nothing Then
-        ApplyLayout
+    If Not m_oRoot Is Nothing And m_bAutoApplyLayout Then
+        ApplyLayout Width, Height
     End If
     Exit Sub
 EH:
@@ -718,6 +779,7 @@ Private Sub UserControl_InitProperties()
         pvInitUserMode
     End If
     Set Font = Ambient.Font
+    AutoApplyLayout = DEF_AUTOAPPLYLAYOUT
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -732,6 +794,7 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
         pvInitUserMode
     End If
     Set Font = PropBag.ReadProperty("Font", Ambient.Font)
+    AutoApplyLayout = PropBag.ReadProperty("AutoApplyLayout", DEF_AUTOAPPLYLAYOUT)
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -743,6 +806,7 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     
     On Error GoTo EH
     PropBag.WriteProperty "Font", m_oFont, Ambient.Font
+    PropBag.WriteProperty "AutoApplyLayout", m_bAutoApplyLayout, DEF_AUTOAPPLYLAYOUT
     Exit Sub
 EH:
     PrintError FUNC_NAME

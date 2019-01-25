@@ -32,8 +32,18 @@ Begin VB.Form Form2
       TabIndex        =   0
       Top             =   672
       Width           =   4128
-      _extentx        =   7281
-      _extenty        =   6837
+      _ExtentX        =   7281
+      _ExtentY        =   6837
+      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
+         Name            =   "MS Sans Serif"
+         Size            =   7.8
+         Charset         =   204
+         Weight          =   400
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      AutoApplyLayout =   -1  'True
    End
 End
 Attribute VB_Name = "Form2"
