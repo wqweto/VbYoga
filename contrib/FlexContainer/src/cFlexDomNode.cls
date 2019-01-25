@@ -191,7 +191,11 @@ Attribute MeasureCallback.VB_MemberFlags = "40"
     With CtlLabel
         If .AutoSize Then
             If .WordWrap Then
-                .Width = Int(sngWidth / Screen.TwipsPerPixelX) * Screen.TwipsPerPixelX
+                If YogaConstantsIsUndefined(sngWidth) Then
+                    .Width = Screen.Width
+                Else
+                    .Width = sngWidth
+                End If
             Else
                 .Width = .Width
             End If
