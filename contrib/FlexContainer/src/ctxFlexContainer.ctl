@@ -1,5 +1,6 @@
 VERSION 5.00
 Begin VB.UserControl ctxFlexContainer 
+   BackColor       =   &H8000000D&
    BackStyle       =   0  'Transparent
    ClientHeight    =   2880
    ClientLeft      =   0
@@ -23,16 +24,16 @@ Begin VB.UserControl ctxFlexContainer
    ScaleWidth      =   3840
    Windowless      =   -1  'True
    Begin Project1.ctxNineButton btnButton 
-      Height          =   600
+      Height          =   684
       Index           =   0
-      Left            =   588
+      Left            =   672
       TabIndex        =   1
-      Top             =   336
+      Top             =   504
       Visible         =   0   'False
-      Width           =   1524
-      _ExtentX        =   2688
-      _ExtentY        =   1058
-      Caption         =   "ctxNineButton1"
+      Width           =   1356
+      _ExtentX        =   2392
+      _ExtentY        =   1207
+      Caption         =   "btnButton"
       BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
          Name            =   "Tahoma"
          Size            =   7.8
@@ -237,6 +238,7 @@ Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
     
     On Error GoTo EH
     Set oStyle = pvGetStyle(oDomNode.Name, oDomNode.CssClass, TypeName(oDomNode.Control))
+    Set oDomNode.Style = oStyle
     With oDomNode.Layout
         For Each vKey In oStyle.Keys
             vValue = oStyle.Item(vKey)

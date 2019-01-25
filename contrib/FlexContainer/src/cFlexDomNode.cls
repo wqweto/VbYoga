@@ -36,6 +36,7 @@ Private m_lControlWeakRef       As Long
 Public Name                     As String
 Public CssClass                 As String
 Public Layout                   As cYogaNode
+Public Style                    As Object
 '--- debug
 #If DebugMode Then
     Private m_sDebugID          As String
@@ -90,11 +91,25 @@ Friend Property Set frControl(oValue As Object)
 End Property
 
 Property Get CtlLabel() As VB.Label
-    Set CtlLabel = YogaWeakRefResurrectTarget(m_lControlWeakRef)
+    Dim oRetVal         As Object
+    
+    Set oRetVal = Control
+    If Not oRetVal Is Nothing Then
+        If TypeOf oRetVal Is VB.Label Then
+            Set CtlLabel = oRetVal
+        End If
+    End If
 End Property
 
 Property Get CtlButton() As ctxNineButton
-    Set CtlButton = YogaWeakRefResurrectTarget(m_lControlWeakRef)
+    Dim oRetVal         As Object
+    
+    Set oRetVal = Control
+    If Not oRetVal Is Nothing Then
+        If TypeOf oRetVal Is ctxNineButton Then
+            Set CtlButton = oRetVal
+        End If
+    End If
 End Property
 
 '=========================================================================
