@@ -23,16 +23,17 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_percentage_width_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Width = Array(yogaUnitPercent, 30)
     root_child0.Height = Array(yogaUnitPercent, 30)
     root.Insert 0, root_child0
@@ -64,14 +65,14 @@ Public Sub Test_percentage_width_height()
 End Sub
 
 Public Sub Test_percentage_position_left_top()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 400
     root.Height = 400
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Left = Array(yogaUnitPercent, 10)
     root_child0.Top = Array(yogaUnitPercent, 20)
     root_child0.Width = Array(yogaUnitPercent, 45)
@@ -105,14 +106,14 @@ Public Sub Test_percentage_position_left_top()
 End Sub
 
 Public Sub Test_percentage_position_bottom_right()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 500
     root.Height = 500
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Right = Array(yogaUnitPercent, 20)
     root_child0.Bottom = Array(yogaUnitPercent, 10)
     root_child0.Width = Array(yogaUnitPercent, 55)
@@ -146,19 +147,19 @@ Public Sub Test_percentage_position_bottom_right()
 End Sub
 
 Public Sub Test_percentage_flex_basis()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 50)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.FlexBasis = Array(yogaUnitPercent, 25)
     root.Insert 1, root_child1
@@ -200,18 +201,18 @@ Public Sub Test_percentage_flex_basis()
 End Sub
 
 Public Sub Test_percentage_flex_basis_cross()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 50)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.FlexBasis = Array(yogaUnitPercent, 25)
     root.Insert 1, root_child1
@@ -253,18 +254,18 @@ Public Sub Test_percentage_flex_basis_cross()
 End Sub
 
 Public Sub Test_percentage_flex_basis_cross_min_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MinHeight = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 2
     root_child1.MinHeight = Array(yogaUnitPercent, 10)
     root.Insert 1, root_child1
@@ -306,20 +307,20 @@ Public Sub Test_percentage_flex_basis_cross_min_height()
 End Sub
 
 Public Sub Test_percentage_flex_basis_main_max_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 10)
     root_child0.MaxHeight = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 4
     root_child1.FlexBasis = Array(yogaUnitPercent, 10)
     root_child1.MaxHeight = Array(yogaUnitPercent, 20)
@@ -362,19 +363,19 @@ Public Sub Test_percentage_flex_basis_main_max_height()
 End Sub
 
 Public Sub Test_percentage_flex_basis_cross_max_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 10)
     root_child0.MaxHeight = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 4
     root_child1.FlexBasis = Array(yogaUnitPercent, 10)
     root_child1.MaxHeight = Array(yogaUnitPercent, 20)
@@ -417,20 +418,20 @@ Public Sub Test_percentage_flex_basis_cross_max_height()
 End Sub
 
 Public Sub Test_percentage_flex_basis_main_max_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 15)
     root_child0.MaxWidth = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 4
     root_child1.FlexBasis = Array(yogaUnitPercent, 10)
     root_child1.MaxWidth = Array(yogaUnitPercent, 20)
@@ -473,19 +474,19 @@ Public Sub Test_percentage_flex_basis_main_max_width()
 End Sub
 
 Public Sub Test_percentage_flex_basis_cross_max_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 10)
     root_child0.MaxWidth = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 4
     root_child1.FlexBasis = Array(yogaUnitPercent, 15)
     root_child1.MaxWidth = Array(yogaUnitPercent, 20)
@@ -528,20 +529,20 @@ Public Sub Test_percentage_flex_basis_cross_max_width()
 End Sub
 
 Public Sub Test_percentage_flex_basis_main_min_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 15)
     root_child0.MinWidth = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 4
     root_child1.FlexBasis = Array(yogaUnitPercent, 10)
     root_child1.MinWidth = Array(yogaUnitPercent, 20)
@@ -584,19 +585,19 @@ Public Sub Test_percentage_flex_basis_main_min_width()
 End Sub
 
 Public Sub Test_percentage_flex_basis_cross_min_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 10)
     root_child0.MinWidth = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 4
     root_child1.FlexBasis = Array(yogaUnitPercent, 15)
     root_child1.MinWidth = Array(yogaUnitPercent, 20)
@@ -639,13 +640,13 @@ Public Sub Test_percentage_flex_basis_cross_min_width()
 End Sub
 
 Public Sub Test_percentage_multiple_nested_with_padding_margin_and_percentage_values()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 10)
     root_child0.MarginLeft = 5
@@ -659,7 +660,7 @@ Public Sub Test_percentage_multiple_nested_with_padding_margin_and_percentage_va
     root_child0.MinWidth = Array(yogaUnitPercent, 60)
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.MarginLeft = 5
     root_child0_child0.MarginTop = 5
     root_child0_child0.MarginRight = 5
@@ -671,7 +672,7 @@ Public Sub Test_percentage_multiple_nested_with_padding_margin_and_percentage_va
     root_child0_child0.Width = Array(yogaUnitPercent, 50)
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0 = YogaNodeNew(Config)
     root_child0_child0_child0.MarginLeft = Array(yogaUnitPercent, 5)
     root_child0_child0_child0.MarginTop = Array(yogaUnitPercent, 5)
     root_child0_child0_child0.MarginRight = Array(yogaUnitPercent, 5)
@@ -683,7 +684,7 @@ Public Sub Test_percentage_multiple_nested_with_padding_margin_and_percentage_va
     root_child0_child0_child0.Width = Array(yogaUnitPercent, 45)
     root_child0_child0.Insert 0, root_child0_child0_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 4
     root_child1.FlexBasis = Array(yogaUnitPercent, 15)
     root_child1.MinWidth = Array(yogaUnitPercent, 20)
@@ -746,13 +747,13 @@ Public Sub Test_percentage_multiple_nested_with_padding_margin_and_percentage_va
 End Sub
 
 Public Sub Test_percentage_margin_should_calculate_based_only_on_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MarginLeft = Array(yogaUnitPercent, 10)
     root_child0.MarginTop = Array(yogaUnitPercent, 10)
@@ -760,7 +761,7 @@ Public Sub Test_percentage_margin_should_calculate_based_only_on_width()
     root_child0.MarginBottom = Array(yogaUnitPercent, 10)
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.Width = 10
     root_child0_child0.Height = 10
     root_child0.Insert 0, root_child0_child0
@@ -802,13 +803,13 @@ Public Sub Test_percentage_margin_should_calculate_based_only_on_width()
 End Sub
 
 Public Sub Test_percentage_padding_should_calculate_based_only_on_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.PaddingLeft = Array(yogaUnitPercent, 10)
     root_child0.PaddingTop = Array(yogaUnitPercent, 10)
@@ -816,7 +817,7 @@ Public Sub Test_percentage_padding_should_calculate_based_only_on_width()
     root_child0.PaddingBottom = Array(yogaUnitPercent, 10)
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.Width = 10
     root_child0_child0.Height = 10
     root_child0.Insert 0, root_child0_child0
@@ -858,13 +859,13 @@ Public Sub Test_percentage_padding_should_calculate_based_only_on_width()
 End Sub
 
 Public Sub Test_percentage_absolute_position()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Left = Array(yogaUnitPercent, 30)
     root_child0.Top = Array(yogaUnitPercent, 10)
@@ -899,11 +900,11 @@ Public Sub Test_percentage_absolute_position()
 End Sub
 
 Public Sub Test_percentage_width_height_undefined_parent_size()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Width = Array(yogaUnitPercent, 50)
     root_child0.Height = Array(yogaUnitPercent, 50)
     root.Insert 0, root_child0
@@ -935,26 +936,26 @@ Public Sub Test_percentage_width_height_undefined_parent_size()
 End Sub
 
 Public Sub Test_percent_within_flex_grow()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 350
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Width = 100
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
 
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(config)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(Config)
     root_child1_child0.Width = Array(yogaUnitPercent, 100)
     root_child1.Insert 0, root_child1_child0
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.Width = 100
     root.Insert 2, root_child2
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1015,29 +1016,29 @@ Public Sub Test_percent_within_flex_grow()
 End Sub
 
 Public Sub Test_percentage_container_in_wrapping_container()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
-    root_child0_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
+    root_child0_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0_child0.JustifyContent = YogaJustify.yogaJustCenter
     root_child0_child0.Width = Array(yogaUnitPercent, 100)
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0 = YogaNodeNew(Config)
     root_child0_child0_child0.Width = 50
     root_child0_child0_child0.Height = 50
     root_child0_child0.Insert 0, root_child0_child0_child0
 
-    Dim root_child0_child0_child1 As cYogaNode: Set root_child0_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child0_child1 As cYogaNode: Set root_child0_child0_child1 = YogaNodeNew(Config)
     root_child0_child0_child1.Width = 50
     root_child0_child0_child1.Height = 50
     root_child0_child0.Insert 1, root_child0_child0_child1
@@ -1099,25 +1100,25 @@ Public Sub Test_percentage_container_in_wrapping_container()
 End Sub
 
 Public Sub Test_percent_absolute_position()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 60
     root.Height = 50
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
-    root_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
+    root_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Left = Array(yogaUnitPercent, 50)
     root_child0.Width = Array(yogaUnitPercent, 100)
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.Width = Array(yogaUnitPercent, 100)
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(Config)
     root_child0_child1.Width = Array(yogaUnitPercent, 100)
     root_child0.Insert 1, root_child0_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1167,3 +1168,25 @@ Public Sub Test_percent_absolute_position()
     Assert.AreEqual 50!, root_child0_child1.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_percentage_width_height"
+    Tests.Add "Test_percentage_position_left_top"
+    Tests.Add "Test_percentage_position_bottom_right"
+    Tests.Add "Test_percentage_flex_basis"
+    Tests.Add "Test_percentage_flex_basis_cross"
+    Tests.Add "Test_percentage_flex_basis_cross_min_height"
+    Tests.Add "Test_percentage_flex_basis_main_max_height"
+    Tests.Add "Test_percentage_flex_basis_cross_max_height"
+    Tests.Add "Test_percentage_flex_basis_main_max_width"
+    Tests.Add "Test_percentage_flex_basis_cross_max_width"
+    Tests.Add "Test_percentage_flex_basis_main_min_width"
+    Tests.Add "Test_percentage_flex_basis_cross_min_width"
+    Tests.Add "Test_percentage_multiple_nested_with_padding_margin_and_percentage_values"
+    Tests.Add "Test_percentage_margin_should_calculate_based_only_on_width"
+    Tests.Add "Test_percentage_padding_should_calculate_based_only_on_width"
+    Tests.Add "Test_percentage_absolute_position"
+    Tests.Add "Test_percentage_width_height_undefined_parent_size"
+    Tests.Add "Test_percent_within_flex_grow"
+    Tests.Add "Test_percentage_container_in_wrapping_container"
+    Tests.Add "Test_percent_absolute_position"
+End Sub

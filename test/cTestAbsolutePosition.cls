@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_absolute_layout_width_height_start_top()
     Dim oConfig         As cYogaConfig
@@ -73,13 +74,13 @@ End Sub
 
 
 Public Sub Test_absolute_layout_width_height_end_bottom()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.End_ = 10
     root_child0.Bottom = 10
@@ -114,13 +115,13 @@ Public Sub Test_absolute_layout_width_height_end_bottom()
 End Sub
 
 Public Sub Test_absolute_layout_start_top_end_bottom()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Start = 10
     root_child0.Top = 10
@@ -155,13 +156,13 @@ Public Sub Test_absolute_layout_start_top_end_bottom()
 End Sub
 
 Public Sub Test_absolute_layout_width_height_start_top_end_bottom()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Start = 10
     root_child0.Top = 10
@@ -198,21 +199,21 @@ Public Sub Test_absolute_layout_width_height_start_top_end_bottom()
 End Sub
 
 Public Sub Test_do_not_clamp_height_of_absolute_node_to_height_of_its_overflow_hidden_parent()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Overflow = YogaOverflow.yogaOverflowHidden
     root.Width = 50
     root.Height = 50
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Start = 0
     root_child0.Top = 0
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.Width = 100
     root_child0_child0.Height = 100
     root_child0.Insert 0, root_child0_child0
@@ -254,9 +255,9 @@ Public Sub Test_do_not_clamp_height_of_absolute_node_to_height_of_its_overflow_h
 End Sub
 
 Public Sub Test_absolute_layout_within_border()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.MarginLeft = 10
     root.MarginTop = 10
     root.MarginRight = 10
@@ -272,7 +273,7 @@ Public Sub Test_absolute_layout_within_border()
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Left = 0
     root_child0.Top = 0
@@ -280,7 +281,7 @@ Public Sub Test_absolute_layout_within_border()
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.PositionType = YogaPositionType.yogaPosAbsolute
     root_child1.Right = 0
     root_child1.Bottom = 0
@@ -288,7 +289,7 @@ Public Sub Test_absolute_layout_within_border()
     root_child1.Height = 50
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.PositionType = YogaPositionType.yogaPosAbsolute
     root_child2.Left = 0
     root_child2.Top = 0
@@ -300,7 +301,7 @@ Public Sub Test_absolute_layout_within_border()
     root_child2.Height = 50
     root.Insert 2, root_child2
 
-    Dim root_child3 As cYogaNode: Set root_child3 = YogaNodeNew(config)
+    Dim root_child3 As cYogaNode: Set root_child3 = YogaNodeNew(Config)
     root_child3.PositionType = YogaPositionType.yogaPosAbsolute
     root_child3.Right = 0
     root_child3.Bottom = 0
@@ -369,16 +370,16 @@ Public Sub Test_absolute_layout_within_border()
 End Sub
 
 Public Sub Test_absolute_layout_align_items_and_justify_content_center()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 60
     root_child0.Height = 40
@@ -411,16 +412,16 @@ Public Sub Test_absolute_layout_align_items_and_justify_content_center()
 End Sub
 
 Public Sub Test_absolute_layout_align_items_and_justify_content_flex_end()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustFlexEnd
     root.AlignItems = YogaAlign.yogaAlignFlexEnd
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 60
     root_child0.Height = 40
@@ -453,15 +454,15 @@ Public Sub Test_absolute_layout_align_items_and_justify_content_flex_end()
 End Sub
 
 Public Sub Test_absolute_layout_justify_content_center()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 60
     root_child0.Height = 40
@@ -494,15 +495,15 @@ Public Sub Test_absolute_layout_justify_content_center()
 End Sub
 
 Public Sub Test_absolute_layout_align_items_center()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 60
     root_child0.Height = 40
@@ -535,14 +536,14 @@ Public Sub Test_absolute_layout_align_items_center()
 End Sub
 
 Public Sub Test_absolute_layout_align_items_center_on_child_only()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignCenter
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 60
@@ -576,16 +577,16 @@ Public Sub Test_absolute_layout_align_items_center_on_child_only()
 End Sub
 
 Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_top_position()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Top = 10
     root_child0.Width = 60
@@ -619,16 +620,16 @@ Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_top_p
 End Sub
 
 Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_bottom_position()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Bottom = 10
     root_child0.Width = 60
@@ -662,16 +663,16 @@ Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_botto
 End Sub
 
 Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_left_position()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Left = 5
     root_child0.Width = 60
@@ -705,16 +706,16 @@ Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_left_
 End Sub
 
 Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_right_position()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.FlexGrow = 1
     root.Width = 110
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Right = 5
     root_child0.Width = 60
@@ -748,9 +749,9 @@ Public Sub Test_absolute_layout_align_items_and_justify_content_center_and_right
 End Sub
 
 Public Sub Test_position_root_with_rtl_should_position_withoutdirection()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Left = 72
     root.Width = 52
     root.Height = 52
@@ -772,27 +773,27 @@ Public Sub Test_position_root_with_rtl_should_position_withoutdirection()
 End Sub
 
 Public Sub Test_absolute_layout_percentage_bottom_based_on_parent_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Top = Array(yogaUnitPercent, 50)
     root_child0.Width = 10
     root_child0.Height = 10
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.PositionType = YogaPositionType.yogaPosAbsolute
     root_child1.Bottom = Array(yogaUnitPercent, 50)
     root_child1.Width = 10
     root_child1.Height = 10
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.PositionType = YogaPositionType.yogaPosAbsolute
     root_child2.Top = Array(yogaUnitPercent, 10)
     root_child2.Bottom = Array(yogaUnitPercent, 10)
@@ -846,14 +847,14 @@ Public Sub Test_absolute_layout_percentage_bottom_based_on_parent_height()
 End Sub
 
 Public Sub Test_absolute_layout_in_wrap_reverse_column_container()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Wrap = YogaWrap.yogaWrapWrapReverse
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 20
     root_child0.Height = 20
@@ -886,15 +887,15 @@ Public Sub Test_absolute_layout_in_wrap_reverse_column_container()
 End Sub
 
 Public Sub Test_absolute_layout_in_wrap_reverse_row_container()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Wrap = YogaWrap.yogaWrapWrapReverse
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 20
     root_child0.Height = 20
@@ -927,14 +928,14 @@ Public Sub Test_absolute_layout_in_wrap_reverse_row_container()
 End Sub
 
 Public Sub Test_absolute_layout_in_wrap_reverse_column_container_flex_end()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Wrap = YogaWrap.yogaWrapWrapReverse
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignFlexEnd
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 20
@@ -968,15 +969,15 @@ Public Sub Test_absolute_layout_in_wrap_reverse_column_container_flex_end()
 End Sub
 
 Public Sub Test_absolute_layout_in_wrap_reverse_row_container_flex_end()
-    Dim config As cYogaConfig: Set config = YogaConfigNew
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Wrap = YogaWrap.yogaWrapWrapReverse
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignFlexEnd
     root_child0.PositionType = YogaPositionType.yogaPosAbsolute
     root_child0.Width = 20
@@ -1009,3 +1010,26 @@ Public Sub Test_absolute_layout_in_wrap_reverse_row_container_flex_end()
     Assert.AreEqual 20!, root_child0.LayoutHeight, "20! = root_child0.LayoutHeight"
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_absolute_layout_width_height_start_top"
+    Tests.Add "Test_absolute_layout_width_height_end_bottom"
+    Tests.Add "Test_absolute_layout_start_top_end_bottom"
+    Tests.Add "Test_absolute_layout_width_height_start_top_end_bottom"
+    Tests.Add "Test_do_not_clamp_height_of_absolute_node_to_height_of_its_overflow_hidden_parent"
+    Tests.Add "Test_absolute_layout_within_border"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_flex_end"
+    Tests.Add "Test_absolute_layout_justify_content_center"
+    Tests.Add "Test_absolute_layout_align_items_center"
+    Tests.Add "Test_absolute_layout_align_items_center_on_child_only"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_top_position"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_bottom_position"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_left_position"
+    Tests.Add "Test_absolute_layout_align_items_and_justify_content_center_and_right_position"
+    Tests.Add "Test_position_root_with_rtl_should_position_withoutdirection"
+    Tests.Add "Test_absolute_layout_percentage_bottom_based_on_parent_height"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_column_container"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_row_container"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_column_container_flex_end"
+    Tests.Add "Test_absolute_layout_in_wrap_reverse_row_container_flex_end"
+End Sub

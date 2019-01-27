@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_border_no_size()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -215,3 +216,10 @@ Public Sub Test_border_center_child()
     Assert.AreEqual 10!, root_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_border_no_size"
+    Tests.Add "Test_border_container_match_child"
+    Tests.Add "Test_border_flex_child"
+    Tests.Add "Test_border_stretch_child"
+    Tests.Add "Test_border_center_child"
+End Sub

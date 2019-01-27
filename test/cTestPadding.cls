@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_padding_no_size()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -259,3 +260,11 @@ Public Sub Test_child_with_padding_align_end()
     Assert.AreEqual 100!, root_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_padding_no_size"
+    Tests.Add "Test_padding_container_match_child"
+    Tests.Add "Test_padding_flex_child"
+    Tests.Add "Test_padding_stretch_child"
+    Tests.Add "Test_padding_center_child"
+    Tests.Add "Test_child_with_padding_align_end"
+End Sub

@@ -23,16 +23,17 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_margin_start()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginStart = 10
     root_child0.Width = 10
     root.Insert 0, root_child0
@@ -64,13 +65,13 @@ Public Sub Test_margin_start()
 End Sub
 
 Public Sub Test_margin_top()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginTop = 10
     root_child0.Height = 10
     root.Insert 0, root_child0
@@ -102,15 +103,15 @@ Public Sub Test_margin_top()
 End Sub
 
 Public Sub Test_margin_end()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.JustifyContent = YogaJustify.yogaJustFlexEnd
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginEnd = 10
     root_child0.Width = 10
     root.Insert 0, root_child0
@@ -142,14 +143,14 @@ Public Sub Test_margin_end()
 End Sub
 
 Public Sub Test_margin_bottom()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustFlexEnd
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginBottom = 10
     root_child0.Height = 10
     root.Insert 0, root_child0
@@ -181,14 +182,14 @@ Public Sub Test_margin_bottom()
 End Sub
 
 Public Sub Test_margin_and_flex_row()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MarginStart = 10
     root_child0.MarginEnd = 10
@@ -221,13 +222,13 @@ Public Sub Test_margin_and_flex_row()
 End Sub
 
 Public Sub Test_margin_and_flex_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MarginTop = 10
     root_child0.MarginBottom = 10
@@ -260,14 +261,14 @@ Public Sub Test_margin_and_flex_column()
 End Sub
 
 Public Sub Test_margin_and_stretch_row()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MarginTop = 10
     root_child0.MarginBottom = 10
@@ -300,13 +301,13 @@ Public Sub Test_margin_and_stretch_row()
 End Sub
 
 Public Sub Test_margin_and_stretch_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MarginStart = 10
     root_child0.MarginEnd = 10
@@ -339,19 +340,19 @@ Public Sub Test_margin_and_stretch_column()
 End Sub
 
 Public Sub Test_margin_with_sibling_row()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MarginEnd = 10
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -392,18 +393,18 @@ Public Sub Test_margin_with_sibling_row()
 End Sub
 
 Public Sub Test_margin_with_sibling_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MarginBottom = 10
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -444,20 +445,20 @@ Public Sub Test_margin_with_sibling_column()
 End Sub
 
 Public Sub Test_margin_auto_bottom()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginBottom = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -499,20 +500,20 @@ Public Sub Test_margin_auto_bottom()
 End Sub
 
 Public Sub Test_margin_auto_top()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginTop = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -554,21 +555,21 @@ Public Sub Test_margin_auto_top()
 End Sub
 
 Public Sub Test_margin_auto_bottom_and_top()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginTop = Array(yogaUnitAuto)
     root_child0.MarginBottom = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -610,21 +611,21 @@ Public Sub Test_margin_auto_bottom_and_top()
 End Sub
 
 Public Sub Test_margin_auto_bottom_and_top_justify_center()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginTop = Array(yogaUnitAuto)
     root_child0.MarginBottom = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -666,26 +667,26 @@ Public Sub Test_margin_auto_bottom_and_top_justify_center()
 End Sub
 
 Public Sub Test_margin_auto_mutiple_children_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginTop = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.MarginTop = Array(yogaUnitAuto)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.Width = 50
     root_child2.Height = 50
     root.Insert 2, root_child2
@@ -737,27 +738,27 @@ Public Sub Test_margin_auto_mutiple_children_column()
 End Sub
 
 Public Sub Test_margin_auto_mutiple_children_row()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.MarginRight = Array(yogaUnitAuto)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.Width = 50
     root_child2.Height = 50
     root.Insert 2, root_child2
@@ -809,22 +810,22 @@ Public Sub Test_margin_auto_mutiple_children_row()
 End Sub
 
 Public Sub Test_margin_auto_left_and_right_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -866,20 +867,20 @@ Public Sub Test_margin_auto_left_and_right_column()
 End Sub
 
 Public Sub Test_margin_auto_left_and_right()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -921,22 +922,22 @@ Public Sub Test_margin_auto_left_and_right()
 End Sub
 
 Public Sub Test_margin_auto_start_and_end_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginStart = Array(yogaUnitAuto)
     root_child0.MarginEnd = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -978,20 +979,20 @@ Public Sub Test_margin_auto_start_and_end_column()
 End Sub
 
 Public Sub Test_margin_auto_start_and_end()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginStart = Array(yogaUnitAuto)
     root_child0.MarginEnd = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1033,21 +1034,21 @@ Public Sub Test_margin_auto_start_and_end()
 End Sub
 
 Public Sub Test_margin_auto_left_and_right_column_and_center()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1089,20 +1090,20 @@ Public Sub Test_margin_auto_left_and_right_column_and_center()
 End Sub
 
 Public Sub Test_margin_auto_left()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1144,20 +1145,20 @@ Public Sub Test_margin_auto_left()
 End Sub
 
 Public Sub Test_margin_auto_right()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1199,21 +1200,21 @@ Public Sub Test_margin_auto_right()
 End Sub
 
 Public Sub Test_margin_auto_left_and_right_strech()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1255,20 +1256,20 @@ Public Sub Test_margin_auto_left_and_right_strech()
 End Sub
 
 Public Sub Test_margin_auto_top_and_bottom_strech()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginTop = Array(yogaUnitAuto)
     root_child0.MarginBottom = Array(yogaUnitAuto)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1310,13 +1311,13 @@ Public Sub Test_margin_auto_top_and_bottom_strech()
 End Sub
 
 Public Sub Test_margin_should_not_be_part_of_max_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 250
     root.Height = 250
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginTop = 20
     root_child0.Width = 100
     root_child0.Height = 100
@@ -1350,13 +1351,13 @@ Public Sub Test_margin_should_not_be_part_of_max_height()
 End Sub
 
 Public Sub Test_margin_should_not_be_part_of_max_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 250
     root.Height = 250
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = 20
     root_child0.Width = 100
     root_child0.MaxWidth = 100
@@ -1390,14 +1391,14 @@ Public Sub Test_margin_should_not_be_part_of_max_width()
 End Sub
 
 Public Sub Test_margin_auto_left_right_child_bigger_than_parent()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.Width = 52
     root.Height = 52
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 72
@@ -1431,14 +1432,14 @@ Public Sub Test_margin_auto_left_right_child_bigger_than_parent()
 End Sub
 
 Public Sub Test_margin_auto_left_child_bigger_than_parent()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.Width = 52
     root.Height = 52
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.Width = 72
     root_child0.Height = 72
@@ -1471,14 +1472,14 @@ Public Sub Test_margin_auto_left_child_bigger_than_parent()
 End Sub
 
 Public Sub Test_margin_fix_left_auto_right_child_bigger_than_parent()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.Width = 52
     root.Height = 52
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = 10
     root_child0.MarginRight = Array(yogaUnitAuto)
     root_child0.Width = 72
@@ -1512,14 +1513,14 @@ Public Sub Test_margin_fix_left_auto_right_child_bigger_than_parent()
 End Sub
 
 Public Sub Test_margin_auto_left_fix_right_child_bigger_than_parent()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.Width = 52
     root.Height = 52
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root_child0.MarginRight = 10
     root_child0.Width = 72
@@ -1553,21 +1554,21 @@ Public Sub Test_margin_auto_left_fix_right_child_bigger_than_parent()
 End Sub
 
 Public Sub Test_margin_auto_top_stretching_child()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexShrink = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 0)
     root_child0.MarginTop = Array(yogaUnitAuto)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1609,21 +1610,21 @@ Public Sub Test_margin_auto_top_stretching_child()
 End Sub
 
 Public Sub Test_margin_auto_left_stretching_child()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.Width = 200
     root.Height = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexShrink = 1
     root_child0.FlexBasis = Array(yogaUnitPercent, 0)
     root_child0.MarginLeft = Array(yogaUnitAuto)
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
@@ -1664,3 +1665,38 @@ Public Sub Test_margin_auto_left_stretching_child()
     Assert.AreEqual 50!, root_child1.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_margin_start"
+    Tests.Add "Test_margin_top"
+    Tests.Add "Test_margin_end"
+    Tests.Add "Test_margin_bottom"
+    Tests.Add "Test_margin_and_flex_row"
+    Tests.Add "Test_margin_and_flex_column"
+    Tests.Add "Test_margin_and_stretch_row"
+    Tests.Add "Test_margin_and_stretch_column"
+    Tests.Add "Test_margin_with_sibling_row"
+    Tests.Add "Test_margin_with_sibling_column"
+    Tests.Add "Test_margin_auto_bottom"
+    Tests.Add "Test_margin_auto_top"
+    Tests.Add "Test_margin_auto_bottom_and_top"
+    Tests.Add "Test_margin_auto_bottom_and_top_justify_center"
+    Tests.Add "Test_margin_auto_mutiple_children_column"
+    Tests.Add "Test_margin_auto_mutiple_children_row"
+    Tests.Add "Test_margin_auto_left_and_right_column"
+    Tests.Add "Test_margin_auto_left_and_right"
+    Tests.Add "Test_margin_auto_start_and_end_column"
+    Tests.Add "Test_margin_auto_start_and_end"
+    Tests.Add "Test_margin_auto_left_and_right_column_and_center"
+    Tests.Add "Test_margin_auto_left"
+    Tests.Add "Test_margin_auto_right"
+    Tests.Add "Test_margin_auto_left_and_right_strech"
+    Tests.Add "Test_margin_auto_top_and_bottom_strech"
+    Tests.Add "Test_margin_should_not_be_part_of_max_height"
+    Tests.Add "Test_margin_should_not_be_part_of_max_width"
+    Tests.Add "Test_margin_auto_left_right_child_bigger_than_parent"
+    Tests.Add "Test_margin_auto_left_child_bigger_than_parent"
+    Tests.Add "Test_margin_fix_left_auto_right_child_bigger_than_parent"
+    Tests.Add "Test_margin_auto_left_fix_right_child_bigger_than_parent"
+    Tests.Add "Test_margin_auto_top_stretching_child"
+    Tests.Add "Test_margin_auto_left_stretching_child"
+End Sub

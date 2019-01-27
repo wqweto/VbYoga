@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_nested_overflowing_child()
     Dim config As cYogaConfig: Set config = YogaConfigNew()
@@ -180,3 +181,8 @@ Public Sub Test_parent_wrap_child_size_overflowing_parent()
     Assert.AreEqual 200!, root_child0_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_nested_overflowing_child"
+    Tests.Add "Test_nested_overflowing_child_in_constraint_parent"
+    Tests.Add "Test_parent_wrap_child_size_overflowing_parent"
+End Sub

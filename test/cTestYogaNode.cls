@@ -23,6 +23,7 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Private Const ObjectVariableNotSetException     As Long = 91
 Private Const SubscriptOutOfRangeException      As Long = 9
@@ -63,10 +64,10 @@ Public Sub TestChildren()
 
     Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
     Parent.Insert 1, child1
-    Dim index As Long
+    Dim Index As Long
     For Each node In Parent
-        Assert.AreEqual index, Parent.IndexOf(node)
-        index = index + 1
+        Assert.AreEqual Index, Parent.IndexOf(node)
+        Index = Index + 1
     Next
 
     Parent.RemoveAt 0
@@ -129,6 +130,7 @@ Public Sub TestResetChild()
 End Sub
 
 Public Sub TestClear()
+    On Error GoTo EH
     Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
     Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
@@ -136,11 +138,14 @@ Public Sub TestClear()
     Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
     Parent.Insert 0, child
     Assert.AreEqual 1, Parent.Count
-    Assert.AreEqual Parent, child.Parent
+    Assert.AreSame Parent, child.Parent
     Parent.Clear
     Assert.AreEqual 0, Parent.Count
     Assert.IsNothing child.Parent
     Assert.AreEqual instanceCount + 2, YogaNodeInstanceCount()
+    Exit Sub
+EH:
+    Err.Raise Err.Number, Err.Source, Err.Description & "(" & Erl & ")"
 End Sub
 
 Public Function MeasureCallback( _
@@ -232,7 +237,7 @@ End Function
 Public Sub TestBaselineFunc()
     Dim node As cYogaNode: Set node = YogaNodeNew()
     node.Height = 200
-    node.flexDirection = YogaFlexDirection.yogaFlexRow
+    node.FlexDirection = YogaFlexDirection.yogaFlexRow
     node.AlignItems = YogaAlign.yogaAlignBaseline
 
     Dim child0 As cYogaNode: Set child0 = YogaNodeNew()
@@ -342,18 +347,26 @@ Private Sub ForceGC()
 End Sub
 
 Public Sub TestDestructor()
+    On Error GoTo EH
     ForceGC
     Dim instanceCount As Long: instanceCount = YogaNodeInstanceCount
     TestDestructorForGC instanceCount
     ForceGC
     Assert.AreEqual instanceCount, YogaNodeInstanceCount()
+    Exit Sub
+EH:
+    Err.Raise Err.Number, Err.Source, Err.Description & ", TestDestructor(" & Erl & ")"
 End Sub
 
 Private Sub TestDestructorForGC(ByVal instanceCount As Long)
+    On Error GoTo EH
     Dim node As cYogaNode: Set node = YogaNodeNew()
-    Assert.IsNotNothing node
+    Assert.AreNotSame Nothing, node
     Assert.AreEqual instanceCount + 1, YogaNodeInstanceCount()
     Set node = Nothing
+    Exit Sub
+EH:
+    Err.Raise Err.Number, Err.Source, Err.Description & ", TestDestructorForGC(" & Erl & ")"
 End Sub
 
 Public Sub TestDestructorWithChildren()
@@ -459,3 +472,30 @@ Public Sub TestLayoutPadding()
     Assert.AreEqual 4, node.LayoutPaddingBottom
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "TestAddChildGetParent"
+    Tests.Add "TestChildren"
+    Tests.Add "TestRemoveAtFromEmpty"
+    Tests.Add "TestRemoveAtOutOfRange"
+    Tests.Add "TestCannotAddChildToMultipleParents"
+    Tests.Add "TestReset"
+    Tests.Add "TestResetParent"
+    Tests.Add "TestResetChild"
+    Tests.Add "TestClear"
+    Tests.Add "TestMeasureFunc"
+    Tests.Add "TestMeasureFuncWithFloat"
+    Tests.Add "TestChildWithMeasureFunc"
+    Tests.Add "TestMeasureFuncWithChild"
+    Tests.Add "TestBaselineFunc"
+    Tests.Add "TestPrintOneNode"
+    Tests.Add "TestPrintWithLogger"
+    Tests.Add "TestPrint"
+    Tests.Add "TestCopyStyle"
+    Tests.Add "TestCopyConstructor"
+    Tests.Add "TestDestructor"
+    Tests.Add "TestDestructorWithChildren"
+    Tests.Add "TestClearWithChildDestructor"
+    Tests.Add "TestMeasureFuncWithDestructor"
+    Tests.Add "TestLayoutMargin"
+    Tests.Add "TestLayoutPadding"
+End Sub

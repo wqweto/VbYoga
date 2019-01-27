@@ -5,3 +5,4 @@
 *.cmp -text
 *.cobj -text
 *.zip -text
+*.pdb -text

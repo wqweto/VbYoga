@@ -23,15 +23,16 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_align_self_center()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignCenter
     root_child0.Width = 10
     root_child0.Height = 10
@@ -64,13 +65,13 @@ Public Sub Test_align_self_center()
 End Sub
 
 Public Sub Test_align_self_flex_end()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignFlexEnd
     root_child0.Width = 10
     root_child0.Height = 10
@@ -103,13 +104,13 @@ Public Sub Test_align_self_flex_end()
 End Sub
 
 Public Sub Test_align_self_flex_start()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignFlexStart
     root_child0.Width = 10
     root_child0.Height = 10
@@ -142,14 +143,14 @@ Public Sub Test_align_self_flex_start()
 End Sub
 
 Public Sub Test_align_self_flex_end_override_flex_start()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignFlexStart
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignFlexEnd
     root_child0.Width = 10
     root_child0.Height = 10
@@ -182,26 +183,26 @@ Public Sub Test_align_self_flex_end_override_flex_start()
 End Sub
 
 Public Sub Test_align_self_baseline()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.AlignSelf = YogaAlign.yogaAlignBaseline
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.AlignSelf = YogaAlign.yogaAlignBaseline
     root_child1.Width = 50
     root_child1.Height = 20
     root.Insert 1, root_child1
 
-    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(config)
+    Dim root_child1_child0 As cYogaNode: Set root_child1_child0 = YogaNodeNew(Config)
     root_child1_child0.Width = 50
     root_child1_child0.Height = 10
     root_child1.Insert 0, root_child1_child0
@@ -252,3 +253,10 @@ Public Sub Test_align_self_baseline()
     Assert.AreEqual 10!, root_child1_child0.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_align_self_center"
+    Tests.Add "Test_align_self_flex_end"
+    Tests.Add "Test_align_self_flex_start"
+    Tests.Add "Test_align_self_flex_end_override_flex_start"
+    Tests.Add "Test_align_self_baseline"
+End Sub

@@ -23,15 +23,16 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_max_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MaxWidth = 50
     root_child0.Height = 10
     root.Insert 0, root_child0
@@ -63,14 +64,14 @@ Public Sub Test_max_width()
 End Sub
 
 Public Sub Test_max_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Width = 10
     root_child0.MaxHeight = 50
     root.Insert 0, root_child0
@@ -102,18 +103,18 @@ Public Sub Test_max_height()
 End Sub
 
 Public Sub Test_min_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MinHeight = 60
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -154,19 +155,19 @@ Public Sub Test_min_height()
 End Sub
 
 Public Sub Test_min_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MinWidth = 60
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -207,15 +208,15 @@ Public Sub Test_min_width()
 End Sub
 
 Public Sub Test_justify_content_min_max()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.Width = 100
     root.MinHeight = 100
     root.MaxHeight = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Width = 60
     root_child0.Height = 60
     root.Insert 0, root_child0
@@ -247,15 +248,15 @@ Public Sub Test_justify_content_min_max()
 End Sub
 
 Public Sub Test_align_items_min_max()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignCenter
     root.MinWidth = 100
     root.MaxWidth = 200
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Width = 60
     root_child0.Height = 60
     root.Insert 0, root_child0
@@ -287,24 +288,24 @@ Public Sub Test_align_items_min_max()
 End Sub
 
 Public Sub Test_justify_content_overflow_min_max()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.JustifyContent = YogaJustify.yogaJustCenter
     root.MinHeight = 100
     root.MaxHeight = 110
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.Width = 50
     root_child0.Height = 50
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root_child1.Height = 50
     root.Insert 1, root_child1
 
-    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(config)
+    Dim root_child2 As cYogaNode: Set root_child2 = YogaNodeNew(Config)
     root_child2.Width = 50
     root_child2.Height = 50
     root.Insert 2, root_child2
@@ -356,19 +357,19 @@ Public Sub Test_justify_content_overflow_min_max()
 End Sub
 
 Public Sub Test_flex_grow_to_min()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.MinHeight = 100
     root.MaxHeight = 500
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexShrink = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Height = 50
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -409,19 +410,19 @@ Public Sub Test_flex_grow_to_min()
 End Sub
 
 Public Sub Test_flex_grow_in_at_most_container()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.AlignItems = YogaAlign.yogaAlignFlexStart
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
-    root_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
+    root_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.FlexGrow = 1
     root_child0_child0.FlexBasis = 0
     root_child0.Insert 0, root_child0_child0
@@ -463,12 +464,12 @@ Public Sub Test_flex_grow_in_at_most_container()
 End Sub
 
 Public Sub Test_flex_grow_child()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 0
     root_child0.Height = 100
@@ -501,17 +502,17 @@ Public Sub Test_flex_grow_child()
 End Sub
 
 Public Sub Test_flex_grow_within_constrained_min_max_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.MinHeight = 100
     root.MaxHeight = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Height = 50
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -552,18 +553,18 @@ Public Sub Test_flex_grow_within_constrained_min_max_column()
 End Sub
 
 Public Sub Test_flex_grow_within_max_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
-    root_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
+    root_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0.MaxWidth = 100
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.FlexGrow = 1
     root_child0_child0.Height = 20
     root_child0.Insert 0, root_child0_child0
@@ -605,18 +606,18 @@ Public Sub Test_flex_grow_within_max_width()
 End Sub
 
 Public Sub Test_flex_grow_within_constrained_max_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
-    root_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
+    root_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0.MaxWidth = 300
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.FlexGrow = 1
     root_child0_child0.Height = 20
     root_child0.Insert 0, root_child0_child0
@@ -658,20 +659,20 @@ Public Sub Test_flex_grow_within_constrained_max_width()
 End Sub
 
 Public Sub Test_flex_root_ignored()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.FlexGrow = 1
     root.Width = 100
     root.MinHeight = 100
     root.MaxHeight = 500
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 200
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Height = 100
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -712,25 +713,25 @@ Public Sub Test_flex_root_ignored()
 End Sub
 
 Public Sub Test_flex_grow_root_minimized()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.MinHeight = 100
     root.MaxHeight = 500
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MinHeight = 100
     root_child0.MaxHeight = 500
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.FlexGrow = 1
     root_child0_child0.FlexBasis = 200
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(Config)
     root_child0_child1.Height = 100
     root_child0.Insert 1, root_child0_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -781,24 +782,24 @@ Public Sub Test_flex_grow_root_minimized()
 End Sub
 
 Public Sub Test_flex_grow_height_maximized()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.Height = 500
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.MinHeight = 100
     root_child0.MaxHeight = 500
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.FlexGrow = 1
     root_child0_child0.FlexBasis = 200
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(Config)
     root_child0_child1.Height = 100
     root_child0.Insert 1, root_child0_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -849,18 +850,18 @@ Public Sub Test_flex_grow_height_maximized()
 End Sub
 
 Public Sub Test_flex_grow_within_constrained_min_row()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.MinWidth = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Width = 50
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -901,16 +902,16 @@ Public Sub Test_flex_grow_within_constrained_min_row()
 End Sub
 
 Public Sub Test_flex_grow_within_constrained_min_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.MinHeight = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Height = 50
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -951,23 +952,23 @@ Public Sub Test_flex_grow_within_constrained_min_column()
 End Sub
 
 Public Sub Test_flex_grow_within_constrained_max_row()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
-    root_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
+    root_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0.MaxWidth = 100
     root_child0.Height = 100
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.FlexShrink = 1
     root_child0_child0.FlexBasis = 100
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child1 As cYogaNode: Set root_child0_child1 = YogaNodeNew(Config)
     root_child0_child1.Width = 50
     root_child0.Insert 1, root_child0_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1018,18 +1019,18 @@ Public Sub Test_flex_grow_within_constrained_max_row()
 End Sub
 
 Public Sub Test_flex_grow_within_constrained_max_column()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 100
     root.MaxHeight = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexShrink = 1
     root_child0.FlexBasis = 100
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.Height = 50
     root.Insert 1, root_child1
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1070,20 +1071,20 @@ Public Sub Test_flex_grow_within_constrained_max_column()
 End Sub
 
 Public Sub Test_child_min_max_width_flexing()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
-    root.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
+    root.FlexDirection = YogaFlexDirection.yogaFlexRow
     root.Width = 120
     root.Height = 50
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.FlexGrow = 1
     root_child0.FlexBasis = 0
     root_child0.MinWidth = 60
     root.Insert 0, root_child0
 
-    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(config)
+    Dim root_child1 As cYogaNode: Set root_child1 = YogaNodeNew(Config)
     root_child1.FlexGrow = 1
     root_child1.FlexBasis = Array(yogaUnitPercent, 50)
     root_child1.MaxWidth = 20
@@ -1126,9 +1127,9 @@ Public Sub Test_child_min_max_width_flexing()
 End Sub
 
 Public Sub Test_min_width_overrides_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 50
     root.MinWidth = 100
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1149,9 +1150,9 @@ Public Sub Test_min_width_overrides_width()
 End Sub
 
 Public Sub Test_max_width_overrides_width()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Width = 200
     root.MaxWidth = 100
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1172,9 +1173,9 @@ Public Sub Test_max_width_overrides_width()
 End Sub
 
 Public Sub Test_min_height_overrides_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Height = 50
     root.MinHeight = 100
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1195,9 +1196,9 @@ Public Sub Test_min_height_overrides_height()
 End Sub
 
 Public Sub Test_max_height_overrides_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.Height = 200
     root.MaxHeight = 100
     root.StyleDirection = YogaDirection.yogaDirLTR
@@ -1218,14 +1219,14 @@ Public Sub Test_max_height_overrides_height()
 End Sub
 
 Public Sub Test_min_max_percent_no_width_height()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignItems = YogaAlign.yogaAlignFlexStart
     root.Width = 100
     root.Height = 100
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root_child0.MinWidth = Array(yogaUnitPercent, 10)
     root_child0.MaxWidth = Array(yogaUnitPercent, 10)
     root_child0.MinHeight = Array(yogaUnitPercent, 10)
@@ -1256,4 +1257,33 @@ Public Sub Test_min_max_percent_no_width_height()
     Assert.AreEqual 0!, root_child0.LayoutY
     Assert.AreEqual 10!, root_child0.LayoutWidth
     Assert.AreEqual 10!, root_child0.LayoutHeight
+End Sub
+
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_max_width"
+    Tests.Add "Test_max_height"
+    Tests.Add "Test_min_height"
+    Tests.Add "Test_min_width"
+    Tests.Add "Test_justify_content_min_max"
+    Tests.Add "Test_align_items_min_max"
+    Tests.Add "Test_justify_content_overflow_min_max"
+    Tests.Add "Test_flex_grow_to_min"
+    Tests.Add "Test_flex_grow_in_at_most_container"
+    Tests.Add "Test_flex_grow_child"
+    Tests.Add "Test_flex_grow_within_constrained_min_max_column"
+    Tests.Add "Test_flex_grow_within_max_width"
+    Tests.Add "Test_flex_grow_within_constrained_max_width"
+    Tests.Add "Test_flex_root_ignored"
+    Tests.Add "Test_flex_grow_root_minimized"
+    Tests.Add "Test_flex_grow_height_maximized"
+    Tests.Add "Test_flex_grow_within_constrained_min_row"
+    Tests.Add "Test_flex_grow_within_constrained_min_column"
+    Tests.Add "Test_flex_grow_within_constrained_max_row"
+    Tests.Add "Test_flex_grow_within_constrained_max_column"
+    Tests.Add "Test_child_min_max_width_flexing"
+    Tests.Add "Test_min_width_overrides_width"
+    Tests.Add "Test_max_width_overrides_width"
+    Tests.Add "Test_min_height_overrides_height"
+    Tests.Add "Test_max_height_overrides_height"
+    Tests.Add "Test_min_max_percent_no_width_height"
 End Sub

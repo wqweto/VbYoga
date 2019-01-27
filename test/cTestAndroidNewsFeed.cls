@@ -23,45 +23,46 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
+Implements ITestFixture
 
 Public Sub Test_android_news_feed()
-    Dim config As cYogaConfig: Set config = YogaConfigNew()
+    Dim Config As cYogaConfig: Set Config = YogaConfigNew()
 
-    Dim root As cYogaNode: Set root = YogaNodeNew(config)
+    Dim root As cYogaNode: Set root = YogaNodeNew(Config)
     root.AlignContent = YogaAlign.yogaAlignStretch
     root.Width = 1080
 
-    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(config)
+    Dim root_child0 As cYogaNode: Set root_child0 = YogaNodeNew(Config)
     root.Insert 0, root_child0
 
-    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0 As cYogaNode: Set root_child0_child0 = YogaNodeNew(Config)
     root_child0_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0.Insert 0, root_child0_child0
 
-    Dim root_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0 = YogaNodeNew(Config)
     root_child0_child0_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0.Insert 0, root_child0_child0_child0
 
-    Dim root_child0_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0_child0 = YogaNodeNew(config)
-    root_child0_child0_child0_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0_child0 = YogaNodeNew(Config)
+    root_child0_child0_child0_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0_child0_child0_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child0_child0.AlignItems = YogaAlign.yogaAlignFlexStart
     root_child0_child0_child0_child0.MarginStart = 36
     root_child0_child0_child0_child0.MarginTop = 24
     root_child0_child0_child0.Insert 0, root_child0_child0_child0_child0
 
-    Dim root_child0_child0_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0_child0_child0 = YogaNodeNew(config)
-    root_child0_child0_child0_child0_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0_child0_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0_child0_child0 = YogaNodeNew(Config)
+    root_child0_child0_child0_child0_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0_child0_child0_child0_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child0_child0.Insert 0, root_child0_child0_child0_child0_child0
 
-    Dim root_child0_child0_child0_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0_child0_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0_child0_child0_child0_child0 As cYogaNode: Set root_child0_child0_child0_child0_child0_child0 = YogaNodeNew(Config)
     root_child0_child0_child0_child0_child0_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child0_child0_child0_child0.Width = 120
     root_child0_child0_child0_child0_child0_child0.Height = 120
     root_child0_child0_child0_child0_child0.Insert 0, root_child0_child0_child0_child0_child0_child0
 
-    Dim root_child0_child0_child0_child0_child1 As cYogaNode: Set root_child0_child0_child0_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child0_child0_child0_child1 As cYogaNode: Set root_child0_child0_child0_child0_child1 = YogaNodeNew(Config)
     root_child0_child0_child0_child0_child1.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child0_child0_child1.FlexShrink = 1
     root_child0_child0_child0_child0_child1.MarginRight = 36
@@ -71,41 +72,41 @@ Public Sub Test_android_news_feed()
     root_child0_child0_child0_child0_child1.PaddingBottom = 18
     root_child0_child0_child0_child0.Insert 1, root_child0_child0_child0_child0_child1
 
-    Dim root_child0_child0_child0_child0_child1_child0 As cYogaNode: Set root_child0_child0_child0_child0_child1_child0 = YogaNodeNew(config)
-    root_child0_child0_child0_child0_child1_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0_child0_child0_child0_child1_child0 As cYogaNode: Set root_child0_child0_child0_child0_child1_child0 = YogaNodeNew(Config)
+    root_child0_child0_child0_child0_child1_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0_child0_child0_child0_child1_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child0_child0_child1_child0.FlexShrink = 1
     root_child0_child0_child0_child0_child1.Insert 0, root_child0_child0_child0_child0_child1_child0
 
-    Dim root_child0_child0_child0_child0_child1_child1 As cYogaNode: Set root_child0_child0_child0_child0_child1_child1 = YogaNodeNew(config)
+    Dim root_child0_child0_child0_child0_child1_child1 As cYogaNode: Set root_child0_child0_child0_child0_child1_child1 = YogaNodeNew(Config)
     root_child0_child0_child0_child0_child1_child1.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child0_child0_child1_child1.FlexShrink = 1
     root_child0_child0_child0_child0_child1.Insert 1, root_child0_child0_child0_child0_child1_child1
 
-    Dim root_child0_child0_child1 As cYogaNode: Set root_child0_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child0_child1 As cYogaNode: Set root_child0_child0_child1 = YogaNodeNew(Config)
     root_child0_child0_child1.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0.Insert 1, root_child0_child0_child1
 
-    Dim root_child0_child0_child1_child0 As cYogaNode: Set root_child0_child0_child1_child0 = YogaNodeNew(config)
-    root_child0_child0_child1_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0_child0_child1_child0 As cYogaNode: Set root_child0_child0_child1_child0 = YogaNodeNew(Config)
+    root_child0_child0_child1_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0_child0_child1_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child1_child0.AlignItems = YogaAlign.yogaAlignFlexStart
     root_child0_child0_child1_child0.MarginStart = 174
     root_child0_child0_child1_child0.MarginTop = 24
     root_child0_child0_child1.Insert 0, root_child0_child0_child1_child0
 
-    Dim root_child0_child0_child1_child0_child0 As cYogaNode: Set root_child0_child0_child1_child0_child0 = YogaNodeNew(config)
-    root_child0_child0_child1_child0_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0_child0_child1_child0_child0 As cYogaNode: Set root_child0_child0_child1_child0_child0 = YogaNodeNew(Config)
+    root_child0_child0_child1_child0_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0_child0_child1_child0_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child1_child0.Insert 0, root_child0_child0_child1_child0_child0
 
-    Dim root_child0_child0_child1_child0_child0_child0 As cYogaNode: Set root_child0_child0_child1_child0_child0_child0 = YogaNodeNew(config)
+    Dim root_child0_child0_child1_child0_child0_child0 As cYogaNode: Set root_child0_child0_child1_child0_child0_child0 = YogaNodeNew(Config)
     root_child0_child0_child1_child0_child0_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child1_child0_child0_child0.Width = 72
     root_child0_child0_child1_child0_child0_child0.Height = 72
     root_child0_child0_child1_child0_child0.Insert 0, root_child0_child0_child1_child0_child0_child0
 
-    Dim root_child0_child0_child1_child0_child1 As cYogaNode: Set root_child0_child0_child1_child0_child1 = YogaNodeNew(config)
+    Dim root_child0_child0_child1_child0_child1 As cYogaNode: Set root_child0_child0_child1_child0_child1 = YogaNodeNew(Config)
     root_child0_child0_child1_child0_child1.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child1_child0_child1.FlexShrink = 1
     root_child0_child0_child1_child0_child1.MarginRight = 36
@@ -115,13 +116,13 @@ Public Sub Test_android_news_feed()
     root_child0_child0_child1_child0_child1.PaddingBottom = 18
     root_child0_child0_child1_child0.Insert 1, root_child0_child0_child1_child0_child1
 
-    Dim root_child0_child0_child1_child0_child1_child0 As cYogaNode: Set root_child0_child0_child1_child0_child1_child0 = YogaNodeNew(config)
-    root_child0_child0_child1_child0_child1_child0.flexDirection = YogaFlexDirection.yogaFlexRow
+    Dim root_child0_child0_child1_child0_child1_child0 As cYogaNode: Set root_child0_child0_child1_child0_child1_child0 = YogaNodeNew(Config)
+    root_child0_child0_child1_child0_child1_child0.FlexDirection = YogaFlexDirection.yogaFlexRow
     root_child0_child0_child1_child0_child1_child0.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child1_child0_child1_child0.FlexShrink = 1
     root_child0_child0_child1_child0_child1.Insert 0, root_child0_child0_child1_child0_child1_child0
 
-    Dim root_child0_child0_child1_child0_child1_child1 As cYogaNode: Set root_child0_child0_child1_child0_child1_child1 = YogaNodeNew(config)
+    Dim root_child0_child0_child1_child0_child1_child1 As cYogaNode: Set root_child0_child0_child1_child0_child1_child1 = YogaNodeNew(Config)
     root_child0_child0_child1_child0_child1_child1.AlignContent = YogaAlign.yogaAlignStretch
     root_child0_child0_child1_child0_child1_child1.FlexShrink = 1
     root_child0_child0_child1_child0_child1.Insert 1, root_child0_child0_child1_child0_child1_child1
@@ -302,3 +303,6 @@ Public Sub Test_android_news_feed()
     Assert.AreEqual 0!, root_child0_child0_child1_child0_child1_child1.LayoutHeight
 End Sub
 
+Private Sub ITestFixture_GetTestCases(ByVal Tests As SimplyVBComp.TestFixtureBuilder)
+    Tests.Add "Test_android_news_feed"
+End Sub
