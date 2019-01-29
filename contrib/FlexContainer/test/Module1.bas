@@ -16,3 +16,7 @@ Public Sub DebugInstanceTerm(sModuleName As String, sDebugID As String)
     m_lDebugCount = m_lDebugCount - 1
     Debug.Print sModuleName & ".DebugInstanceTerm: " & sDebugID & "/" & m_lDebugCount
 End Sub
+
+Public Sub DebugInstanceName(sInstanceName As String, sDebugID As String)
+
+End Sub
