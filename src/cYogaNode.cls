@@ -25,6 +25,8 @@ Option Explicit
 DefObj A-Z
 Private Const MODULE_NAME As String = "cYogaNode"
 
+#Const ImplUseShared = VBYOGA_USE_SHARED <> 0
+
 '=========================================================================
 ' Public Enums
 '=========================================================================
@@ -255,10 +257,24 @@ Private m_cChildren             As Collection
 Private m_cLog                  As Collection
 Private m_sngAbsoluteX          As Single
 Private m_sngAbsoluteY          As Single
+Private m_sngActualWidth        As Single
+Private m_sngActualHeight       As Single
 '--- debug
 #If DebugMode Then
     Private m_sDebugID          As String
 #End If
+
+'=========================================================================
+' Error handling
+'=========================================================================
+
+Private Function PrintError(sFunction As String) As VbMsgBoxResult
+#If ImplUseShared Then
+    PopPrintError sFunction, MODULE_NAME, PushError
+#Else
+    Debug.Print "Critical error: " & Err.Description & " [" & MODULE_NAME & "." & sFunction & "]", Timer
+#End If
+End Function
 
 '=========================================================================
 ' Properties
@@ -300,7 +316,7 @@ Property Get Parent() As cYogaNode
     Set Parent = YogaWeakRefResurrectTarget(m_lParentWeakRef)
 End Property
 
-Property Set Parent(ByVal oValue As cYogaNode)
+Friend Property Set frParent(ByVal oValue As cYogaNode)
     m_lParentWeakRef = YogaWeakRefInit(oValue)
 End Property
 
@@ -959,7 +975,7 @@ Public Sub Insert(ByVal Index As Long, oChild As cYogaNode)
     Else
         m_cChildren.Add oChild
     End If
-    Set oChild.Parent = Me
+    Set oChild.frParent = Me
     Call YGNodeInsertChild(NodePtr, oChild.NodePtr, Index)
 End Sub
 
@@ -968,7 +984,7 @@ Public Sub RemoveAt(ByVal Index As Long)
     
     Set oChild = m_cChildren.Item(Index + 1)
     m_cChildren.Remove Index + 1
-    Set oChild.Parent = Nothing
+    Set oChild.frParent = Nothing
     Call YGNodeRemoveChild(NodePtr, oChild.NodePtr)
 End Sub
 
@@ -1037,8 +1053,10 @@ Public Sub CalculateLayout( _
 End Sub
 
 Public Function ToString(Optional ByVal eOptions As YogaPrintOptions = yogaProLayout Or yogaProStyle Or yogaProChildren) As String
+    Const FUNC_NAME     As String = "ToString"
     Dim oOrig           As Object
     
+    On Error GoTo EH
     Set oOrig = m_oConfig.Logger
     Set m_oConfig.Logger = Me
     Set m_cLog = New Collection
@@ -1046,6 +1064,10 @@ Public Function ToString(Optional ByVal eOptions As YogaPrintOptions = yogaProLa
     ToString = ConcatCollection(m_cLog)
     Set m_cLog = Nothing
     Set m_oConfig.Logger = oOrig
+    Exit Function
+EH:
+    PrintError FUNC_NAME
+    Resume Next
 End Function
 
 Public Function GetEnumerator() As IUnknown
@@ -1057,32 +1079,78 @@ Attribute GetEnumerator.VB_MemberFlags = "40"
     Set GetEnumerator = m_cChildren.[_NewEnum]
 End Function
 
-Public Function GetRelativeX(Optional oContainer As cYogaNode) As Single
+Public Function GetAbsoluteX() As Single
     If YogaConstantsIsUndefined(m_sngAbsoluteX) Then
         If m_lParentWeakRef = 0 Then
             m_sngAbsoluteX = LayoutX
         Else
-            m_sngAbsoluteX = Parent.GetRelativeX() + LayoutX
+            m_sngAbsoluteX = Parent.GetAbsoluteX() + LayoutX
         End If
     End If
-    GetRelativeX = m_sngAbsoluteX
-    If Not oContainer Is Nothing Then
-        GetRelativeX = GetRelativeX - oContainer.GetRelativeX()
-    End If
+    GetAbsoluteX = m_sngAbsoluteX
 End Function
 
-Public Function GetRelativeY(Optional oContainer As cYogaNode) As Single
+Public Function GetAbsoluteY() As Single
     If YogaConstantsIsUndefined(m_sngAbsoluteY) Then
         If m_lParentWeakRef = 0 Then
             m_sngAbsoluteY = LayoutY
         Else
-            m_sngAbsoluteY = Parent.GetRelativeY() + LayoutY
+            m_sngAbsoluteY = Parent.GetAbsoluteY() + LayoutY
         End If
     End If
-    GetRelativeY = m_sngAbsoluteY
-    If Not oContainer Is Nothing Then
-        GetRelativeY = GetRelativeY - oContainer.GetRelativeY()
+    GetAbsoluteY = m_sngAbsoluteY
+End Function
+
+Public Function GetActualWidth() As Single
+    Dim oChild          As cYogaNode
+    Dim dblRight        As Double
+    
+    If Not LayoutHadOverflow Then
+        GetActualWidth = LayoutWidth
+    Else
+        If YogaConstantsIsUndefined(m_sngActualWidth) Then
+            m_sngActualWidth = LayoutWidth
+            If Not m_cChildren Is Nothing Then
+                For Each oChild In m_cChildren
+                    dblRight = oChild.LayoutX + oChild.GetActualWidth()
+                    If dblRight > m_sngActualWidth Then
+                        m_sngActualWidth = dblRight
+                    End If
+                Next
+            End If
+        End If
+        GetActualWidth = m_sngActualWidth
     End If
+End Function
+
+Public Function GetActualHeight() As Single
+    Dim oChild          As cYogaNode
+    Dim dblBottom       As Double
+    
+    If Not LayoutHadOverflow Then
+        GetActualHeight = LayoutHeight
+    Else
+        If YogaConstantsIsUndefined(m_sngActualHeight) Then
+            m_sngActualHeight = LayoutHeight
+            If Not m_cChildren Is Nothing Then
+                For Each oChild In m_cChildren
+                    dblBottom = oChild.LayoutY + oChild.GetActualHeight()
+                    If dblBottom > m_sngActualHeight Then
+                        m_sngActualHeight = dblBottom
+                    End If
+                Next
+            End If
+        End If
+        GetActualHeight = m_sngActualHeight
+    End If
+End Function
+
+Public Function GetRelativeX(oContainer As cYogaNode) As Single
+    GetRelativeX = GetAbsoluteX() - oContainer.GetAbsoluteX()
+End Function
+
+Public Function GetRelativeY(oContainer As cYogaNode) As Single
+    GetRelativeY = GetAbsoluteY() - oContainer.GetAbsoluteY()
 End Function
 
 '--- hidden
@@ -1101,6 +1169,8 @@ Friend Sub frInvalidateLayoutCache()
     If HasNewLayout Then
         m_sngAbsoluteX = YogaFloatNan
         m_sngAbsoluteY = YogaFloatNan
+        m_sngActualWidth = YogaFloatNan
+        m_sngActualHeight = YogaFloatNan
     End If
     If Not m_cChildren Is Nothing Then
         For Each oNode In m_cChildren
@@ -1163,10 +1233,23 @@ End Function
 #End If
 
 Private Sub Class_Terminate()
+    Dim oChild          As cYogaNode
+    
+    If Not m_cChildren Is Nothing Then
+        For Each oChild In m_cChildren
+            Set oChild.frParent = Nothing
+        Next
+        Set m_cChildren = Nothing
+    End If
     If m_lNodePtr <> 0 Then
         Call YGNodeFree(m_lNodePtr)
         m_lNodePtr = 0
     End If
+    Set m_oMeasureFn = Nothing
+    Set m_oBaselineFn = Nothing
+    Set m_oConfig = Nothing
+    Tag = Empty
+    Debug.Assert m_cLog Is Nothing
     #If DebugMode Then
         DebugInstanceTerm MODULE_NAME, m_sDebugID
     #End If
