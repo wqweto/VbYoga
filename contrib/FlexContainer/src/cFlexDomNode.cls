@@ -25,6 +25,33 @@ Option Explicit
 DefObj A-Z
 Private Const MODULE_NAME As String = "cFlexDomNode"
 
+#Const ImplUseShared = VBYOGA_USE_SHARED <> 0
+
+'=========================================================================
+' API
+'=========================================================================
+
+Private Const DT_WORDBREAK                  As Long = &H10
+Private Const DT_CALCRECT                   As Long = &H400
+
+Private Declare Function GetDC Lib "user32" (ByVal hWnd As Long) As Long
+Private Declare Function ReleaseDC Lib "user32" (ByVal hWnd As Long, ByVal hDC As Long) As Long
+Private Declare Function SelectObject Lib "gdi32" (ByVal hDC As Long, ByVal hObject As Long) As Long
+Private Declare Function GetTextExtentPoint32 Lib "gdi32" Alias "GetTextExtentPoint32A" (ByVal hDC As Long, ByVal lpsz As String, ByVal cbString As Long, lpSize As SIZEAPI) As Long
+Private Declare Function DrawText Lib "user32" Alias "DrawTextA" (ByVal hDC As Long, ByVal lpStr As String, ByVal nCount As Long, lpRect As RECT, ByVal wFormat As Long) As Long
+
+Private Type SIZEAPI
+    cx                  As Long
+    cy                  As Long
+End Type
+
+Private Type RECT
+    Left            As Long
+    Top             As Long
+    Right           As Long
+    Bottom          As Long
+End Type
+
 '=========================================================================
 ' Constants and member variables
 '=========================================================================
@@ -37,6 +64,7 @@ Public Name                     As String
 Public CssClass                 As String
 Public Layout                   As cYogaNode
 Public Style                    As Object
+Public Tag                      As Variant
 '--- debug
 #If DebugMode Then
     Private m_sDebugID          As String
@@ -64,6 +92,18 @@ End Property
 
 Friend Property Set frParent(oValue As cFlexDomNode)
     m_lParentWeakRef = YogaWeakRefInit(oValue)
+End Property
+
+Property Get Root() As cFlexDomNode
+    Dim oParent         As cFlexDomNode
+    
+    If m_lParentWeakRef <> 0 Then
+        Set oParent = Parent
+        Set Root = oParent.Root
+        If Root Is Nothing Then
+            Set Root = oParent
+        End If
+    End If
 End Property
 
 Property Get Item(Index As Variant) As cFlexDomNode
@@ -157,25 +197,59 @@ Public Function AddControl(oCtl As Object, Optional Name As String, Optional Css
     Set AddControl = oDomNode
 End Function
 
-Public Sub ApplyLayout()
+Public Sub ApplyLayout( _
+            Optional ByVal sngClipLeft As Single, _
+            Optional ByVal sngClipTop As Single, _
+            Optional ByVal sngClipWidth As Single, _
+            Optional ByVal sngClipHeight As Single)
     Dim oItem           As cFlexDomNode
+    Dim oCtl            As Object
     
-    If Not Control Is Nothing Then
+    Set oCtl = Control
+    If Not oCtl Is Nothing Then
         With Layout
-            If .Display = yogaDisplayNone Then
-                Control.Visible = False
+            oCtl.Visible = (.Display <> yogaDisplayNone)
+            Debug.Assert .GetAbsoluteX = AlignTwipsToPix(.GetAbsoluteX)
+            Debug.Assert .GetAbsoluteY = AlignTwipsToPix(.GetAbsoluteY)
+'            Debug.Assert .LayoutWidth = AlignTwipsToPix(.LayoutWidth)
+'            Debug.Assert .LayoutHeight = AlignTwipsToPix(.LayoutHeight)
+            If sngClipWidth > 0 Or sngClipHeight > 0 Then
+                If .GetAbsoluteX <= sngClipLeft + sngClipWidth And .GetAbsoluteX + .LayoutWidth >= sngClipLeft Then
+                    If .GetAbsoluteY <= sngClipTop + sngClipHeight And .GetAbsoluteY + .LayoutHeight >= sngClipTop Then
+                        MoveCtl oCtl, .GetAbsoluteX, .GetAbsoluteY, .LayoutWidth, .LayoutHeight
+                    Else
+                        oCtl.Left = -oCtl.Width
+                    End If
+                Else
+                    oCtl.Left = -oCtl.Width
+                End If
             Else
-                Control.Visible = True
-                Control.Move .GetRelativeX, .GetRelativeY, .LayoutWidth, .LayoutHeight
+                MoveCtl oCtl, .GetAbsoluteX, .GetAbsoluteY, .LayoutWidth, .LayoutHeight
             End If
         End With
     End If
     If Not m_cChildren Is Nothing Then
         For Each oItem In m_cChildren
-            oItem.ApplyLayout
+            oItem.ApplyLayout sngClipLeft, sngClipTop, sngClipWidth, sngClipHeight
         Next
     End If
 End Sub
+
+Public Function SelectItemByName(sName As String) As cFlexDomNode
+    Dim vItem           As Variant
+    Dim oItem           As cFlexDomNode
+    
+    If SearchCollection(m_cChildren, sName, RetVal:=vItem) Then
+        Set SelectItemByName = vItem
+    ElseIf Not m_cChildren Is Nothing Then
+        For Each oItem In m_cChildren
+            Set SelectItemByName = oItem.SelectItemByName(sName)
+            If Not SelectItemByName Is Nothing Then
+                Exit For
+            End If
+        Next
+    End If
+End Function
 
 Public Sub MeasureCallback( _
             oNode As Object, _
@@ -186,24 +260,91 @@ Public Sub MeasureCallback( _
             sngLayoutWidth As Single, _
             sngLayoutHeight As Single)
 Attribute MeasureCallback.VB_MemberFlags = "40"
+    Const LNG_PRIVATE   As Long = &HE1B6 '-- U+E000 to U+F8FF - Private Use Area (PUA)
+    Dim hDC             As Long
+    Dim pFont           As IFont
+    Dim hPrevFont       As Long
+    Dim sText           As String
+    Dim sz              As SIZEAPI
+    Dim rc              As RECT
+    
     #If oNode And eWidthMode And sngHeight And eHeightMode Then '--- touch args (silence MZ-Tools->Review Source Code)
     #End If
     With CtlLabel
         If .AutoSize Then
-            If .WordWrap Then
-                If YogaConstantsIsUndefined(sngWidth) Then
-                    .Width = Screen.Width
-                Else
-                    .Width = sngWidth
-                End If
+            If YogaConstantsIsUndefined(sngWidth) Then
+                rc.Right = Screen.Width \ Screen.TwipsPerPixelX
             Else
-                .Width = .Width
+                rc.Right = sngWidth \ Screen.TwipsPerPixelX
             End If
+            If YogaConstantsIsUndefined(sngHeight) Then
+                rc.Bottom = Screen.Height \ Screen.TwipsPerPixelY
+            Else
+                rc.Bottom = sngHeight \ Screen.TwipsPerPixelY
+            End If
+            hDC = GetDC(0)
+            Set pFont = .Font
+            hPrevFont = SelectObject(hDC, pFont.hFont)
+            sText = .Caption
+            If .UseMnemonic Then
+                sText = Replace(Replace(Replace(sText, _
+                    "&&", ChrW$(LNG_PRIVATE)), _
+                    "&", vbNullString), _
+                    ChrW$(LNG_PRIVATE), "&")
+            End If
+            If InStr(sText, vbCrLf) > 0 Then
+                GoTo MultiLine
+            End If
+            Call GetTextExtentPoint32(hDC, sText, Len(sText), sz)
+            If sz.cx > rc.Right Then
+                If .WordWrap Then
+MultiLine:
+                    Call DrawText(hDC, sText, Len(sText), rc, DT_CALCRECT Or DT_WORDBREAK)
+                    sz.cx = rc.Right
+                    sz.cy = rc.Bottom
+                End If
+            End If
+            Call SelectObject(hDC, hPrevFont)
+            Call ReleaseDC(0, hDC)
+'            Debug.Print sText, .Font.Name, .Font.Size, sz.cx, sz.cy, Timer
+            sngLayoutWidth = sz.cx * Screen.TwipsPerPixelX
+            sngLayoutHeight = sz.cy * Screen.TwipsPerPixelY
+        Else
+            sngLayoutWidth = .Width
+            sngLayoutHeight = .Height
         End If
-        sngLayoutWidth = .Width
-        sngLayoutHeight = .Height
     End With
 End Sub
+
+#If Not ImplUseShared Then
+Private Function AlignTwipsToPix(ByVal sngTwips As Single) As Single
+    AlignTwipsToPix = Int(sngTwips / Screen.TwipsPerPixelX + 0.5) * Screen.TwipsPerPixelX
+End Function
+
+Private Sub MoveCtl(oCtl As Object, ByVal Left As Single, ByVal Top As Variant, ByVal Width As Variant, ByVal Height As Variant)
+    If 1440 \ Screen.TwipsPerPixelX = 1440 / Screen.TwipsPerPixelX Then
+        oCtl.Move Left, Top, Width, Height
+    Else
+        oCtl.Move Left + Screen.TwipsPerPixelX, Top, Width, Height
+        oCtl.Move Left
+    End If
+End Sub
+
+Private Function SearchCollection(ByVal pCol As Object, Index As Variant, Optional RetVal As Variant) As Boolean
+    On Error GoTo QH
+    AssignVariant RetVal, pCol.Item(Index)
+    SearchCollection = True
+QH:
+End Function
+
+Private Sub AssignVariant(vDest As Variant, vSrc As Variant)
+    If IsObject(vSrc) Then
+        Set vDest = vSrc
+    Else
+        vDest = vSrc
+    End If
+End Sub
+#End If
 
 '=========================================================================
 ' Base class events
@@ -216,8 +357,16 @@ End Sub
 #End If
 
 Private Sub Class_Terminate()
-    Set m_cChildren = Nothing
+    Dim oChild          As cFlexDomNode
+    
+    If Not m_cChildren Is Nothing Then
+        For Each oChild In m_cChildren
+            Set oChild.frParent = Nothing
+        Next
+        Set m_cChildren = Nothing
+    End If
     Set Layout = Nothing
+    Set Style = Nothing
     #If DebugMode Then
         DebugInstanceTerm MODULE_NAME, m_sDebugID
     #End If

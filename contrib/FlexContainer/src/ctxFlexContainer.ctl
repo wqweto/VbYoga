@@ -74,20 +74,30 @@ Attribute VB_Exposed = False
 '=========================================================================
 Option Explicit
 DefObj A-Z
-Private Const MODULE_NAME As String = "ctxFlexContainer"
+Private Const STR_MODULE_NAME As String = "ctxFlexContainer"
+
+#Const ImplUseShared = VBYOGA_USE_SHARED <> 0
 
 '=========================================================================
 ' Events
 '=========================================================================
 
 Event Click(DomNode As cFlexDomNode)
+Event OwnerDraw(DomNode As cFlexDomNode, ByVal hGraphics As Long, ByVal hFont As Long, ByVal ButtonState As UcsNineButtonStateEnum, ClientLeft As Long, ClientTop As Long, ClientWidth As Long, ClientHeight As Long, Caption As String, ByVal hPicture As Long)
 Event RegisterCancelMode(oCtl As Object, Handled As Boolean)
+Event StyleCustomProperty(DomNode As cFlexDomNode, Key As String, Value As Variant)
+Event AccessKeyPress(DomNode As cFlexDomNode, KeyAscii As Integer)
+Event StartDrag(Button As Integer, Shift As Integer, X As Single, Y As Single, Handled As Boolean)
+Event MouseDown(DomNode As cFlexDomNode, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Event MouseMove(DomNode As cFlexDomNode, Button As Integer, Shift As Integer, X As Single, Y As Single)
+Event MouseUp(DomNode As cFlexDomNode, Button As Integer, Shift As Integer, X As Single, Y As Single)
 
 '=========================================================================
 ' API
 '=========================================================================
 
-Private Declare Function ApiUpdateWindow Lib "user32" Alias "UpdateWindow" (ByVal hWnd As Long) As Long
+'Private Declare Function ApiUpdateWindow Lib "user32" Alias "UpdateWindow" (ByVal hWnd As Long) As Long
+Private Declare Function GetCapture Lib "user32" () As Long
 
 '=========================================================================
 ' Constants and member variables
@@ -95,6 +105,8 @@ Private Declare Function ApiUpdateWindow Lib "user32" Alias "UpdateWindow" (ByVa
 
 Private Const FLOAT_UNDEFINED       As Single = 3.40282347E+38
 Private Const DEF_AUTOAPPLYLAYOUT   As Boolean = False
+Private Const DEF_ENABLED           As Boolean = True
+Private Const LNG_DRAG_DISTANCE     As Long = 16
 
 Private WithEvents m_oFont      As StdFont
 Attribute m_oFont.VB_VarHelpID = -1
@@ -108,7 +120,13 @@ Private m_lButtonCount          As Long
 Private m_lLabelCount           As Long
 Private m_cMapping              As Collection
 Private m_oCtlCancelMode        As Object
+Private m_nDownButton           As Integer
+Private m_nDownShift            As Integer
+Private m_sngDownX              As Single
+Private m_sngDownY              As Single
+Private m_bDragging             As Boolean
 '--- debug
+Private m_sInstanceName         As String
 #If DebugMode Then
     Private m_sDebugID          As String
 #End If
@@ -117,15 +135,36 @@ Private m_oCtlCancelMode        As Object
 ' Error handling
 '=========================================================================
 
-Private Sub PrintError(sFunction As String)
-    Debug.Print "Critical error: " & Err.Description & " [" & MODULE_NAME & "." & sFunction & "]", Timer
-End Sub
+Friend Function frInstanceName() As String
+    frInstanceName = m_sInstanceName
+End Function
+
+Private Property Get MODULE_NAME() As String
+#If ImplUseShared Then
+    #If DebugMode Then
+        MODULE_NAME = GetModuleInstance(STR_MODULE_NAME, frInstanceName, m_sDebugID)
+    #Else
+        MODULE_NAME = GetModuleInstance(STR_MODULE_NAME, frInstanceName)
+    #End If
+#Else
+    MODULE_NAME = STR_MODULE_NAME
+#End If
+End Property
+
+Private Function PrintError(sFunction As String) As VbMsgBoxResult
+#If ImplUseShared Then
+    PopPrintError sFunction, MODULE_NAME, PushError
+#Else
+    Debug.Print "Critical error: " & Err.Description & " [" & STR_MODULE_NAME & "." & sFunction & "]", Timer
+#End If
+End Function
 
 '=========================================================================
 ' Properties
 '=========================================================================
 
 Property Get Font() As StdFont
+Attribute Font.VB_UserMemId = -512
     Set Font = m_oFont
 End Property
 
@@ -151,6 +190,18 @@ Property Let AutoApplyLayout(ByVal bValue As Boolean)
     End If
 End Property
 
+Property Get Enabled() As Boolean
+Attribute Enabled.VB_UserMemId = -514
+    Enabled = UserControl.Enabled
+End Property
+
+Property Let Enabled(ByVal bValue As Boolean)
+    If UserControl.Enabled <> bValue Then
+        UserControl.Enabled = bValue
+    End If
+    PropertyChanged
+End Property
+
 '= run-time ==============================================================
 
 Property Get Styles() As Object
@@ -171,6 +222,18 @@ Property Get Root() As cFlexDomNode
     Set Root = m_oRoot
 End Property
 
+Property Get Dragging() As Boolean
+    Dragging = m_bDragging
+End Property
+
+Property Get DownX() As Single
+    DownX = m_sngDownX
+End Property
+
+Property Get DownY() As Single
+    DownY = m_sngDownY
+End Property
+
 Property Get frYogaConfig() As cYogaConfig
     Set frYogaConfig = m_oYogaConfig
 End Property
@@ -186,27 +249,28 @@ Public Sub Reset()
     For m_lLabelCount = m_lLabelCount To 1 Step -1
         labLabel(m_lLabelCount).Visible = False
     Next
-    Set m_oRoot = New cFlexDomNode
-    #If DebugMode Then
-        Debug.Print "YogaNodeInstanceCount=" & YogaNodeInstanceCount(), Timer
-    #End If
-    Set m_oRoot.Layout = YogaNodeNew(m_oYogaConfig)
-    Set m_oRoot.frFlexBox = Me
-    m_oRoot.CssClass = "root container"
-    Set m_cMapping = New Collection
+    pvInitRoot
 End Sub
 
-Public Sub ApplyLayout(Optional ByVal sngWidth As Single = FLOAT_UNDEFINED, Optional ByVal sngHeight As Single = FLOAT_UNDEFINED)
+Public Sub ApplyLayout( _
+            Optional ByVal sngWidth As Single = FLOAT_UNDEFINED, _
+            Optional ByVal sngHeight As Single = FLOAT_UNDEFINED, _
+            Optional ByVal sngClipLeft As Single = FLOAT_UNDEFINED, _
+            Optional ByVal sngClipTop As Single = FLOAT_UNDEFINED, _
+            Optional ByVal sngClipWidth As Single = FLOAT_UNDEFINED, _
+            Optional ByVal sngClipHeight As Single = FLOAT_UNDEFINED)
     m_oRoot.Layout.CalculateLayout sngWidth, sngHeight
-    m_oRoot.ApplyLayout
-End Sub
-
-Public Sub RegisterCancelMode(oCtl As Object)
-    pvRegisterCancelMode Me
-    If Not m_oCtlCancelMode Is Nothing And Not m_oCtlCancelMode Is oCtl Then
-        m_oCtlCancelMode.CancelMode
+    If sngClipLeft = FLOAT_UNDEFINED Or sngClipTop = FLOAT_UNDEFINED Then
+        m_oRoot.ApplyLayout
+    Else
+        If sngClipWidth = FLOAT_UNDEFINED Then
+            sngClipWidth = ScaleWidth
+        End If
+        If sngClipHeight = FLOAT_UNDEFINED Then
+            sngClipHeight = ScaleHeight
+        End If
+        m_oRoot.ApplyLayout sngClipLeft, sngClipTop, sngClipWidth, sngClipHeight
     End If
-    Set m_oCtlCancelMode = oCtl
 End Sub
 
 Public Sub CancelMode()
@@ -223,14 +287,14 @@ End Sub
 Public Sub Repaint()
     Dim lIdx            As Long
     
-    UserControl.Refresh
     For lIdx = 1 To m_lButtonCount
         btnButton(lIdx).Refresh
     Next
     For lIdx = 1 To m_lLabelCount
         labLabel(lIdx).Refresh
     Next
-    Call ApiUpdateWindow(ContainerHwnd)
+    UserControl.Refresh
+'    Call ApiUpdateWindow(ContainerHwnd)
 End Sub
 
 '= friend ================================================================
@@ -242,6 +306,8 @@ Friend Function frLoadButton() As VBControlExtender
         Set btnButton(m_lButtonCount).Font = m_oFont
     End If
     Set frLoadButton = btnButton(m_lButtonCount)
+    Set frLoadButton.Object.Font = m_oFont
+    frLoadButton.ForeColor = ForeColor
 End Function
 
 Friend Function frLoadLabel() As VB.Label
@@ -251,6 +317,8 @@ Friend Function frLoadLabel() As VB.Label
         Set labLabel(m_lLabelCount).Font = m_oFont
     End If
     Set frLoadLabel = labLabel(m_lLabelCount)
+    Set frLoadLabel.Font = m_oFont
+    frLoadLabel.ForeColor = ForeColor
 End Function
 
 Friend Sub frAddDomNodeMapping(oDomNode As cFlexDomNode, oCtl As Object)
@@ -259,10 +327,9 @@ End Sub
 
 '= private ===============================================================
 
-Private Sub pvInitUserMode()
+Private Sub pvInitRoot()
     Set m_oYogaConfig = YogaConfigNew()
     m_oYogaConfig.PointScaleFactor = 1# / Screen.TwipsPerPixelX
-    m_oYogaConfig.UseWebDefaults = True
     Set m_oRoot = New cFlexDomNode
     Set m_oRoot.Layout = YogaNodeNew(m_oYogaConfig)
     Set m_oRoot.frFlexBox = Me
@@ -277,284 +344,137 @@ Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
     Dim oItem           As cFlexDomNode
     Dim vKey            As Variant
     Dim vSplit          As Variant
-    Dim vValue          As Variant
+    Dim sValue          As String
     
     On Error GoTo EH
     Set oStyle = pvGetStyle(oDomNode.Name, oDomNode.CssClass, TypeName(oDomNode.Control))
+'    Debug.Print oDomNode.Name, oDomNode.CssClass, JsonDump(oStyle, Minimize:=True), Timer
     Set oDomNode.Style = oStyle
     With oDomNode.Layout
         For Each vKey In oStyle.Keys
-            vValue = oStyle.Item(vKey)
+            sValue = C_Str(oStyle.Item(vKey))
             Select Case LCase$(vKey)
             Case "width"
-                .Width = pvToYogaValue(vValue)
+                .Width = pvToYogaValue(sValue)
             Case "height"
-                .Height = pvToYogaValue(vValue)
+                .Height = pvToYogaValue(sValue)
             Case "min-width"
-                .MinWidth = pvToYogaValue(vValue)
+                .MinWidth = pvToYogaValue(sValue)
             Case "min-height"
-                .MinHeight = pvToYogaValue(vValue)
+                .MinHeight = pvToYogaValue(sValue)
             Case "max-width"
-                .MaxWidth = pvToYogaValue(vValue)
+                .MaxWidth = pvToYogaValue(sValue)
             Case "max-height"
-                .MaxHeight = pvToYogaValue(vValue)
+                .MaxHeight = pvToYogaValue(sValue)
             Case "direction"
-                Select Case LCase$(vValue)
-                Case "ltr"
-                    .StyleDirection = yogaDirLTR
-                Case "rtl"
-                    .StyleDirection = yogaDirRTL
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .StyleDirection = frToYogaEnum(LCase$(vKey), sValue)
             Case "position"
-                Select Case LCase$(vValue)
-                Case "absolute"
-                    .PositionType = yogaPosAbsolute
-                Case "relative"
-                    .PositionType = yogaPosRelative
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .PositionType = frToYogaEnum(LCase$(vKey), sValue)
             Case "display"
-                Select Case LCase$(vValue)
-                Case "none"
-                    .Display = yogaDisplayNone
-                Case "flex"
-                    .Display = yogaDisplayFlex
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .Display = frToYogaEnum(LCase$(vKey), sValue)
             Case "overflow"
-                Select Case LCase$(vValue)
-                Case "hidden"
-                    .Overflow = yogaOverflowHidden
-                Case "visible"
-                    .Overflow = yogaOverflowVisible
-                Case "scroll"
-                    .Overflow = yogaOverflowScroll
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .Overflow = frToYogaEnum(LCase$(vKey), sValue)
             Case "flex-direction"
-                Select Case LCase$(vValue)
-                Case "row"
-                    .FlexDirection = yogaFlexRow
-                Case "row-reverse"
-                    .FlexDirection = yogaFlexRowReverse
-                Case "column"
-                    .FlexDirection = yogaFlexColumn
-                Case "column-reverse"
-                    .FlexDirection = yogaFlexColumnReverse
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .FlexDirection = frToYogaEnum(LCase$(vKey), sValue)
             Case "flex-wrap"
-                Select Case LCase$(vValue)
-                Case "nowrap"
-                    .Wrap = yogaWrapNoWrap
-                Case "wrap"
-                    .Wrap = yogaWrapWrap
-                Case "wrap-reverse"
-                    .Wrap = yogaWrapWrapReverse
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .Wrap = frToYogaEnum(LCase$(vKey), sValue)
             Case "flex-flow"
-                vSplit = Split(LCase$(vValue), " ")
-                Select Case vSplit(0)
-                Case "row"
-                    .FlexDirection = yogaFlexRow
-                Case "row-reverse"
-                    .FlexDirection = yogaFlexRowReverse
-                Case "column"
-                    .FlexDirection = yogaFlexColumn
-                Case "column-reverse"
-                    .FlexDirection = yogaFlexColumnReverse
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
-                Select Case vSplit(1)
-                Case "nowrap"
-                    .Wrap = yogaWrapNoWrap
-                Case "wrap"
-                    .Wrap = yogaWrapWrap
-                Case "wrap-reverse"
-                    .Wrap = yogaWrapWrapReverse
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                vSplit = Split(sValue)
+                If LenB(At(vSplit, 0)) <> 0 Then
+                    .FlexDirection = frToYogaEnum(LCase$(vKey), At(vSplit, 0))
+                End If
+                If LenB(At(vSplit, 1)) <> 0 Then
+                    .Wrap = frToYogaEnum(LCase$(vKey), At(vSplit, 1))
+                End If
             Case "justify-content"
-                Select Case LCase$(vValue)
-                Case "flex-start"
-                    .JustifyContent = yogaJustFlexStart
-                Case "flex-end"
-                    .JustifyContent = yogaJustFlexEnd
-                Case "center"
-                    .JustifyContent = yogaJustCenter
-                Case "space-between"
-                    .JustifyContent = yogaJustSpaceBetween
-                Case "space-around"
-                    .JustifyContent = yogaJustSpaceAround
-                Case "space-evenly"
-                    .JustifyContent = yogaJustSpaceEvenly
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .JustifyContent = frToYogaEnum(LCase$(vKey), sValue)
             Case "align-items"
-                Select Case LCase$(vValue)
-                Case "flex-start"
-                    .AlignItems = yogaAlignFlexStart
-                Case "flex-end"
-                    .AlignItems = yogaAlignFlexEnd
-                Case "center"
-                    .AlignItems = yogaAlignCenter
-                Case "stretch"
-                    .AlignItems = yogaAlignStretch
-                Case "baseline"
-                    .AlignItems = yogaAlignBaseline
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .AlignItems = frToYogaEnum(LCase$(vKey), sValue)
             Case "align-content"
-                Select Case LCase$(vValue)
-                Case "flex-start"
-                    .AlignContent = yogaAlignFlexStart
-                Case "flex-end"
-                    .AlignContent = yogaAlignFlexEnd
-                Case "center"
-                    .AlignContent = yogaAlignCenter
-                Case "stretch"
-                    .AlignContent = yogaAlignStretch
-                Case "space-between"
-                    .AlignContent = yogaAlignSpaceBetween
-                Case "space-around"
-                    .AlignContent = yogaAlignSpaceAround
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .AlignContent = frToYogaEnum(LCase$(vKey), sValue)
             Case "align-self"
-                Select Case LCase$(vValue)
-                Case "auto"
-                    .AlignSelf = yogaAlignAuto
-                Case "flex-start"
-                    .AlignSelf = yogaAlignFlexStart
-                Case "flex-end"
-                    .AlignSelf = yogaAlignFlexEnd
-                Case "center"
-                    .AlignSelf = yogaAlignCenter
-                Case "baseline"
-                    .AlignSelf = yogaAlignBaseline
-                Case "stretch"
-                    .AlignSelf = yogaAlignStretch
-                Case Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown value for '" & vKey & "': " & vValue
-                    #End If
-                End Select
+                .AlignSelf = frToYogaEnum(LCase$(vKey), sValue)
             Case "flex"
-                .Flex = Val(vValue)
+                .Flex = Val(sValue)
             Case "flex-grow":
-                .FlexGrow = Val(vValue)
+                .FlexGrow = Val(sValue)
             Case "flex-shrink":
-                .FlexShrink = Val(vValue)
-            Case "flex-basic":
-                .FlexShrink = pvToYogaValue(vValue)
+                .FlexShrink = Val(sValue)
+            Case "flex-basis":
+                .FlexBasis = pvToYogaValue(sValue)
             Case "aspect-ratio"
-                .AspectRatio = Val(vValue)
+                .AspectRatio = Val(sValue)
             '--- spacing
             Case "left"
-                .Left = pvToYogaValue(vValue)
+                .Left = pvToYogaValue(sValue)
             Case "top"
-                .Top = pvToYogaValue(vValue)
+                .Top = pvToYogaValue(sValue)
             Case "right"
-                .Right = pvToYogaValue(vValue)
+                .Right = pvToYogaValue(sValue)
             Case "bottom"
-                .Bottom = pvToYogaValue(vValue)
+                .Bottom = pvToYogaValue(sValue)
             Case "start"
-                .Start = pvToYogaValue(vValue)
+                .Start = pvToYogaValue(sValue)
             Case "end"
-                .End_ = pvToYogaValue(vValue)
+                .End_ = pvToYogaValue(sValue)
             Case "margin"
-                .Margin = pvToYogaValue(vValue)
+                .Margin = pvToYogaValue(sValue)
             Case "margin-left"
-                .MarginLeft = pvToYogaValue(vValue)
+                .MarginLeft = pvToYogaValue(sValue)
             Case "margin-top"
-                .MarginTop = pvToYogaValue(vValue)
+                .MarginTop = pvToYogaValue(sValue)
             Case "margin-right"
-                .MarginRight = pvToYogaValue(vValue)
+                .MarginRight = pvToYogaValue(sValue)
             Case "margin-bottom"
-                .MarginBottom = pvToYogaValue(vValue)
+                .MarginBottom = pvToYogaValue(sValue)
             Case "margin-horizontal"
-                .MarginHorizontal = pvToYogaValue(vValue)
+                .MarginHorizontal = pvToYogaValue(sValue)
             Case "margin-vertical"
-                .MarginVertical = pvToYogaValue(vValue)
+                .MarginVertical = pvToYogaValue(sValue)
             Case "margin-start"
-                .MarginStart = pvToYogaValue(vValue)
+                .MarginStart = pvToYogaValue(sValue)
             Case "margin-end"
-                .MarginEnd = pvToYogaValue(vValue)
+                .MarginEnd = pvToYogaValue(sValue)
             Case "padding"
-                .Padding = pvToYogaValue(vValue)
+                .Padding = pvToYogaValue(sValue)
             Case "padding-left"
-                .PaddingLeft = pvToYogaValue(vValue)
+                .PaddingLeft = pvToYogaValue(sValue)
             Case "padding-top"
-                .PaddingTop = pvToYogaValue(vValue)
+                .PaddingTop = pvToYogaValue(sValue)
             Case "padding-right"
-                .PaddingRight = pvToYogaValue(vValue)
+                .PaddingRight = pvToYogaValue(sValue)
             Case "padding-bottom"
-                .PaddingBottom = pvToYogaValue(vValue)
+                .PaddingBottom = pvToYogaValue(sValue)
             Case "padding-horizontal"
-                .PaddingHorizontal = pvToYogaValue(vValue)
+                .PaddingHorizontal = pvToYogaValue(sValue)
             Case "padding-vertical"
-                .PaddingVertical = pvToYogaValue(vValue)
+                .PaddingVertical = pvToYogaValue(sValue)
             Case "padding-start"
-                .PaddingStart = pvToYogaValue(vValue)
+                .PaddingStart = pvToYogaValue(sValue)
             Case "padding-end"
-                .PaddingEnd = pvToYogaValue(vValue)
+                .PaddingEnd = pvToYogaValue(sValue)
             Case "border-left", "border-left-width"
-                .BorderLeftWidth = Val(vValue)
+                .BorderLeftWidth = Val(sValue)
             Case "border-top", "border-top-width"
-                .BorderTopWidth = Val(vValue)
+                .BorderTopWidth = Val(sValue)
             Case "border-right", "border-right-width"
-                .BorderRightWidth = Val(vValue)
+                .BorderRightWidth = Val(sValue)
             Case "border-bottom", "border-bottom-width"
-                .BorderBottomWidth = Val(vValue)
+                .BorderBottomWidth = Val(sValue)
             Case "border-start", "border-start-width"
-                .BorderStartWidth = Val(vValue)
+                .BorderStartWidth = Val(sValue)
             Case "border-end", "border-end-width"
-                .BorderEndWidth = Val(vValue)
+                .BorderEndWidth = Val(sValue)
             Case "border", "border-width"
-                .BorderWidth = Val(vValue)
+                .BorderWidth = Val(sValue)
             Case Else
                 '--- allow setting control properties from CSS
                 If Left$(LCase$(vKey), Len(STR_PROP_PREFIX)) = STR_PROP_PREFIX Then
                     If InStr(vKey, ":") = 0 And Not oDomNode.Control Is Nothing Then
-                        CallByName oDomNode.Control, Replace(Mid$(vKey, Len(STR_PROP_PREFIX) + 1), "-", vbNullString), VbLet, vValue
+                        CallByName oDomNode.Control, Replace(Mid$(vKey, Len(STR_PROP_PREFIX) + 1), "-", vbNullString), VbLet, sValue
                     End If
                 Else
-                    #If DebugMode Then
-                        Debug.Print "Unknown style: " & vKey
-                    #End If
+                    RaiseEvent StyleCustomProperty(oDomNode, vKey & vbNullString, oStyle.Item(vKey))
                 End If
             End Select
         Next
@@ -582,6 +502,157 @@ Private Function pvToYogaValue(ByVal sValue As String) As Variant
         Else
             pvToYogaValue = Val(sValue)
         End If
+    End Select
+End Function
+
+Friend Function frToYogaEnum(sProp As String, sValue As String) As Long
+    Select Case sProp
+    Case "direction"
+        Select Case LCase$(sValue)
+        Case "ltr"
+            frToYogaEnum = yogaDirLTR
+        Case "rtl"
+            frToYogaEnum = yogaDirRTL
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "position"
+        Select Case LCase$(sValue)
+        Case "absolute"
+            frToYogaEnum = yogaPosAbsolute
+        Case "relative"
+            frToYogaEnum = yogaPosRelative
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "display"
+        Select Case LCase$(sValue)
+        Case "none"
+            frToYogaEnum = yogaDisplayNone
+        Case "flex"
+            frToYogaEnum = yogaDisplayFlex
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "overflow"
+        Select Case LCase$(sValue)
+        Case "hidden"
+            frToYogaEnum = yogaOverflowHidden
+        Case "visible"
+            frToYogaEnum = yogaOverflowVisible
+        Case "scroll"
+            frToYogaEnum = yogaOverflowScroll
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "flex-direction"
+        Select Case LCase$(sValue)
+        Case "row"
+            frToYogaEnum = yogaFlexRow
+        Case "row-reverse"
+            frToYogaEnum = yogaFlexRowReverse
+        Case "column"
+            frToYogaEnum = yogaFlexColumn
+        Case "column-reverse"
+            frToYogaEnum = yogaFlexColumnReverse
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "flex-wrap"
+        Select Case LCase$(sValue)
+        Case "nowrap"
+            frToYogaEnum = yogaWrapNoWrap
+        Case "wrap"
+            frToYogaEnum = yogaWrapWrap
+        Case "wrap-reverse"
+            frToYogaEnum = yogaWrapWrapReverse
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "justify-content"
+        Select Case LCase$(sValue)
+        Case "flex-start"
+            frToYogaEnum = yogaJustFlexStart
+        Case "flex-end"
+            frToYogaEnum = yogaJustFlexEnd
+        Case "center"
+            frToYogaEnum = yogaJustCenter
+        Case "space-between"
+            frToYogaEnum = yogaJustSpaceBetween
+        Case "space-around"
+            frToYogaEnum = yogaJustSpaceAround
+        Case "space-evenly"
+            frToYogaEnum = yogaJustSpaceEvenly
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "align-items"
+        Select Case LCase$(sValue)
+        Case "flex-start"
+            frToYogaEnum = yogaAlignFlexStart
+        Case "flex-end"
+            frToYogaEnum = yogaAlignFlexEnd
+        Case "center"
+            frToYogaEnum = yogaAlignCenter
+        Case "stretch"
+            frToYogaEnum = yogaAlignStretch
+        Case "baseline"
+            frToYogaEnum = yogaAlignBaseline
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "align-content"
+        Select Case LCase$(sValue)
+        Case "flex-start"
+            frToYogaEnum = yogaAlignFlexStart
+        Case "flex-end"
+            frToYogaEnum = yogaAlignFlexEnd
+        Case "center"
+            frToYogaEnum = yogaAlignCenter
+        Case "stretch"
+            frToYogaEnum = yogaAlignStretch
+        Case "space-between"
+            frToYogaEnum = yogaAlignSpaceBetween
+        Case "space-around"
+            frToYogaEnum = yogaAlignSpaceAround
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
+    Case "align-self"
+        Select Case LCase$(sValue)
+        Case "auto"
+            frToYogaEnum = yogaAlignAuto
+        Case "flex-start"
+            frToYogaEnum = yogaAlignFlexStart
+        Case "flex-end"
+            frToYogaEnum = yogaAlignFlexEnd
+        Case "center"
+            frToYogaEnum = yogaAlignCenter
+        Case "baseline"
+            frToYogaEnum = yogaAlignBaseline
+        Case "stretch"
+            frToYogaEnum = yogaAlignStretch
+        Case Else
+            #If DebugMode Then
+                Debug.Print "Unknown value for '" & sProp & "': " & sValue, Timer
+            #End If
+        End Select
     End Select
 End Function
 
@@ -671,7 +742,7 @@ Private Sub pvMergeStyle(oDest As Object, oSrc As Object)
     Next
 End Sub
 
-Private Function pvRegisterCancelMode(oCtl As Object) As Boolean
+Private Function pvParentRegisterCancelMode(oCtl As Object) As Boolean
     Dim bHandled        As Boolean
     
     RaiseEvent RegisterCancelMode(oCtl, bHandled)
@@ -681,45 +752,252 @@ Private Function pvRegisterCancelMode(oCtl As Object) As Boolean
         On Error GoTo 0
     End If
     '--- success
-    pvRegisterCancelMode = True
+    pvParentRegisterCancelMode = True
 QH:
 End Function
 
-'=========================================================================
-' Events
-'=========================================================================
-
-Private Sub btnButton_Click(Index As Integer)
-    Const FUNC_NAME     As String = "btnButton_Click"
-
+Private Sub pvHandleMouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "pvHandleMouseDown"
+    
     On Error GoTo EH
-    RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton(Index))))
+    m_bDragging = False
+    m_nDownButton = Button
+    m_nDownShift = Shift
+    m_sngDownX = X
+    m_sngDownY = Y
     Exit Sub
 EH:
     PrintError FUNC_NAME
     Resume Next
 End Sub
 
-'Private Sub btnButton_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
-'    Const FUNC_NAME     As String = "btnButton_MouseUp"
-'
-'    On Error GoTo EH
-'    If X >= 0 And X < btnButton(Index).Width And Y >= 0 And Y < btnButton(Index).Height Then
-'        If (btnButton(Index).DownButton And Button And vbLeftButton) <> 0 Then
-'            RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton(Index))))
-'        End If
-'    End If
-'    Exit Sub
-'EH:
-'    PrintError FUNC_NAME
-'    Resume Next
-'End Sub
+Private Sub pvHandleMouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "pvHandleMouseMove"
+#If Not ImplUseShared Then
+    Const ucsPicHandCursor As Long = 1
+#End If
+    
+    On Error GoTo EH
+    #If Shift Then '--- touch args
+    #End If
+    m_nDownButton = m_nDownButton And Button
+    If m_nDownButton <> 0 Then
+        If Not m_bDragging Then
+            If Abs(X - m_sngDownX) > LNG_DRAG_DISTANCE * Screen.TwipsPerPixelX Or Abs(Y - m_sngDownY) > LNG_DRAG_DISTANCE * Screen.TwipsPerPixelY Then
+                RaiseEvent StartDrag(m_nDownButton, m_nDownShift, m_sngDownX, m_sngDownY, m_bDragging)
+                If m_bDragging Then
+                    MousePointer = vbCustom
+                    Set MouseIcon = LoadStdPicture(ucsPicHandCursor)
+                End If
+            End If
+        End If
+    End If
+    If m_bDragging Then
+        If GetCapture() <> ContainerHwnd Or m_nDownButton = 0 Then
+            m_bDragging = False
+            MousePointer = vbDefault
+        End If
+    End If
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub pvHandleMouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    #If Button And Shift And X And Y Then '--- touch args
+    #End If
+    m_nDownButton = 0
+    m_bDragging = False
+    MousePointer = vbDefault
+End Sub
+
+#If Not ImplUseShared Then
+Private Function C_Str(ByVal Value As Variant) As String
+    On Error GoTo QH
+    C_Str = CStr(Value)
+QH:
+End Function
+
+Private Function At(Data As Variant, ByVal Index As Long, Optional Default As String) As String
+    On Error GoTo QH
+    At = Default
+    If IsArray(Data) Then
+        If LBound(Data) <= Index And Index <= UBound(Data) Then
+            At = Data(Index)
+        End If
+    End If
+QH:
+End Function
+
+Private Function LoadStdPicture(ByVal eType As Long) As StdPicture
+    #If eType Then
+    #End If
+End Function
+#End If
+
+'=========================================================================
+' Events
+'=========================================================================
+
+Private Sub btnButton_AccessKeyPress(Index As Integer, KeyAscii As Integer)
+    Const FUNC_NAME     As String = "btnButton_AccessKeyPress"
+    
+    On Error GoTo EH
+    RaiseEvent AccessKeyPress(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), KeyAscii)
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub btnButton_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "btnButton_MouseDown"
+    Dim sngX            As Single
+    Dim sngY            As Single
+    
+    On Error GoTo EH
+    sngX = btnButton.Item(Index).Left + X
+    sngY = btnButton.Item(Index).Top + Y
+    pvHandleMouseDown Button, Shift, sngX, sngY
+    RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), Button, Shift, sngX, sngY)
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub btnButton_MouseMove(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "btnButton_MouseMove"
+    Dim sngX            As Single
+    Dim sngY            As Single
+    
+    On Error GoTo EH
+    sngX = btnButton.Item(Index).Left + X
+    sngY = btnButton.Item(Index).Top + Y
+    pvHandleMouseMove Button, Shift, sngX, sngY
+    RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), Button, Shift, sngX, sngY)
+    If m_bDragging Then
+        Button = 0
+    End If
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub btnButton_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "btnButton_MouseUp"
+    Dim sngX            As Single
+    Dim sngY            As Single
+    Dim bDragging       As Boolean
+    
+    On Error GoTo EH
+    bDragging = m_bDragging
+    sngX = btnButton.Item(Index).Left + X
+    sngY = btnButton.Item(Index).Top + Y
+    pvHandleMouseUp Button, Shift, sngX, sngY
+    RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), Button, Shift, sngX, sngY)
+    If Not bDragging Then
+        If X >= 0 And X < btnButton(Index).Width And Y >= 0 And Y < btnButton(Index).Height Then
+            If (btnButton(Index).DownButton And Button And vbLeftButton) <> 0 Then
+                RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton(Index))))
+            End If
+        End If
+    Else
+        Button = 0
+    End If
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub btnButton_OwnerDraw(Index As Integer, ByVal hGraphics As Long, ByVal hFont As Long, ByVal ButtonState As UcsNineButtonStateEnum, ClientLeft As Long, ClientTop As Long, ClientWidth As Long, ClientHeight As Long, Caption As String, ByVal hPicture As Long)
+    Const FUNC_NAME     As String = "btnButton_OwnerDraw"
+    
+    On Error GoTo EH
+    RaiseEvent OwnerDraw(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), hGraphics, hFont, ButtonState, ClientLeft, ClientTop, ClientWidth, ClientHeight, Caption, hPicture)
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub btnButton_RegisterCancelMode(Index As Integer, oCtl As Object, Handled As Boolean)
+    Const FUNC_NAME     As String = "btnButton_RegisterCancelMode"
+    
+    On Error GoTo EH
+    pvParentRegisterCancelMode Me
+    If Not m_oCtlCancelMode Is Nothing And Not m_oCtlCancelMode Is oCtl Then
+        m_oCtlCancelMode.CancelMode
+    End If
+    Set m_oCtlCancelMode = oCtl
+    Handled = True
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
 
 Private Sub labLabel_Click(Index As Integer)
     Const FUNC_NAME     As String = "labLabel_Click"
+    Dim bDragging       As Boolean
     
     On Error GoTo EH
-    RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(labLabel(Index))))
+    bDragging = m_bDragging
+    pvHandleMouseUp m_nDownButton, m_nDownShift, m_sngDownX, m_sngDownY
+    If Not bDragging Then
+        RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(labLabel(Index))))
+    End If
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub labLabel_MouseDown(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "labLabel_MouseDown"
+    Dim sngX            As Single
+    Dim sngY            As Single
+    
+    On Error GoTo EH
+    sngX = labLabel.Item(Index).Left + X
+    sngY = labLabel.Item(Index).Top + Y
+    pvHandleMouseDown Button, Shift, sngX, sngY
+    RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(labLabel(Index))), Button, Shift, sngX, sngY)
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub labLabel_MouseMove(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "labLabel_MouseMove"
+    Dim sngX            As Single
+    Dim sngY            As Single
+    
+    On Error GoTo EH
+    sngX = labLabel.Item(Index).Left + X
+    sngY = labLabel.Item(Index).Top + Y
+    pvHandleMouseMove Button, Shift, sngX, sngY
+    RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(labLabel(Index))), Button, Shift, sngX, sngY)
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub labLabel_MouseUp(Index As Integer, Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "labLabel_MouseUp"
+    Dim sngX            As Single
+    Dim sngY            As Single
+    
+    On Error GoTo EH
+    sngX = labLabel.Item(Index).Left + X
+    sngY = labLabel.Item(Index).Top + Y
+'    pvHandleMouseUp Button, Shift, sngX, sngY
+    RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(labLabel(Index))), Button, Shift, sngX, sngY)
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -747,11 +1025,38 @@ Private Sub UserControl_HitTest(X As Single, Y As Single, HitResult As Integer)
     HitResult = vbHitResultHit
 End Sub
 
+Private Sub UserControl_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "UserControl_MouseDown"
+    
+    On Error GoTo EH
+    CancelMode
+    pvHandleMouseDown Button, Shift, X, Y
+    RaiseEvent MouseDown(Nothing, Button, Shift, ScaleX(X, ScaleMode, vbContainerPosition), ScaleY(Y, ScaleMode, vbContainerPosition))
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
 Private Sub UserControl_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
     Const FUNC_NAME     As String = "UserControl_MouseMove"
     
     On Error GoTo EH
     CancelMode
+    pvHandleMouseMove Button, Shift, X, Y
+    RaiseEvent MouseMove(Nothing, Button, Shift, ScaleX(X, ScaleMode, vbContainerPosition), ScaleY(Y, ScaleMode, vbContainerPosition))
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub UserControl_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    Const FUNC_NAME     As String = "UserControl_MouseUp"
+    
+    On Error GoTo EH
+    pvHandleMouseUp Button, Shift, X, Y
+    RaiseEvent MouseUp(Nothing, Button, Shift, ScaleX(X, ScaleMode, vbContainerPosition), ScaleY(Y, ScaleMode, vbContainerPosition))
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -776,10 +1081,11 @@ Private Sub UserControl_InitProperties()
     
     On Error GoTo EH
     If Ambient.UserMode Then
-        pvInitUserMode
+        pvInitRoot
     End If
     Set Font = Ambient.Font
     AutoApplyLayout = DEF_AUTOAPPLYLAYOUT
+    Enabled = DEF_ENABLED
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -791,10 +1097,13 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     
     On Error GoTo EH
     If Ambient.UserMode Then
-        pvInitUserMode
+        pvInitRoot
     End If
-    Set Font = PropBag.ReadProperty("Font", Ambient.Font)
-    AutoApplyLayout = PropBag.ReadProperty("AutoApplyLayout", DEF_AUTOAPPLYLAYOUT)
+    With PropBag
+        Set Font = .ReadProperty("Font", Ambient.Font)
+        AutoApplyLayout = .ReadProperty("AutoApplyLayout", DEF_AUTOAPPLYLAYOUT)
+        Enabled = .ReadProperty("Enabled", DEF_ENABLED)
+    End With
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -805,8 +1114,11 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     Const FUNC_NAME     As String = "UserControl_WriteProperties"
     
     On Error GoTo EH
-    PropBag.WriteProperty "Font", m_oFont, Ambient.Font
-    PropBag.WriteProperty "AutoApplyLayout", m_bAutoApplyLayout, DEF_AUTOAPPLYLAYOUT
+    With PropBag
+        .WriteProperty "Font", Font, Ambient.Font
+        .WriteProperty "AutoApplyLayout", AutoApplyLayout, DEF_AUTOAPPLYLAYOUT
+        .WriteProperty "Enabled", Enabled, DEF_ENABLED
+    End With
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -824,7 +1136,10 @@ End Sub
 #End If
 
 Private Sub UserControl_Terminate()
-    Set m_oRoot = Nothing
+    If Not m_oRoot Is Nothing Then
+        Set m_oRoot.frFlexBox = Nothing
+        Set m_oRoot = Nothing
+    End If
     Set m_cMapping = Nothing
     Set m_oYogaConfig = Nothing
     #If DebugMode Then
