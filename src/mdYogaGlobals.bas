@@ -13,6 +13,8 @@ Option Explicit
 DefObj A-Z
 Private Const MODULE_NAME As String = "mdYogaGlobals"
 
+#Const ImplUseShared = VBYOGA_USE_SHARED <> 0
+
 '=========================================================================
 ' API
 '=========================================================================
@@ -21,6 +23,7 @@ Private Declare Sub CopyMemory Lib "kernel32" Alias "RtlMoveMemory" (Destination
 Private Declare Function lstrlen Lib "kernel32" Alias "lstrlenA" (ByVal lpString As Long) As Long
 Private Declare Function GetModuleHandle Lib "kernel32" Alias "GetModuleHandleA" (ByVal lpModuleName As String) As Long
 Private Declare Function LoadLibrary Lib "kernel32" Alias "LoadLibraryA" (ByVal lpLibFileName As String) As Long
+Private Declare Function vbaObjSetAddref Lib "msvbvm60" Alias "__vbaObjSetAddref" (oDest As Any, ByVal lSrcPtr As Long) As Long
 Private Declare Function YGConfigGetDefault Lib "yoga" Alias "_YGConfigGetDefault@0" () As Long
 Private Declare Function YGConfigGetContext Lib "yoga" Alias "_YGConfigGetContext@4" (ByVal lConfigPtr As Long) As Long
 Private Declare Function YGConfigGetInstanceCount Lib "yoga" Alias "_YGConfigGetInstanceCount@0" () As Long
@@ -63,7 +66,7 @@ End Sub
 Public Function YogaConfigDefault() As cYogaConfig
     If YogaDefConfigPtr = 0 Then
         If GetModuleHandle("yoga.dll") = 0 Then
-            Call LoadLibrary(LocateFile(App.Path & "\yoga.dll"))
+            Call LoadLibrary(LocateFile(PathCombine(App.Path, "yoga.dll")))
         End If
         Call CopyMemory(YogaFloatNan, FLOAT_NAN_BYTES, 4)
         YogaDefConfigPtr = YGConfigGetDefault()
@@ -147,11 +150,7 @@ Public Function YogaWeakRefInit(oObj As Object) As Long
 End Function
 
 Public Function YogaWeakRefResurrectTarget(ByVal lPtr As Long) As Object
-    Dim pUnk            As IUnknown
-    
-    Call CopyMemory(pUnk, lPtr, 4)
-    Set YogaWeakRefResurrectTarget = pUnk
-    Call CopyMemory(pUnk, 0&, 4)
+    Call vbaObjSetAddref(YogaWeakRefResurrectTarget, lPtr)
 End Function
 
 '= private ===============================================================
@@ -219,6 +218,12 @@ Private Function pvToObject(ByVal lPtr As Long) As Object
     End If
 End Function
 
+#If Not ImplUseShared Then
 Private Function LocateFile(sFile As String) As String
     LocateFile = sFile
 End Function
+
+Private Function PathCombine(sPath As String, sFile As String) As String
+    PathCombine = sPath & IIf(LenB(sPath) <> 0 And Right$(sPath, 1) <> "\" And LenB(sFile) <> 0, "\", vbNullString) & sFile
+End Function
+#End If
