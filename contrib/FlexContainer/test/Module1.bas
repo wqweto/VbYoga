@@ -18,5 +18,6 @@ Public Sub DebugInstanceTerm(sModuleName As String, sDebugID As String)
 End Sub
 
 Public Sub DebugInstanceName(sInstanceName As String, sDebugID As String)
-
+    #If sInstanceName And sDebugID Then '--- touch args
+    #End If
 End Sub
