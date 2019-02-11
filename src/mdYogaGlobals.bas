@@ -209,13 +209,7 @@ Private Function pvToString(ByVal lPtr As Long) As String
 End Function
 
 Private Function pvToObject(ByVal lPtr As Long) As Object
-    Dim pUnk            As IUnknown
-    
-    If lPtr <> 0 Then
-        Call CopyMemory(pUnk, lPtr, 4)
-        Set pvToObject = pUnk
-        Call CopyMemory(pUnk, 0&, 4)
-    End If
+    Call vbaObjSetAddref(pvToObject, lPtr)
 End Function
 
 #If Not ImplUseShared Then
