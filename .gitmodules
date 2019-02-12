@@ -1,3 +1,3 @@
 [submodule "contrib/FlexContainer/test/NinePatch"]
-	path = contrib/FlexContainer/test/NinePatch
+	path = contrib/FlexContainer/lib/NinePatch
 	url = git@github.com:wqweto/NinePatch.git
