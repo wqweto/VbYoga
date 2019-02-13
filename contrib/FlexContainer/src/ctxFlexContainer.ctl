@@ -244,10 +244,10 @@ End Property
 
 Public Sub Reset()
     For m_lButtonCount = m_lButtonCount To 1 Step -1
-        btnButton(m_lButtonCount).Visible = False
+        btnButton.Item(m_lButtonCount).Visible = False
     Next
     For m_lLabelCount = m_lLabelCount To 1 Step -1
-        labLabel(m_lLabelCount).Visible = False
+        labLabel.Item(m_lLabelCount).Visible = False
     Next
     pvInitRoot
 End Sub
@@ -288,10 +288,10 @@ Public Sub Repaint()
     Dim lIdx            As Long
     
     For lIdx = 1 To m_lButtonCount
-        btnButton(lIdx).Refresh
+        btnButton.Item(lIdx).Refresh
     Next
     For lIdx = 1 To m_lLabelCount
-        labLabel(lIdx).Refresh
+        labLabel.Item(lIdx).Refresh
     Next
     UserControl.Refresh
 '    Call ApiUpdateWindow(ContainerHwnd)
@@ -302,10 +302,10 @@ End Sub
 Friend Function frLoadButton() As VBControlExtender
     m_lButtonCount = m_lButtonCount + 1
     If btnButton.UBound < m_lButtonCount Then
-        Load btnButton(m_lButtonCount)
-        Set btnButton(m_lButtonCount).Font = m_oFont
+        Load btnButton.Item(m_lButtonCount)
+        Set btnButton.Item(m_lButtonCount).Font = m_oFont
     End If
-    Set frLoadButton = btnButton(m_lButtonCount)
+    Set frLoadButton = btnButton.Item(m_lButtonCount)
     Set frLoadButton.Object.Font = m_oFont
     frLoadButton.ForeColor = ForeColor
 End Function
@@ -313,12 +313,13 @@ End Function
 Friend Function frLoadLabel() As VB.Label
     m_lLabelCount = m_lLabelCount + 1
     If labLabel.UBound < m_lLabelCount Then
-        Load labLabel(m_lLabelCount)
-        Set labLabel(m_lLabelCount).Font = m_oFont
+        Load labLabel.Item(m_lLabelCount)
+        Set labLabel.Item(m_lLabelCount).Font = m_oFont
     End If
-    Set frLoadLabel = labLabel(m_lLabelCount)
+    Set frLoadLabel = labLabel.Item(m_lLabelCount)
     Set frLoadLabel.Font = m_oFont
     frLoadLabel.ForeColor = ForeColor
+    frLoadLabel.UseMnemonic = False
 End Function
 
 Friend Sub frAddDomNodeMapping(oDomNode As cFlexDomNode, oCtl As Object)
@@ -831,7 +832,7 @@ QH:
 End Function
 
 Private Function LoadStdPicture(ByVal eType As Long) As StdPicture
-    #If eType Then
+    #If eType Then '--- touch args
     #End If
 End Function
 #End If
@@ -844,7 +845,23 @@ Private Sub btnButton_AccessKeyPress(Index As Integer, KeyAscii As Integer)
     Const FUNC_NAME     As String = "btnButton_AccessKeyPress"
     
     On Error GoTo EH
-    RaiseEvent AccessKeyPress(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), KeyAscii)
+    RaiseEvent AccessKeyPress(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), KeyAscii)
+    Exit Sub
+EH:
+    PrintError FUNC_NAME
+    Resume Next
+End Sub
+
+Private Sub btnButton_Click(Index As Integer)
+    Const FUNC_NAME     As String = "btnButton_Click"
+    Dim bDragging       As Boolean
+    
+    On Error GoTo EH
+    bDragging = m_bDragging
+    pvHandleMouseUp m_nDownButton, m_nDownShift, m_sngDownX, m_sngDownY
+    If Not bDragging Then
+        RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))))
+    End If
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -860,7 +877,7 @@ Private Sub btnButton_MouseDown(Index As Integer, Button As Integer, Shift As In
     sngX = btnButton.Item(Index).Left + X
     sngY = btnButton.Item(Index).Top + Y
     pvHandleMouseDown Button, Shift, sngX, sngY
-    RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), Button, Shift, sngX, sngY)
+    RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -876,9 +893,10 @@ Private Sub btnButton_MouseMove(Index As Integer, Button As Integer, Shift As In
     sngX = btnButton.Item(Index).Left + X
     sngY = btnButton.Item(Index).Top + Y
     pvHandleMouseMove Button, Shift, sngX, sngY
-    RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), Button, Shift, sngX, sngY)
+    RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), Button, Shift, sngX, sngY)
     If m_bDragging Then
-        Button = 0
+        btnButton.Item(Index).CancelMode
+        Button = -1
     End If
     Exit Sub
 EH:
@@ -897,15 +915,10 @@ Private Sub btnButton_MouseUp(Index As Integer, Button As Integer, Shift As Inte
     sngX = btnButton.Item(Index).Left + X
     sngY = btnButton.Item(Index).Top + Y
     pvHandleMouseUp Button, Shift, sngX, sngY
-    RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), Button, Shift, sngX, sngY)
-    If Not bDragging Then
-        If X >= 0 And X < btnButton(Index).Width And Y >= 0 And Y < btnButton(Index).Height Then
-            If (btnButton(Index).DownButton And Button And vbLeftButton) <> 0 Then
-                RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(btnButton(Index))))
-            End If
-        End If
-    Else
-        Button = 0
+    RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), Button, Shift, sngX, sngY)
+    If bDragging Then
+        btnButton.Item(Index).CancelMode
+        Button = -1
     End If
     Exit Sub
 EH:
@@ -917,7 +930,7 @@ Private Sub btnButton_OwnerDraw(Index As Integer, ByVal hGraphics As Long, ByVal
     Const FUNC_NAME     As String = "btnButton_OwnerDraw"
     
     On Error GoTo EH
-    RaiseEvent OwnerDraw(m_cMapping.Item("#" & ObjPtr(btnButton(Index))), hGraphics, hFont, ButtonState, ClientLeft, ClientTop, ClientWidth, ClientHeight, Caption, hPicture)
+    RaiseEvent OwnerDraw(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), hGraphics, hFont, ButtonState, ClientLeft, ClientTop, ClientWidth, ClientHeight, Caption, hPicture)
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -948,7 +961,7 @@ Private Sub labLabel_Click(Index As Integer)
     bDragging = m_bDragging
     pvHandleMouseUp m_nDownButton, m_nDownShift, m_sngDownX, m_sngDownY
     If Not bDragging Then
-        RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(labLabel(Index))))
+        RaiseEvent Click(m_cMapping.Item("#" & ObjPtr(labLabel.Item(Index))))
     End If
     Exit Sub
 EH:
@@ -965,7 +978,7 @@ Private Sub labLabel_MouseDown(Index As Integer, Button As Integer, Shift As Int
     sngX = labLabel.Item(Index).Left + X
     sngY = labLabel.Item(Index).Top + Y
     pvHandleMouseDown Button, Shift, sngX, sngY
-    RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(labLabel(Index))), Button, Shift, sngX, sngY)
+    RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(labLabel.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -981,7 +994,7 @@ Private Sub labLabel_MouseMove(Index As Integer, Button As Integer, Shift As Int
     sngX = labLabel.Item(Index).Left + X
     sngY = labLabel.Item(Index).Top + Y
     pvHandleMouseMove Button, Shift, sngX, sngY
-    RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(labLabel(Index))), Button, Shift, sngX, sngY)
+    RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(labLabel.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -997,7 +1010,7 @@ Private Sub labLabel_MouseUp(Index As Integer, Button As Integer, Shift As Integ
     sngX = labLabel.Item(Index).Left + X
     sngY = labLabel.Item(Index).Top + Y
 '    pvHandleMouseUp Button, Shift, sngX, sngY
-    RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(labLabel(Index))), Button, Shift, sngX, sngY)
+    RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(labLabel.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
 EH:
     PrintError FUNC_NAME
@@ -1010,10 +1023,10 @@ Private Sub m_oFont_FontChanged(ByVal PropertyName As String)
     
     On Error GoTo EH
     For lIdx = 0 To m_lButtonCount
-        btnButton(lIdx).Font = m_oFont
+        btnButton.Item(lIdx).Font = m_oFont
     Next
     For lIdx = 0 To m_lLabelCount
-        labLabel(lIdx).Font = m_oFont
+        labLabel.Item(lIdx).Font = m_oFont
     Next
     Exit Sub
 EH:
