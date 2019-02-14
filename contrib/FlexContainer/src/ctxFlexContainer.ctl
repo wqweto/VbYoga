@@ -330,7 +330,7 @@ End Sub
 
 Private Sub pvInitRoot()
     Set m_oYogaConfig = YogaConfigNew()
-    m_oYogaConfig.PointScaleFactor = 1# / Screen.TwipsPerPixelX
+    m_oYogaConfig.PointScaleFactor = 1# / ScreenTwipsPerPixelX
     Set m_oRoot = New cFlexDomNode
     Set m_oRoot.Layout = YogaNodeNew(m_oYogaConfig)
     Set m_oRoot.frFlexBox = Me
@@ -784,7 +784,7 @@ Private Sub pvHandleMouseMove(Button As Integer, Shift As Integer, X As Single, 
     m_nDownButton = m_nDownButton And Button
     If m_nDownButton <> 0 Then
         If Not m_bDragging Then
-            If Abs(X - m_sngDownX) > LNG_DRAG_DISTANCE * Screen.TwipsPerPixelX Or Abs(Y - m_sngDownY) > LNG_DRAG_DISTANCE * Screen.TwipsPerPixelY Then
+            If Abs(X - m_sngDownX) > LNG_DRAG_DISTANCE * ScreenTwipsPerPixelX Or Abs(Y - m_sngDownY) > LNG_DRAG_DISTANCE * ScreenTwipsPerPixelY Then
                 RaiseEvent StartDrag(m_nDownButton, m_nDownShift, m_sngDownX, m_sngDownY, m_bDragging)
                 If m_bDragging Then
                     MousePointer = vbCustom
@@ -835,6 +835,14 @@ Private Function LoadStdPicture(ByVal eType As Long) As StdPicture
     #If eType Then '--- touch args
     #End If
 End Function
+
+Private Property Get ScreenTwipsPerPixelX() As Single
+    ScreenTwipsPerPixelX = Screen.TwipsPerPixelX
+End Property
+
+Private Property Get ScreenTwipsPerPixelY() As Single
+    ScreenTwipsPerPixelY = Screen.TwipsPerPixelY
+End Property
 #End If
 
 '=========================================================================

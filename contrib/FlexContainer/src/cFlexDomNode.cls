@@ -202,29 +202,37 @@ Public Sub ApplyLayout( _
             Optional ByVal sngClipTop As Single, _
             Optional ByVal sngClipWidth As Single, _
             Optional ByVal sngClipHeight As Single)
+    Const SNG_EPSILON   As Single = 0.01
     Dim oItem           As cFlexDomNode
     Dim oCtl            As Object
+    Dim sngLeft         As Single
+    Dim sngTop          As Single
+    Dim sngWidth        As Single
+    Dim sngHeight       As Single
     
     Set oCtl = Control
     If Not oCtl Is Nothing Then
         With Layout
             oCtl.Visible = (.Display <> yogaDisplayNone)
-            Debug.Assert .GetAbsoluteX = AlignTwipsToPix(.GetAbsoluteX)
-            Debug.Assert .GetAbsoluteY = AlignTwipsToPix(.GetAbsoluteY)
-'            Debug.Assert .LayoutWidth = AlignTwipsToPix(.LayoutWidth)
-'            Debug.Assert .LayoutHeight = AlignTwipsToPix(.LayoutHeight)
+            Debug.Assert Abs(.GetAbsoluteX - AlignTwipsToPix(.GetAbsoluteX)) < SNG_EPSILON
+            Debug.Assert Abs(.GetAbsoluteY - AlignTwipsToPix(.GetAbsoluteY)) < SNG_EPSILON
+            Debug.Assert Abs(.LayoutWidth - AlignTwipsToPix(.LayoutWidth)) < SNG_EPSILON
+            Debug.Assert Abs(.LayoutHeight - AlignTwipsToPix(.LayoutHeight)) < SNG_EPSILON
+            sngLeft = AlignTwipsToPix(.GetAbsoluteX)
+            sngTop = AlignTwipsToPix(.GetAbsoluteY)
+            sngWidth = AlignTwipsToPix(.LayoutWidth)
+            sngHeight = AlignTwipsToPix(.LayoutHeight)
             If sngClipWidth > 0 Or sngClipHeight > 0 Then
-                If .GetAbsoluteX <= sngClipLeft + sngClipWidth And .GetAbsoluteX + .LayoutWidth >= sngClipLeft Then
-                    If .GetAbsoluteY <= sngClipTop + sngClipHeight And .GetAbsoluteY + .LayoutHeight >= sngClipTop Then
-                        MoveCtl oCtl, .GetAbsoluteX, .GetAbsoluteY, .LayoutWidth, .LayoutHeight
-                    Else
-                        oCtl.Left = -oCtl.Width
-                    End If
+                If sngLeft <= sngClipLeft + sngClipWidth _
+                        And sngLeft + sngWidth >= sngClipLeft _
+                        And sngTop <= sngClipTop + sngClipHeight _
+                        And sngTop + sngHeight >= sngClipTop Then
+                    MoveCtl oCtl, sngLeft, sngTop, sngWidth, sngHeight
                 Else
                     oCtl.Left = -oCtl.Width
                 End If
             Else
-                MoveCtl oCtl, .GetAbsoluteX, .GetAbsoluteY, .LayoutWidth, .LayoutHeight
+                MoveCtl oCtl, sngLeft, sngTop, sngWidth, sngHeight
             End If
         End With
     End If
@@ -273,14 +281,14 @@ Attribute MeasureCallback.VB_MemberFlags = "40"
     With CtlLabel
         If .AutoSize Then
             If YogaConstantsIsUndefined(sngWidth) Then
-                rc.Right = Screen.Width \ Screen.TwipsPerPixelX
+                rc.Right = Screen.Width \ ScreenTwipsPerPixelX
             Else
-                rc.Right = sngWidth \ Screen.TwipsPerPixelX
+                rc.Right = sngWidth \ ScreenTwipsPerPixelX
             End If
             If YogaConstantsIsUndefined(sngHeight) Then
-                rc.Bottom = Screen.Height \ Screen.TwipsPerPixelY
+                rc.Bottom = Screen.Height \ ScreenTwipsPerPixelY
             Else
-                rc.Bottom = sngHeight \ Screen.TwipsPerPixelY
+                rc.Bottom = sngHeight \ ScreenTwipsPerPixelY
             End If
             hDC = GetDC(0)
             Set pFont = .Font
@@ -307,8 +315,8 @@ MultiLine:
             Call SelectObject(hDC, hPrevFont)
             Call ReleaseDC(0, hDC)
 '            Debug.Print sText, .Font.Name, .Font.Size, sz.cx, sz.cy, Timer
-            sngLayoutWidth = sz.cx * Screen.TwipsPerPixelX
-            sngLayoutHeight = sz.cy * Screen.TwipsPerPixelY
+            sngLayoutWidth = sz.cx * ScreenTwipsPerPixelX
+            sngLayoutHeight = sz.cy * ScreenTwipsPerPixelY
         Else
             sngLayoutWidth = .Width
             sngLayoutHeight = .Height
@@ -318,14 +326,14 @@ End Sub
 
 #If Not ImplUseShared Then
 Private Function AlignTwipsToPix(ByVal sngTwips As Single) As Single
-    AlignTwipsToPix = Int(sngTwips / Screen.TwipsPerPixelX + 0.5) * Screen.TwipsPerPixelX
+    AlignTwipsToPix = Int(sngTwips / ScreenTwipsPerPixelX + 0.5) * ScreenTwipsPerPixelX
 End Function
 
 Private Sub MoveCtl(oCtl As Object, ByVal Left As Single, ByVal Top As Variant, ByVal Width As Variant, ByVal Height As Variant)
-    If 1440 \ Screen.TwipsPerPixelX = 1440 / Screen.TwipsPerPixelX Then
+    If 1440 \ ScreenTwipsPerPixelX = 1440 / ScreenTwipsPerPixelX Then
         oCtl.Move Left, Top, Width, Height
     Else
-        oCtl.Move Left + Screen.TwipsPerPixelX, Top, Width, Height
+        oCtl.Move Left + ScreenTwipsPerPixelX, Top, Width, Height
         oCtl.Move Left
     End If
 End Sub
@@ -344,6 +352,14 @@ Private Sub AssignVariant(vDest As Variant, vSrc As Variant)
         vDest = vSrc
     End If
 End Sub
+
+Property Get ScreenTwipsPerPixelX() As Single
+    ScreenTwipsPerPixelX = Screen.TwipsPerPixelX
+End Property
+
+Property Get ScreenTwipsPerPixelY() As Single
+    ScreenTwipsPerPixelY = Screen.TwipsPerPixelY
+End Property
 #End If
 
 '=========================================================================
