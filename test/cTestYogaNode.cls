@@ -29,6 +29,10 @@ Private Const ObjectVariableNotSetException     As Long = 91
 Private Const SubscriptOutOfRangeException      As Long = 9
 Private Const InvalidOperationException         As Long = vbObjectError
 
+Private Function C_Obj(Value As Variant) As Object
+    Set C_Obj = Value
+End Function
+
 Public Sub TestAddChildGetParent()
     Dim Parent As cYogaNode: Set Parent = YogaNodeNew()
     Dim child As cYogaNode: Set child = YogaNodeNew()
@@ -173,8 +177,8 @@ End Function
 
 Public Sub TestMeasureFunc()
     Dim node As cYogaNode: Set node = YogaNodeNew()
-    node.SetMeasureFunction Me
     node.Tag = 0
+    node.SetMeasureFunction Array(C_Obj(Me), "MeasureCallback")
     node.CalculateLayout
     Assert.AreEqual 100, node.LayoutWidth
     Assert.AreEqual 150, node.LayoutHeight
@@ -183,7 +187,7 @@ End Sub
 Public Sub TestMeasureFuncWithFloat()
     Dim node As cYogaNode: Set node = YogaNodeNew()
     node.Tag = 1
-    node.SetMeasureFunction Me
+    node.SetMeasureFunction Array(C_Obj(Me), "MeasureCallback")
     node.CalculateLayout
     Assert.AreEqual 124!, node.LayoutWidth
     Assert.AreEqual 82!, node.LayoutHeight
@@ -192,7 +196,7 @@ Public Sub TestMeasureFuncWithFloat()
     config0.PointScaleFactor = 0
     Set node = YogaNodeNew(config0)
     node.Tag = 1
-    node.SetMeasureFunction Me
+    node.SetMeasureFunction Array(C_Obj(Me), "MeasureCallback")
     node.CalculateLayout
     Assert.AreEqual 123.4!, node.LayoutWidth
     Assert.AreEqual 81.7!, node.LayoutHeight
@@ -200,7 +204,7 @@ End Sub
 
 Public Sub TestChildWithMeasureFunc()
     Dim node As cYogaNode: Set node = YogaNodeNew()
-    node.SetMeasureFunction Me
+    node.SetMeasureFunction Array(C_Obj(Me), "MeasureCallback")
     Dim child As cYogaNode: Set child = YogaNodeNew()
     Assert.Throws InvalidOperationException, , "Cannot add child: Nodes with measure functions cannot have children"
     node.Insert 0, child
@@ -211,7 +215,7 @@ Public Sub TestMeasureFuncWithChild()
     Dim child As cYogaNode: Set child = YogaNodeNew()
     node.Insert 0, child
     Assert.Throws InvalidOperationException, , "Cannot set measure function: Nodes with measure functions cannot have children"
-    node.SetMeasureFunction Me
+    node.SetMeasureFunction Array(C_Obj(Me), "MeasureCallback")
 End Sub
 
 Public Function BaselineCallback( _
@@ -244,21 +248,21 @@ Public Sub TestBaselineFunc()
     child0.Width = 100
     child0.Height = 110
     child0.Tag = 0
-    child0.SetBaselineFunction Me
+    child0.SetBaselineFunction Array(C_Obj(Me), "BaselineCallback")
     node.Insert 0, child0
 
     Dim child1 As cYogaNode: Set child1 = YogaNodeNew()
     child1.Width = 100
     child1.Height = 110
     child1.Tag = 1
-    child1.SetBaselineFunction Me
+    child1.SetBaselineFunction Array(C_Obj(Me), "BaselineCallback")
     node.Insert 1, child1
 
     Dim child2 As cYogaNode: Set child2 = YogaNodeNew()
     child2.Width = 100
     child2.Height = 110
     child2.Tag = 2
-    child2.SetBaselineFunction Me
+    child2.SetBaselineFunction Array(C_Obj(Me), "BaselineCallback")
     node.Insert 2, child2
 
     node.CalculateLayout
@@ -437,7 +441,7 @@ Private Sub TestMeasureFuncWithDestructorForGC(Parent As cYogaNode)
     Dim child As cYogaNode: Set child = YogaNodeNew()
     Parent.Insert 0, child
     child.Tag = 2
-    child.SetMeasureFunction Me
+    child.SetMeasureFunction Array(C_Obj(Me), "MeasureCallback")
 End Sub
 
 Public Sub TestLayoutMargin()

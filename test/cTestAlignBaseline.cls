@@ -25,6 +25,10 @@ Option Explicit
 DefObj A-Z
 Implements ITestFixture
 
+Private Function C_Obj(Value As Variant) As Object
+    Set C_Obj = Value
+End Function
+
 Public Sub Test_align_baseline_parent_using_child_in_column_as_reference()
     Dim Config As cYogaConfig: Set Config = YogaConfigNew()
     Dim root As cYogaNode: Set root = createYGNode(Config, YogaFlexDirection.yogaFlexRow, 1000, 1000, True)
@@ -39,7 +43,7 @@ Public Sub Test_align_baseline_parent_using_child_in_column_as_reference()
     root_child1.Insert 0, root_child1_child0
     
     Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = createYGNode(Config, YogaFlexDirection.yogaFlexColumn, 500, 400, False)
-    root_child1_child1.SetBaselineFunction Me
+    root_child1_child1.SetBaselineFunction Array(C_Obj(Me), "BaselineCallback")
     root_child1_child1.IsReferenceBaseline = True
     root_child1.Insert 1, root_child1_child1
     
@@ -79,7 +83,7 @@ Public Sub Test_align_baseline_parent_using_child_in_row_as_reference()
     root_child1.Insert 0, root_child1_child0
 
     Dim root_child1_child1 As cYogaNode: Set root_child1_child1 = createYGNode(Config, YogaFlexDirection.yogaFlexRow, 500, 400, False)
-    root_child1_child1.SetBaselineFunction Me
+    root_child1_child1.SetBaselineFunction Array(C_Obj(Me), "BaselineCallback")
     root_child1_child1.IsReferenceBaseline = True
     root_child1.Insert 1, root_child1_child1
 
