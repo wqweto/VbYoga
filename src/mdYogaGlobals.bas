@@ -111,11 +111,21 @@ Public Function YogaNodeMeasureRedirect( _
             ByVal eHeightMode As YogaMeasureMode) As YogaSize
     Const FUNC_NAME     As String = "YogaNodeMeasureRedirect"
     Dim oNode           As cYogaNode
+    Dim vCallback       As Variant
+    Dim oFunc           As Object
     
     On Error GoTo EH
     Set oNode = pvToObject(YGNodeGetContext(lNodePtr))
-    Call oNode.frMeasureFn.MeasureCallback(oNode, sngWidth, eWidthMode, sngHeight, eHeightMode, _
-        YogaNodeMeasureRedirect.Width, YogaNodeMeasureRedirect.Height)
+    oNode.GetMeasureFunction vCallback
+    If IsArray(vCallback) Then
+        CallByName vCallback(0), vCallback(1), VbMethod Or VbGet, oNode, _
+            sngWidth, eWidthMode, sngHeight, eHeightMode, _
+            YogaNodeMeasureRedirect.Width, YogaNodeMeasureRedirect.Height
+    ElseIf IsObject(vCallback) Then
+        Set oFunc = vCallback
+        Call oFunc(oNode, sngWidth, eWidthMode, sngHeight, eHeightMode, _
+            YogaNodeMeasureRedirect.Width, YogaNodeMeasureRedirect.Height)
+    End If
     Exit Function
 EH:
     PrintError FUNC_NAME
@@ -128,9 +138,18 @@ Public Function YogaNodeBaselineRedirect( _
             ByVal sngHeight As Single) As Single
     Const FUNC_NAME     As String = "YogaNodeMeasureRedirect"
     Dim oNode           As cYogaNode
+    Dim vCallback       As Variant
+    Dim oFunc           As Object
     
     Set oNode = pvToObject(YGNodeGetContext(lNodePtr))
-    YogaNodeBaselineRedirect = oNode.frBaselineFn.BaselineCallback(oNode, sngWidth, sngHeight)
+    oNode.GetBaselineFunction vCallback
+    If IsArray(vCallback) Then
+        YogaNodeBaselineRedirect = CallByName(vCallback(0), vCallback(1), _
+            VbMethod Or VbGet, oNode, sngWidth, sngHeight)
+    ElseIf IsObject(vCallback) Then
+        Set oFunc = vCallback
+        YogaNodeBaselineRedirect = oFunc(oNode, sngWidth, sngHeight)
+    End If
     Exit Function
 EH:
     PrintError FUNC_NAME
@@ -165,6 +184,8 @@ Private Function pvYogaConfigLoggerRedirect( _
     Dim oNode           As cYogaNode
     Dim sMessage        As String
     Dim bLogged         As Boolean
+    Dim vCallback       As Variant
+    Dim oFunc           As Object
     
     On Error GoTo EH
     Set oConfig = pvToObject(YGConfigGetContext(lConfigPtr))
@@ -180,8 +201,13 @@ Private Function pvYogaConfigLoggerRedirect( _
         sMessage = Left$(sMessage, Len(sMessage) - 1)
     End If
     If Not oConfig Is Nothing Then
-        If Not oConfig.Logger Is Nothing Then
-            Call oConfig.Logger.LogCallback(oNode, eLevel, sMessage)
+        oConfig.GetLoggerCallback vCallback
+        If IsArray(vCallback) Then
+            CallByName vCallback(0), vCallback(1), VbMethod Or VbGet, oNode, eLevel, sMessage
+            bLogged = True
+        ElseIf IsObject(vCallback) Then
+            Set oFunc = vCallback
+            Call oFunc(oNode, eLevel, sMessage)
             bLogged = True
         End If
     End If
@@ -198,7 +224,8 @@ Private Function pvYogaConfigLoggerRedirect( _
     End If
     Exit Function
 EH:
-    Debug.Print "Critical error: " & Err.Description & " [" & FUNC_NAME & "]"
+    PrintError FUNC_NAME
+    Resume Next
 End Function
 
 Private Function pvToString(ByVal lPtr As Long) As String

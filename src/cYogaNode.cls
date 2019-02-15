@@ -250,8 +250,8 @@ Private Const FLOAT_EPSILON         As Single = 0.000000001
 Public Tag                      As Variant
 Private m_oConfig               As cYogaConfig
 Private m_lNodePtr              As Long
-Private m_oMeasureFn            As Object
-Private m_oBaselineFn           As Object
+Private m_vMeasureFn            As Variant
+Private m_vBaselineFn           As Variant
 Private m_lParentWeakRef        As Long
 Private m_cChildren             As Collection
 Private m_cLog                  As Collection
@@ -321,11 +321,11 @@ Friend Property Set frParent(ByVal oValue As cYogaNode)
 End Property
 
 Property Get IsMeasureDefined() As Boolean
-    IsMeasureDefined = Not m_oMeasureFn Is Nothing
+    IsMeasureDefined = Not IsEmpty(m_vMeasureFn)
 End Property
 
 Property Get IsBaselineDefined() As Boolean
-    IsBaselineDefined = Not m_oBaselineFn Is Nothing
+    IsBaselineDefined = Not IsEmpty(m_vBaselineFn)
 End Property
 
 Property Get StyleDirection() As YogaDirection
@@ -925,14 +925,6 @@ Property Get LayoutPaddingEnd() As Single
     LayoutPaddingEnd = YGNodeLayoutGetPadding(NodePtr, yogaEdgeEnd)
 End Property
 
-Friend Property Get frMeasureFn() As Object
-    Set frMeasureFn = m_oMeasureFn
-End Property
-
-Friend Property Get frBaselineFn() As Object
-    Set frBaselineFn = m_oBaselineFn
-End Property
-
 '=========================================================================
 ' Methods
 '=========================================================================
@@ -951,8 +943,8 @@ Public Sub Init(oConfig As cYogaConfig, Optional ByVal lSrcNodePtr As Long)
 End Sub
 
 Public Sub Reset()
-    Set m_oMeasureFn = Nothing
-    Set m_oBaselineFn = Nothing
+    m_vMeasureFn = Empty
+    m_vBaselineFn = Empty
     Tag = Empty
     Call YGNodeReset(NodePtr)
     Call YGNodeSetContext(NodePtr, ObjPtr(Me))
@@ -1021,21 +1013,49 @@ Public Function IndexOf(oNode As cYogaNode) As Long
     IndexOf = -1
 End Function
 
-Public Sub SetMeasureFunction(oCallback As Object)
-    Set m_oMeasureFn = oCallback
-    If Not oCallback Is Nothing Then
+Public Sub SetMeasureFunction(Callback As Variant)
+    If Not IsObject(Callback) Then
+        m_vMeasureFn = Callback
+    ElseIf Callback Is Nothing Then
+        m_vMeasureFn = Empty
+    Else
+        Set m_vMeasureFn = Callback
+    End If
+    If Not IsEmpty(m_vMeasureFn) Then
         Call YGNodeSetMeasureFunc(NodePtr, AddressOf YogaNodeMeasureRedirect)
     Else
         Call YGNodeSetMeasureFunc(NodePtr, 0)
     End If
 End Sub
 
-Public Sub SetBaselineFunction(oCallback As Object)
-    Set m_oBaselineFn = oCallback
-    If Not oCallback Is Nothing Then
+Public Sub GetMeasureFunction(Callback As Variant)
+    If IsObject(m_vMeasureFn) Then
+        Set Callback = m_vMeasureFn
+    Else
+        Callback = m_vMeasureFn
+    End If
+End Sub
+
+Public Sub SetBaselineFunction(Callback As Variant)
+    If Not IsObject(Callback) Then
+        m_vBaselineFn = Callback
+    ElseIf Callback Is Nothing Then
+        m_vBaselineFn = Empty
+    Else
+        Set m_vBaselineFn = Callback
+    End If
+    If Not IsEmpty(m_vBaselineFn) Then
         Call YGNodeSetBaselineFunc(NodePtr, AddressOf YogaNodeBaselineRedirect)
     Else
         Call YGNodeSetBaselineFunc(NodePtr, 0)
+    End If
+End Sub
+
+Public Sub GetBaselineFunction(Callback As Variant)
+    If IsObject(m_vBaselineFn) Then
+        Set Callback = m_vBaselineFn
+    Else
+        Callback = m_vBaselineFn
     End If
 End Sub
 
@@ -1054,16 +1074,16 @@ End Sub
 
 Public Function ToString(Optional ByVal eOptions As YogaPrintOptions = yogaProLayout Or yogaProStyle Or yogaProChildren) As String
     Const FUNC_NAME     As String = "ToString"
-    Dim oOrig           As Object
+    Dim vOrig          As Variant
     
     On Error GoTo EH
-    Set oOrig = m_oConfig.Logger
-    Set m_oConfig.Logger = Me
+    m_oConfig.GetLoggerCallback vOrig
+    m_oConfig.SetLoggerCallback Array(C_Obj(Me), "LogCallback")
     Set m_cLog = New Collection
     Call YGNodePrint(NodePtr, eOptions)
     ToString = ConcatCollection(m_cLog)
     Set m_cLog = Nothing
-    Set m_oConfig.Logger = oOrig
+    m_oConfig.SetLoggerCallback vOrig
     Exit Function
 EH:
     PrintError FUNC_NAME
@@ -1203,6 +1223,7 @@ Private Function FromYogaValue(uValue As YogaValue) As Variant
     FromYogaValue = Array(uValue.Unit, uValue.Value)
 End Function
 
+#If Not ImplUseShared Then
 Private Function ConcatCollection(oCol As Collection, Optional Separator As String = vbCrLf) As String
     Dim lSize           As Long
     Dim vElem           As Variant
@@ -1221,6 +1242,11 @@ Private Function ConcatCollection(oCol As Collection, Optional Separator As Stri
         Next
     End If
 End Function
+
+Private Function C_Obj(Value As Variant) As Object
+    Set C_Obj = Value
+End Function
+#End If
 
 '=========================================================================
 ' Base class events
@@ -1245,8 +1271,8 @@ Private Sub Class_Terminate()
         Call YGNodeFree(m_lNodePtr)
         m_lNodePtr = 0
     End If
-    Set m_oMeasureFn = Nothing
-    Set m_oBaselineFn = Nothing
+    m_vMeasureFn = Empty
+    m_vBaselineFn = Empty
     Set m_oConfig = Nothing
     Tag = Empty
     Debug.Assert m_cLog Is Nothing

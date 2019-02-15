@@ -42,8 +42,8 @@ Private Declare Function YGConfigSetPointScaleFactor Lib "yoga" Alias "_YGConfig
 ' Constants and member variables
 '=========================================================================
 
-Public Logger                   As Object
 Private m_lConfigPtr            As Long
+Private m_vLoggerFn             As Variant
 '--- debug
 #If DebugMode Then
     Private m_sDebugID          As String
@@ -96,6 +96,24 @@ Public Sub Init(Optional ByVal lConfigPtr As Long)
         m_lConfigPtr = YGConfigNew()
     End If
     Call YGConfigSetContext(m_lConfigPtr, ObjPtr(Me))
+End Sub
+
+Public Sub SetLoggerCallback(Callback As Variant)
+    If Not IsObject(Callback) Then
+        m_vLoggerFn = Callback
+    ElseIf Callback Is Nothing Then
+        m_vLoggerFn = Empty
+    Else
+        Set m_vLoggerFn = Callback
+    End If
+End Sub
+
+Public Sub GetLoggerCallback(Callback As Variant)
+    If IsObject(m_vLoggerFn) Then
+        Set Callback = m_vLoggerFn
+    Else
+        Callback = m_vLoggerFn
+    End If
 End Sub
 
 '=========================================================================
