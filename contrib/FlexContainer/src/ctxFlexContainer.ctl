@@ -209,13 +209,12 @@ Property Get Styles() As Object
 End Property
 
 Property Set Styles(oValue As Object)
-    If oValue Is Nothing Then
-        Set m_oStyles = CreateObject("Scripting.Dictionary")
-    Else
+    If TypeName(oValue) = "Dictionary" Then
         Set m_oStyles = oValue
+    Else
+        Set m_oStyles = CreateObject("Scripting.Dictionary")
     End If
     Set m_oCache = CreateObject("Scripting.Dictionary")
-    pvApplyStyles m_oRoot
 End Property
 
 Property Get Root() As cFlexDomNode
@@ -271,6 +270,19 @@ Public Sub ApplyLayout( _
         End If
         m_oRoot.ApplyLayout sngClipLeft, sngClipTop, sngClipWidth, sngClipHeight
     End If
+End Sub
+
+Public Sub RecalcStyles(Optional oDomNode As cFlexDomNode)
+    Const FUNC_NAME     As String = "RecalcStyles"
+    
+    If oDomNode Is Nothing Then
+        pvApplyStyles m_oRoot
+    Else
+        pvApplyStyles oDomNode
+    End If
+    #If ImplUseShared Then
+        LogMemory FUNC_NAME & "." & MODULE_NAME, "YogaNodeInstanceCount=" & YogaNodeInstanceCount
+    #End If
 End Sub
 
 Public Sub CancelMode()
@@ -329,6 +341,7 @@ End Sub
 '= private ===============================================================
 
 Private Sub pvInitRoot()
+    pvTerminateRoot
     Set m_oYogaConfig = YogaConfigNew()
     m_oYogaConfig.PointScaleFactor = 1# / ScreenTwipsPerPixelX
     Set m_oRoot = New cFlexDomNode
@@ -336,6 +349,15 @@ Private Sub pvInitRoot()
     Set m_oRoot.frFlexBox = Me
     m_oRoot.CssClass = "root container"
     Set m_cMapping = New Collection
+End Sub
+
+Private Sub pvTerminateRoot()
+    Set m_cMapping = Nothing
+    If Not m_oRoot Is Nothing Then
+        Set m_oRoot.frFlexBox = Nothing
+        Set m_oRoot = Nothing
+    End If
+    Set m_oYogaConfig = Nothing
 End Sub
 
 Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
@@ -348,7 +370,7 @@ Private Sub pvApplyStyles(oDomNode As cFlexDomNode)
     Dim sValue          As String
     
     On Error GoTo EH
-    Set oStyle = pvGetStyle(oDomNode.Name, oDomNode.CssClass, TypeName(oDomNode.Control))
+    Set oStyle = pvGetStyle(oDomNode.Name, oDomNode.CssClass, oDomNode.CssPseudoClass, TypeName(oDomNode.Control))
 '    Debug.Print oDomNode.Name, oDomNode.CssClass, JsonDump(oStyle, Minimize:=True), Timer
     Set oDomNode.Style = oStyle
     With oDomNode.Layout
@@ -657,57 +679,63 @@ Friend Function frToYogaEnum(sProp As String, sValue As String) As Long
     End Select
 End Function
 
-Private Function pvGetStyle(CtlName As String, CssClass As String, CtlType As String) As Object
+Private Function pvGetStyle(CtlName As String, CssClass As String, CssPseudoClass As String, CtlType As String) As Object
+    Const STR_PREFIX    As String = "~"
     Dim oRetVal         As Object
     Dim vElem           As Variant
-    Dim oCache          As Object
+    Dim vPseudo         As Variant
     Dim sKey            As String
     
     If LenB(CtlName) <> 0 Then
-        sKey = "#" & CtlName
+        sKey = STR_PREFIX & "#" & CtlName
     Else
-        sKey = IIf(LenB(CtlType) <> 0, CtlType, vbNullString) & IIf(LenB(CssClass) <> 0, "." & CssClass, vbNullString)
+        sKey = STR_PREFIX & IIf(LenB(CtlType) <> 0, CtlType, vbNullString) & IIf(LenB(CssClass) <> 0, "." & CssClass, vbNullString)
     End If
+    sKey = sKey & IIf(LenB(CssPseudoClass) <> 0, ":" & CssPseudoClass, vbNullString)
     Set oRetVal = pvTryGetCache(sKey)
     If oRetVal Is Nothing Then
         Set oRetVal = CreateObject("Scripting.Dictionary")
-        Set oCache = pvTryGetCache("#" & CtlName)
-        If oCache Is Nothing Then
-            If m_oStyles.Exists("#" & CtlName) Then
-                Set oCache = m_oStyles.Item("#" & CtlName)
-            Else
-                Set oCache = pvEmptyStyle
-            End If
-            pvSetCache "#" & CtlName, oCache
-        End If
-        pvMergeStyle oRetVal, oCache
-        For Each vElem In Split(StrReverse(CssClass))
-            vElem = StrReverse(vElem)
-            Set oCache = pvTryGetCache("." & vElem)
-            If oCache Is Nothing Then
-                If m_oStyles.Exists("." & vElem) Then
-                    Set oCache = m_oStyles.Item("." & vElem)
-                Else
-                    Set oCache = pvEmptyStyle
-                End If
-                pvSetCache "." & vElem, oCache
-            End If
-            pvMergeStyle oRetVal, oCache
+        For Each vPseudo In Split(StrReverse(CssPseudoClass))
+            pvMergeFromCache oRetVal, "#" & CtlName & ":" & StrReverse(vPseudo)
+            For Each vElem In Split(StrReverse(CssClass))
+                pvMergeFromCache oRetVal, "." & StrReverse(vElem) & ":" & StrReverse(vPseudo)
+            Next
+            pvMergeFromCache oRetVal, CtlType & ":" & StrReverse(vPseudo)
         Next
-        Set oCache = pvTryGetCache(CtlType)
-        If oCache Is Nothing Then
-            If m_oStyles.Exists(CtlType) Then
-                Set oCache = m_oStyles.Item(CtlType)
-            Else
-                Set oCache = pvEmptyStyle
-            End If
-            pvSetCache CtlType, oCache
-        End If
-        pvMergeStyle oRetVal, oCache
+        pvMergeFromCache oRetVal, "#" & CtlName
+        For Each vElem In Split(StrReverse(CssClass))
+            pvMergeFromCache oRetVal, "." & StrReverse(vElem)
+        Next
+        pvMergeFromCache oRetVal, CtlType
         pvSetCache sKey, oRetVal
     End If
     Set pvGetStyle = oRetVal
 End Function
+
+Private Sub pvMergeFromCache(oDest As Object, sKey As String)
+    Dim oCache          As Object
+    
+    Set oCache = pvTryGetCache(sKey)
+    If oCache Is Nothing Then
+        If m_oStyles.Exists(sKey) Then
+            Set oCache = m_oStyles.Item(sKey)
+        Else
+            Set oCache = pvEmptyStyle
+        End If
+        pvSetCache sKey, oCache
+    End If
+    pvMergeStyle oDest, oCache
+End Sub
+
+Private Sub pvMergeStyle(oDest As Object, oSrc As Object)
+    Dim vElem           As Variant
+    
+    For Each vElem In oSrc.Keys
+        If Not oDest.Exists(vElem) Then
+            oDest.Item(vElem) = oSrc.Item(vElem)
+        End If
+    Next
+End Sub
 
 Private Function pvTryGetCache(sKey As String) As Object
     If m_oCache.Exists(sKey) Then
@@ -732,16 +760,6 @@ Private Function pvEmptyStyle() As Object
     Debug.Assert oEmpty.Count = 0
     Set pvEmptyStyle = oEmpty
 End Function
-
-Private Sub pvMergeStyle(oDest As Object, oSrc As Object)
-    Dim vElem           As Variant
-    
-    For Each vElem In oSrc.Keys
-        If Not oDest.Exists(vElem) Then
-            oDest.Item(vElem) = oSrc.Item(vElem)
-        End If
-    Next
-End Sub
 
 Private Function pvParentRegisterCancelMode(oCtl As Object) As Boolean
     Dim bHandled        As Boolean
@@ -843,6 +861,10 @@ End Property
 Private Property Get ScreenTwipsPerPixelY() As Single
     ScreenTwipsPerPixelY = Screen.TwipsPerPixelY
 End Property
+
+Private Function AlignTwipsToPix(ByVal sngTwips As Single) As Single
+    AlignTwipsToPix = Int(sngTwips / Screen.TwipsPerPixelX + 0.5) * Screen.TwipsPerPixelX
+End Function
 #End If
 
 '=========================================================================
@@ -882,8 +904,8 @@ Private Sub btnButton_MouseDown(Index As Integer, Button As Integer, Shift As In
     Dim sngY            As Single
     
     On Error GoTo EH
-    sngX = btnButton.Item(Index).Left + X
-    sngY = btnButton.Item(Index).Top + Y
+    sngX = AlignTwipsToPix(btnButton.Item(Index).Left + X)
+    sngY = AlignTwipsToPix(btnButton.Item(Index).Top + Y)
     pvHandleMouseDown Button, Shift, sngX, sngY
     RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
@@ -898,8 +920,8 @@ Private Sub btnButton_MouseMove(Index As Integer, Button As Integer, Shift As In
     Dim sngY            As Single
     
     On Error GoTo EH
-    sngX = btnButton.Item(Index).Left + X
-    sngY = btnButton.Item(Index).Top + Y
+    sngX = AlignTwipsToPix(btnButton.Item(Index).Left + X)
+    sngY = AlignTwipsToPix(btnButton.Item(Index).Top + Y)
     pvHandleMouseMove Button, Shift, sngX, sngY
     RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), Button, Shift, sngX, sngY)
     If m_bDragging Then
@@ -920,8 +942,8 @@ Private Sub btnButton_MouseUp(Index As Integer, Button As Integer, Shift As Inte
     
     On Error GoTo EH
     bDragging = m_bDragging
-    sngX = btnButton.Item(Index).Left + X
-    sngY = btnButton.Item(Index).Top + Y
+    sngX = AlignTwipsToPix(btnButton.Item(Index).Left + X)
+    sngY = AlignTwipsToPix(btnButton.Item(Index).Top + Y)
     pvHandleMouseUp Button, Shift, sngX, sngY
     RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(btnButton.Item(Index))), Button, Shift, sngX, sngY)
     If bDragging Then
@@ -983,8 +1005,8 @@ Private Sub labLabel_MouseDown(Index As Integer, Button As Integer, Shift As Int
     Dim sngY            As Single
     
     On Error GoTo EH
-    sngX = labLabel.Item(Index).Left + X
-    sngY = labLabel.Item(Index).Top + Y
+    sngX = AlignTwipsToPix(labLabel.Item(Index).Left + X)
+    sngY = AlignTwipsToPix(labLabel.Item(Index).Top + Y)
     pvHandleMouseDown Button, Shift, sngX, sngY
     RaiseEvent MouseDown(m_cMapping.Item("#" & ObjPtr(labLabel.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
@@ -999,8 +1021,8 @@ Private Sub labLabel_MouseMove(Index As Integer, Button As Integer, Shift As Int
     Dim sngY            As Single
     
     On Error GoTo EH
-    sngX = labLabel.Item(Index).Left + X
-    sngY = labLabel.Item(Index).Top + Y
+    sngX = AlignTwipsToPix(labLabel.Item(Index).Left + X)
+    sngY = AlignTwipsToPix(labLabel.Item(Index).Top + Y)
     pvHandleMouseMove Button, Shift, sngX, sngY
     RaiseEvent MouseMove(m_cMapping.Item("#" & ObjPtr(labLabel.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
@@ -1015,8 +1037,8 @@ Private Sub labLabel_MouseUp(Index As Integer, Button As Integer, Shift As Integ
     Dim sngY            As Single
     
     On Error GoTo EH
-    sngX = labLabel.Item(Index).Left + X
-    sngY = labLabel.Item(Index).Top + Y
+    sngX = AlignTwipsToPix(labLabel.Item(Index).Left + X)
+    sngY = AlignTwipsToPix(labLabel.Item(Index).Top + Y)
 '    pvHandleMouseUp Button, Shift, sngX, sngY
     RaiseEvent MouseUp(m_cMapping.Item("#" & ObjPtr(labLabel.Item(Index))), Button, Shift, sngX, sngY)
     Exit Sub
@@ -1157,12 +1179,7 @@ End Sub
 #End If
 
 Private Sub UserControl_Terminate()
-    If Not m_oRoot Is Nothing Then
-        Set m_oRoot.frFlexBox = Nothing
-        Set m_oRoot = Nothing
-    End If
-    Set m_cMapping = Nothing
-    Set m_oYogaConfig = Nothing
+    pvTerminateRoot
     #If DebugMode Then
         DebugInstanceTerm MODULE_NAME, m_sDebugID
     #End If

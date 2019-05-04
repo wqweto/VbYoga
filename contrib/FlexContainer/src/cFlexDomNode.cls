@@ -62,6 +62,7 @@ Private m_cChildren             As Collection
 Private m_lControlWeakRef       As Long
 Public Name                     As String
 Public CssClass                 As String
+Public CssPseudoClass           As String
 Public Layout                   As cYogaNode
 Public Style                    As Object
 Public Tag                      As Variant
@@ -166,7 +167,7 @@ End Function
 
 Public Function AddLabel(Optional Name As String, Optional CssClass As String) As cFlexDomNode
     Set AddLabel = AddControl(frFlexBox.frLoadLabel, Name, Trim$("label " & CssClass))
-    AddLabel.Layout.SetMeasureFunction AddLabel
+    AddLabel.Layout.SetMeasureFunction Array(ObjPtr(AddLabel), "MeasureCallback")
 End Function
 
 Public Function AddControl(oCtl As Object, Optional Name As String, Optional CssClass As String) As cFlexDomNode
