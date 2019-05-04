@@ -935,6 +935,7 @@ Public Sub Init(oConfig As cYogaConfig, Optional ByVal lSrcNodePtr As Long)
     Else
         Set m_oConfig = YogaConfigDefault
     End If
+    Debug.Assert m_lNodePtr = 0
     m_lNodePtr = YGNodeNewWithConfig(m_oConfig.ConfigPtr)
     Call YGNodeSetContext(m_lNodePtr, ObjPtr(Me))
     If lSrcNodePtr <> 0 Then
@@ -1166,11 +1167,19 @@ Public Function GetActualHeight() As Single
 End Function
 
 Public Function GetRelativeX(oContainer As cYogaNode) As Single
-    GetRelativeX = GetAbsoluteX() - oContainer.GetAbsoluteX()
+    If Not oContainer Is Nothing Then
+        GetRelativeX = GetAbsoluteX() - oContainer.GetAbsoluteX()
+    Else
+        GetRelativeX = GetAbsoluteX()
+    End If
 End Function
 
 Public Function GetRelativeY(oContainer As cYogaNode) As Single
-    GetRelativeY = GetAbsoluteY() - oContainer.GetAbsoluteY()
+    If Not oContainer Is Nothing Then
+        GetRelativeY = GetAbsoluteY() - oContainer.GetAbsoluteY()
+    Else
+        GetRelativeY = GetAbsoluteY()
+    End If
 End Function
 
 '--- hidden
