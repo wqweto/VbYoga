@@ -118,7 +118,12 @@ Public Function YogaNodeMeasureRedirect( _
     Set oNode = pvToObject(YGNodeGetContext(lNodePtr))
     oNode.GetMeasureFunction vCallback
     If IsArray(vCallback) Then
-        CallByName vCallback(0), vCallback(1), VbMethod Or VbGet, oNode, _
+        If IsObject(vCallback(0)) Then
+            Set oFunc = vCallback(0)
+        Else
+            Call vbaObjSetAddref(oFunc, vCallback(0))
+        End If
+        CallByName oFunc, vCallback(1), VbMethod Or VbGet, oNode, _
             sngWidth, eWidthMode, sngHeight, eHeightMode, _
             YogaNodeMeasureRedirect.Width, YogaNodeMeasureRedirect.Height
     ElseIf IsObject(vCallback) Then
@@ -144,7 +149,12 @@ Public Function YogaNodeBaselineRedirect( _
     Set oNode = pvToObject(YGNodeGetContext(lNodePtr))
     oNode.GetBaselineFunction vCallback
     If IsArray(vCallback) Then
-        YogaNodeBaselineRedirect = CallByName(vCallback(0), vCallback(1), _
+        If IsObject(vCallback(0)) Then
+            Set oFunc = vCallback(0)
+        Else
+            Call vbaObjSetAddref(oFunc, vCallback(0))
+        End If
+        YogaNodeBaselineRedirect = CallByName(oFunc, vCallback(1), _
             VbMethod Or VbGet, oNode, sngWidth, sngHeight)
     ElseIf IsObject(vCallback) Then
         Set oFunc = vCallback
@@ -203,7 +213,12 @@ Private Function pvYogaConfigLoggerRedirect( _
     If Not oConfig Is Nothing Then
         oConfig.GetLoggerCallback vCallback
         If IsArray(vCallback) Then
-            CallByName vCallback(0), vCallback(1), VbMethod Or VbGet, oNode, eLevel, sMessage
+            If IsObject(vCallback(0)) Then
+                Set oFunc = vCallback(0)
+            Else
+                Call vbaObjSetAddref(oFunc, vCallback(0))
+            End If
+            CallByName oFunc, vCallback(1), VbMethod Or VbGet, oNode, eLevel, sMessage
             bLogged = True
         ElseIf IsObject(vCallback) Then
             Set oFunc = vCallback
@@ -230,7 +245,7 @@ End Function
 
 Private Function pvToString(ByVal lPtr As Long) As String
     If lPtr <> 0 Then
-        pvToString = String$(lstrlen(lPtr), Chr$(0))
+        pvToString = String$(lstrlen(lPtr), vbNullChar)
         Call CopyMemory(ByVal pvToString, ByVal lPtr, lstrlen(lPtr))
     End If
 End Function
